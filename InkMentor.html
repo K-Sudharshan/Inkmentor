@@ -1,0 +1,2019 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>InkMentor</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Reenie+Beanie&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f2f7;--glass:rgba(255,255,255,.66);--gb:rgba(255,255,255,.8);--line:rgba(0,0,0,.07);--tx:#1c1c1e;--tx2:#6e6e73;--ac:#6b4ef0;--sh:0 12px 44px rgba(0,0,0,.10);--g:32px;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a0a0f;--glass:rgba(32,32,40,.62);--gb:rgba(255,255,255,.09);--line:rgba(255,255,255,.09);--tx:#f5f5f7;--tx2:#9a9aa3;--ac:#a99bff;--sh:0 12px 44px rgba(0,0,0,.55)}}
+:root[data-theme="dark"]{--bg:#0a0a0f;--glass:rgba(32,32,40,.62);--gb:rgba(255,255,255,.09);--line:rgba(255,255,255,.09);--tx:#f5f5f7;--tx2:#9a9aa3;--ac:#a99bff;--sh:0 12px 44px rgba(0,0,0,.55)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--tx);font:400 14px/1.4 -apple-system,'Inter',system-ui,sans-serif;overflow:hidden}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+#app{position:fixed;inset:0;display:flex;gap:12px;padding:12px;padding-top:calc(12px + env(safe-area-inset-top,0px));padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+.glass{background:var(--glass);backdrop-filter:blur(32px) saturate(180%);-webkit-backdrop-filter:blur(32px) saturate(180%);border:1px solid var(--gb);box-shadow:var(--sh)}
+#sb{width:268px;flex:none;border-radius:24px;padding:18px 14px 14px;display:flex;flex-direction:column;gap:14px;transition:width .35s cubic-bezier(.2,.8,.2,1),opacity .25s,padding .35s,margin .35s;overflow:hidden}
+#app.hide #sb{width:0;padding:0;opacity:0;border-width:0;margin-right:-12px}
+.brand{display:flex;align-items:center;gap:10px;padding:0 6px;white-space:nowrap}
+.logo{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#FFB347,#FF5E7E);display:grid;place-items:center;color:#2a0f14}
+.logo .i{width:16px;height:16px}
+.brand b{font:400 26px 'Instrument Serif',serif;letter-spacing:-.3px}
+.brand i{font-style:italic;color:var(--ac)}
+.sr{display:flex;align-items:center;gap:8px;padding:0 12px;height:36px;border-radius:12px;background:var(--line);color:var(--tx2)}
+.sr input{flex:1;min-width:0;border:0;background:none;color:var(--tx);font:inherit;outline:none}
+.lb{font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);padding:0 8px}
+#pl{display:flex;flex-direction:column;gap:2px;overflow:auto;flex:1;margin:-4px -4px 0;padding:4px}
+.pi{display:flex;align-items:center;gap:12px;padding:8px;border-radius:14px;text-align:left;transition:background .2s;white-space:nowrap}
+.pi:hover{background:var(--line)}
+.pi.on{background:color-mix(in srgb,var(--ac) 15%,transparent)}
+.pi b{display:block;font-weight:600;font-size:14px}.pi small{color:var(--tx2);font-size:12px}
+.pi.on b{color:var(--ac)}
+.th{width:36px;height:46px;border-radius:7px;background:#fff;background-image:linear-gradient(rgba(0,0,0,.2) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.2) 1px,transparent 1px);background-size:9px 9px;box-shadow:0 0 0 1px var(--line),0 3px 8px rgba(0,0,0,.08);flex:none}
+#add-page{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:12px;color:var(--tx);font-weight:600;font-size:13px;background:var(--line);white-space:nowrap;transition:background .2s}
+#add-page:hover{filter:brightness(1.08)}
+.mem{display:flex;align-items:center;gap:10px;padding:12px;border-radius:16px;background:var(--line);white-space:nowrap}
+.mem b{display:block;font-weight:600}.mem small{color:var(--tx2);font-size:12px}
+.mem i{width:8px;height:8px;border-radius:50%;background:var(--ac);box-shadow:0 0 0 0 var(--ac);animation:pl 2.4s infinite}
+@keyframes pl{70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.st{display:flex;align-items:center;gap:10px;padding:8px;border-radius:12px;color:var(--tx2);white-space:nowrap}.st:hover{background:var(--line)}
+#mn{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px}
+#hd{display:flex;align-items:center;gap:12px;min-height:52px}
+.ib{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:var(--tx);flex:none;transition:background .2s}
+.ib:hover{background:var(--line)}
+.ttl{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ttl b{font-weight:600}.ttl span{color:var(--tx2);margin-left:8px}
+.tb{display:flex;align-items:center;gap:4px;padding:5px;border-radius:999px;overflow-x:auto;max-width:100%;scrollbar-width:none}
+.tb::-webkit-scrollbar{display:none}
+.tb .ib{width:38px;height:38px}
+.tb .ib.on{background:var(--line);color:var(--ac)}
+.dv{width:1px;height:20px;background:var(--line);margin:0 4px;flex:none}
+.dot{width:22px;height:22px;border-radius:50%;margin:0 3px;flex:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15);transition:transform .15s}
+.dot.on{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--c)}
+.sv{display:flex;align-items:center;gap:6px;height:38px;padding:0 16px 0 12px;margin-left:4px;border-radius:999px;background:linear-gradient(90deg,#FFB347,#FF5E7E);color:#2a0f14;font-weight:600;flex:none;transition:transform .15s,filter .2s}
+.sv:hover{filter:brightness(1.06)}.sv:active{transform:scale(.97)}
+.sv:disabled,.ib:disabled{opacity:0.4;cursor:not-allowed;pointer-events:none}
+#paper{flex:1;position:relative;border-radius:24px;overflow:hidden;background:#fff;background-image:linear-gradient(rgba(0,0,0,.2) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.2) 1px,transparent 1px);background-size:var(--g) var(--g);box-shadow:var(--sh),0 0 0 1px var(--line);color:#0b0b14;touch-action:none}
+#cv{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:crosshair;z-index:1}
+#ov{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;pointer-events:none;z-index:2}
+#notes{position:absolute;inset:0;padding:calc(var(--g)*2) var(--g);display:flex;flex-direction:column;align-items:flex-start;pointer-events:none;font:400 calc(var(--g)*1.9)/calc(var(--g)*2) 'Reenie Beanie',cursive;overflow:hidden;z-index:3}
+.ln{max-width:100%}.sp{height:calc(var(--g)*1.2);flex:none}
+.ai{margin-left:var(--g);color:#FF5E7E;text-shadow:0 0 18px rgba(255,94,126,.35)}
+.ai-line-container{display:inline-block;position:relative;max-width:100%;vertical-align:middle}
+.ai-reenie-line{display:inline-block;font-family:'Reenie Beanie',cursive;font-size:calc(var(--g)*1.85);line-height:calc(var(--g)*1.95);white-space:nowrap;vertical-align:middle;background:linear-gradient(90deg,#FFA23A 0%,#FF5E7E 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 6px rgba(255,94,126,0.40))}
+.ai-pen-tip-dot{position:absolute;display:none;width:7px;height:7px;border-radius:50%;background:#FFA23A;border:1.5px solid #FF5E7E;box-shadow:0 0 8px #FFA23A, 0 0 14px rgba(255,94,126,0.6);pointer-events:none;z-index:5;transform:translate(-50%,-50%)}
+.math-line-svg{display:block;overflow:visible}
+.math-stroke{fill:none;stroke:url(#ai-ink-grad);stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 5px rgba(255,94,126,0.35))}
+.pen-tip{fill:#FFA23A;stroke:#FF5E7E;stroke-width:1.5;filter:drop-shadow(0 0 6px #FFA23A);pointer-events:none}
+.mk{pointer-events:auto;margin:calc(var(--g)*.5) 0 0 calc(var(--g)*1.5);font:inherit;color:#e8446a;opacity:0;transform:translateX(-8px);transition:.5s;visibility:hidden;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px}
+.mk.show{opacity:1;transform:none;visibility:visible}
+.math-sup{font-size:.60em;vertical-align:.38em;line-height:0;display:inline-block;font-weight:400;margin-right:.14em;-webkit-text-fill-color:transparent}
+.math-svg{display:inline-block;vertical-align:-0.32em;height:1.55em;width:auto;overflow:visible;fill:none;stroke:url(#ai-ink-grad);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;-webkit-text-fill-color:initial;filter:drop-shadow(0 0 6px rgba(255,94,126,0.40))}
+.ai .math-svg{stroke:url(#ai-ink-grad)}
+.math-diff{display:inline-block;margin-left:.22em}
+#ring{position:absolute;border:2.5px solid var(--ac);border-radius:18px;opacity:0;transform:scale(1.04);transition:.4s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 24px color-mix(in srgb,var(--ac) 45%,transparent);pointer-events:none;z-index:4}
+#ring.on{opacity:1;transform:none}
+#confirm-panel{position:absolute;bottom:78px;left:50%;transform:translateX(-50%);width:min(460px,calc(100% - 32px));z-index:15;padding:16px;border-radius:20px;display:none;flex-direction:column;gap:10px;box-shadow:var(--sh)}
+.cp-hdr{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.06em}
+.cp-input{width:100%;border:1px solid var(--line);background:var(--line);border-radius:12px;padding:10px 14px;color:var(--tx);font:500 14px -apple-system,'Inter',sans-serif;outline:none;transition:border-color .2s}
+.cp-input:focus{border-color:var(--ac)}
+.cp-note{font-size:12px;color:#FF5E7E;line-height:1.35}
+.cp-acts{display:flex;justify-content:flex-end;gap:8px;margin-top:2px}
+.cp-btn{border-radius:999px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;transition:transform .12s,filter .2s}
+.cp-btn:active{transform:scale(.97)}
+.cp-btn.cancel{border:1px solid var(--line);color:var(--tx2);background:transparent}
+.cp-btn.cancel:hover{background:var(--line);color:var(--tx)}
+.cp-btn.solve{background:linear-gradient(90deg,#FFB347,#FF5E7E);color:#2a0f14}
+.cp-btn.solve:hover{filter:brightness(1.06)}
+#chip{position:absolute;left:50%;bottom:20px;transform:translate(-50%,20px);opacity:0;pointer-events:none;display:flex;align-items:center;gap:12px;padding:12px 18px;border-radius:999px;transition:.4s cubic-bezier(.2,.8,.2,1);white-space:nowrap;max-width:calc(100% - 24px);color:var(--tx);z-index:20}
+#chip.on{opacity:1;transform:translate(-50%,0)}
+.wv{display:flex;gap:3px;align-items:center;height:20px}
+.wv i{width:3px;border-radius:2px;background:linear-gradient(#FFB347,#FF5E7E);height:5px;animation:wb .7s ease-in-out infinite alternate}
+.wv i:nth-child(2){animation-delay:.15s}.wv i:nth-child(3){animation-delay:.3s}.wv i:nth-child(4){animation-delay:.1s}.wv i:nth-child(5){animation-delay:.25s}
+@keyframes wb{to{height:20px}}
+#toast{position:fixed;left:50%;top:calc(18px + env(safe-area-inset-top,0px));transform:translate(-50%,-20px);opacity:0;padding:10px 18px;border-radius:999px;transition:.35s;z-index:30;pointer-events:none;max-width:90%}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#scrim{display:none}
+@media(max-width:820px){
+:root{--g:28px}
+#app{padding:8px;gap:8px;padding-top:calc(8px + env(safe-area-inset-top,0px));padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}
+#sb{position:fixed;left:8px;top:calc(8px + env(safe-area-inset-top,0px));bottom:calc(8px + env(safe-area-inset-bottom,0px));z-index:40;width:280px;transform:translateX(-110%);transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+#app.hide #sb{width:280px;padding:18px 14px 14px;opacity:1;border-width:1px;margin:0}
+#app.open #sb{transform:none}
+#app.open #scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.28);z-index:39}
+.ttl{display:none}#hd{justify-content:space-between}
+.tb{margin-left:auto}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<linearGradient id="ai-ink-grad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="700" y2="0"><stop offset="0%" stop-color="#FFA23A"/><stop offset="100%" stop-color="#FF5E7E"/></linearGradient>
+<symbol id="pen" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></symbol>
+<symbol id="era" viewBox="0 0 24 24"><path d="M7 21l-4.3-4.3a2 2 0 010-2.8l9.6-9.6a2 2 0 012.8 0l5.6 5.6a2 2 0 010 2.8L13 21M22 21H7M5 11l9 9"/></symbol>
+<symbol id="cir" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-dasharray="3 3" fill="none"/></symbol>
+<symbol id="und" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 010 12h-3"/></symbol>
+<symbol id="pls" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="sbr" viewBox="0 0 24 24"><path d="M4 5h16a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V6a1 1 0 011-1zM9 5v14"/></symbol>
+<symbol id="sea" viewBox="0 0 24 24"><path d="M11 4a7 7 0 100 14 7 7 0 000-14zM21 21l-4.3-4.3"/></symbol>
+<symbol id="vol" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4zM15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13"/></symbol>
+<symbol id="spk" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></symbol>
+<symbol id="set" viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6zM19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 01-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 010-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 014 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 010 4h-.1a1.7 1.7 0 00-1.5 1z"/></symbol>
+</defs></svg>
+<div id="app">
+<aside id="sb" class="glass" aria-label="Notebook sidebar">
+<div class="brand"><span class="logo"><svg class="i"><use href="#pen"/></svg></span><b>Ink<i>Mentor</i></b></div>
+<label class="sr"><svg class="i"><use href="#sea"/></svg><input id="q" placeholder="Search notes" aria-label="Search notes"></label>
+<div class="lb">Calculus · Pages</div>
+<div id="pl"></div>
+<button id="add-page" aria-label="Add new page"><svg class="i"><use href="#pls"/></svg>+ New page</button>
+<div class="mem"><i></i><span><b>Notebook memory</b><small id="mem-count">8 pages indexed</small></span></div>
+<button class="st"><svg class="i"><use href="#set"/></svg>Settings</button>
+</aside>
+<div id="scrim"></div>
+<main id="mn">
+<header id="hd">
+<button class="ib" id="menu" aria-label="Toggle sidebar"><svg class="i"><use href="#sbr"/></svg></button>
+<div class="ttl"><b>Calculus</b><span id="pg"></span></div>
+<div class="tb glass" role="toolbar" aria-label="Drawing tools">
+<button class="ib on" data-t="pen" id="tool-pen" aria-label="Pen"><svg class="i"><use href="#pen"/></svg></button>
+<button class="ib" data-t="era" id="tool-era" aria-label="Eraser"><svg class="i"><use href="#era"/></svg></button>
+<button class="ib" data-t="circle" id="tool-circle" aria-label="Circle to solve"><svg class="i"><use href="#cir"/></svg></button>
+<span class="dv"></span>
+<button class="dot on" data-c="#111118" style="--c:#111118;background:#111118" aria-label="Black ink"></button>
+<button class="dot" data-c="#7C5CFF" style="--c:#7C5CFF;background:#7C5CFF" aria-label="Violet ink"></button>
+<button class="dot" data-c="#FF5E7E" style="--c:#FF5E7E;background:#FF5E7E" aria-label="Coral ink"></button>
+<span class="dv"></span>
+<button class="ib" id="undo" aria-label="Undo"><svg class="i"><use href="#und"/></svg></button>
+<button class="ib on" id="vo" title="Voice narration (click to toggle, Shift+click to change language)" aria-label="Voice narration"><svg class="i"><use href="#vol"/></svg></button>
+<button class="ib" id="hint-btn" title="Hint Ladder (Nudge → Step 1 → Solution)" aria-label="Hint Ladder"><svg class="i" viewBox="0 0 24 24"><path d="M12 2a7 7 0 00-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 001 1h6a1 1 0 001-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 00-7-7zM9 21a1 1 0 001 1h4a1 1 0 001-1v-1H9v1z"/></svg></button>
+<button class="sv" id="solve"><svg class="i"><use href="#spk"/></svg>Solve</button>
+</div>
+</header>
+<section id="paper">
+<canvas id="cv"></canvas>
+<canvas id="ov"></canvas>
+<div id="notes"></div>
+<div id="ring"></div>
+<div id="confirm-panel" class="glass" role="dialog" aria-label="Confirm recognized question">
+  <div class="cp-hdr"><span id="cp-title">Confirm Question</span><span id="cp-status"></span></div>
+  <input id="cp-text" class="cp-input" placeholder="Type your math question here..." autocomplete="off">
+  <div id="cp-note" class="cp-note" style="display:none;"></div>
+  <div class="cp-acts">
+    <button id="cp-cancel" class="cp-btn cancel">Cancel</button>
+    <button id="cp-hint" class="cp-btn" style="border:1px solid var(--line);background:var(--line);color:var(--tx);">Hint (3 levels)</button>
+    <button id="cp-solve" class="cp-btn solve">Solve</button>
+  </div>
+</div>
+<div id="chip" class="glass" role="status" aria-live="polite"><div class="wv"><i></i><i></i><i></i><i></i><i></i></div><span id="ct"></span></div>
+</section>
+</main>
+</div>
+<div id="toast" class="glass" role="status"></div>
+<script>
+// --- Core Elements & State ---
+var $ = function(s) { return document.querySelector(s); };
+var app = $('#app'), paper = $('#paper');
+var cv = $('#cv'), cx = cv.getContext('2d');
+var ov = $('#ov'), ox = ov.getContext('2d');
+var notes = $('#notes'), ring = $('#ring');
+var confirmPanel = $('#confirm-panel');
+
+var SEEDED_PAGES = [
+  { t: 'Chain rule', l: ['Chain rule', 'd/dx f(g(x)) = f′(g(x)) · g′(x)', 'e.g. d/dx (x²+1)³ = 6x(x²+1)²'] },
+  { t: 'Product rule', l: ['Product rule', '(uv)′ = u′v + uv′'] },
+  { t: 'Quotient rule', l: ['Quotient rule', '(u/v)′ = (u′v − uv′) / v²'] },
+  { t: 'Trig derivatives', l: ['Trig derivatives', 'd/dx sin x = cos x', 'd/dx cos x = −sin x'] },
+  { t: 'Implicit differentiation', l: ['Implicit differentiation', 'x² + y² = 25  →  2x + 2y·y′ = 0'] },
+  { t: 'Limits', l: ['Limits', 'lim sin x / x = 1  as x → 0'] },
+  { t: 'Integration basics', l: ['Integration basics', '∫ xⁿ dx = xⁿ⁺¹ / (n+1) + C'] },
+  { t: 'Practice problems', q: 1 }
+];
+
+var pages = SEEDED_PAGES.slice();
+var cur = 8;
+var tool = 'pen'; // 'pen' | 'era' | 'circle'
+var col = '#111118';
+var busy = false;
+var voice = true;
+var filt = '';
+
+// --- Voice Tuning Constants (Persona: Ink) ---
+var VOICE_RATE = 1.0;
+var VOICE_PITCH = 1.08;
+window.VOICE_RATE = VOICE_RATE;
+window.VOICE_PITCH = VOICE_PITCH;
+
+// --- Handwriting & Typography Tuning Constants ---
+var USE_STROKE_FONT = false; // Default: false (Reenie Beanie cursive). Set true for Hershey single-line stroke font.
+window.USE_STROKE_FONT = USE_STROKE_FONT;
+
+var AI_FONT_SIZE = 'calc(var(--g) * 1.85)';    // Main handwriting line font size
+var INTEGRAL_SCALE = 1.55;                     // 1.4 to 1.6 times line font size
+var INTEGRAL_STROKE_WIDTH = 2.4;              // Matched to Reenie Beanie stroke weight
+var INTEGRAL_VERTICAL_ALIGN = '-0.28em';       // Vertically centered on text
+var EXPONENT_SCALE = 0.60;                     // About 60% of font size
+var EXPONENT_SHIFT = '0.38em';                 // Sits around top of base letter
+var EXPONENT_RIGHT_GAP = '0.14em';             // Gap after exponent so it doesn't touch next char
+var INTEGRAL_LEFT_GAP = '0.06em';              // Gap before integral symbol
+var INTEGRAL_RIGHT_GAP = '0.16em';             // Gap after integral symbol
+var DIFFERENTIAL_GAP = '0.22em';               // Gap before 'dx', 'du', 'dt', 'dy'
+var SQRT_SCALE = 1.15;
+var SQRT_STROKE_WIDTH = 2.3;
+var PI_SCALE = 0.95;
+var PI_STROKE_WIDTH = 2.3;
+
+window.AI_FONT_SIZE = AI_FONT_SIZE;
+window.INTEGRAL_SCALE = INTEGRAL_SCALE;
+window.INTEGRAL_STROKE_WIDTH = INTEGRAL_STROKE_WIDTH;
+window.INTEGRAL_VERTICAL_ALIGN = INTEGRAL_VERTICAL_ALIGN;
+window.EXPONENT_SCALE = EXPONENT_SCALE;
+window.EXPONENT_SHIFT = EXPONENT_SHIFT;
+window.EXPONENT_RIGHT_GAP = EXPONENT_RIGHT_GAP;
+window.INTEGRAL_LEFT_GAP = INTEGRAL_LEFT_GAP;
+window.INTEGRAL_RIGHT_GAP = INTEGRAL_RIGHT_GAP;
+window.DIFFERENTIAL_GAP = DIFFERENTIAL_GAP;
+
+// --- Storage Keys ---
+var STROKES_KEY = 'inkmentor_notebook_strokes_v1';
+var PAGES_KEY = 'inkmentor_notebook_pages_v1';
+var AI_OUTPUT_KEY = 'inkmentor_notebook_ai_output_v1';
+
+var pageStrokes = {};
+var redoHistory = {};
+var pageAiOutput = {};
+
+function escapeHtml(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// --- Hershey Single-Line Stroke Font (Source: hersheytext@2.0.0, MIT License) ---
+var HERSHEY_GLYPHS = {"_meta":{"source":"hersheytext@2.0.0","font":"cursive","originalName":"Script 1-stroke (alt)","license":"MIT","origin":"A.V. Hershey single-line stroke font (Public Domain), ported by James T (techninja)","unitsPerEm":10,"baseY":22},"chars":{"0":{"d":"M9,1 L6,2 4,5 3,10 3,13 4,18 6,21 9,22 11,22 14,21 16,18 17,13 17,10 16,5 14,2 11,1 9,1","w":10},"1":{"d":"M6,5 L8,4 11,1 11,22","w":10},"2":{"d":"M4,6 L4,5 5,3 6,2 8,1 12,1 14,2 15,3 16,5 16,7 15,9 13,12 3,22 17,22","w":10},"3":{"d":"M5,1 L16,1 10,9 13,9 15,10 16,11 17,14 17,16 16,19 14,21 11,22 8,22 5,21 4,20 3,18","w":10},"4":{"d":"M13,1 L3,15 18,15 M13,1 L13,22","w":10},"5":{"d":"M15,1 L5,1 4,10 5,9 8,8 11,8 14,9 16,11 17,14 17,16 16,19 14,21 11,22 8,22 5,21 4,20 3,18","w":10},"6":{"d":"M16,4 L15,2 12,1 10,1 7,2 5,5 4,10 4,15 5,19 7,21 10,22 11,22 14,21 16,19 17,16 17,15 16,12 14,10 11,9 10,9 7,10 5,12 4,15","w":10},"7":{"d":"M17,1 L7,22 M3,1 L17,1","w":10},"8":{"d":"M8,1 L5,2 4,4 4,6 5,8 7,9 11,10 14,11 16,13 17,15 17,18 16,20 15,21 12,22 8,22 5,21 4,20 3,18 3,15 4,13 6,11 9,10 13,9 15,8 16,6 16,4 15,2 12,1 8,1","w":10},"9":{"d":"M16,8 L15,11 13,13 10,14 9,14 6,13 4,11 3,8 3,7 4,4 6,2 9,1 10,1 13,2 15,4 16,8 16,13 15,18 13,21 10,22 8,22 5,21 4,19","w":10},"!":{"d":"M5,1 L5,15 M5,20 L4,21 5,22 6,21 5,20","w":5},"\"":{"d":"M4,1 L4,8 M12,1 L12,8","w":8},"#":{"d":"M11,-3 L4,29 M17,-3 L10,29 M4,10 L18,10 M3,16 L17,16","w":11},"$":{"d":"M8,-3 L8,26 M12,-3 L12,26 M17,4 L15,2 12,1 8,1 5,2 3,4 3,6 4,8 5,9 7,10 13,12 15,13 16,14 17,16 17,19 15,21 12,22 8,22 5,21 3,19","w":10},"%":{"d":"M21,1 L3,22 M8,1 L10,3 10,5 9,7 7,8 5,8 3,6 3,4 4,2 6,1 8,1 10,2 13,3 16,3 19,2 21,1 M17,15 L15,16 14,18 14,20 16,22 18,22 20,21 21,19 21,17 19,15 17,15","w":12},"&":{"d":"M23,10 L23,9 22,8 21,8 20,9 19,11 17,16 15,19 13,21 11,22 7,22 5,21 4,20 3,18 3,16 4,14 5,13 12,9 13,8 14,6 14,4 13,2 11,1 9,2 8,4 8,6 9,9 11,12 16,19 18,21 20,22 22,22 23,21 23,20","w":13},"'":{"d":"M2,8 L2,12","w":2},"(":{"d":"M11,-3 L9,-1 7,2 5,6 4,11 4,15 5,20 7,24 9,27 11,29","w":7},")":{"d":"M3,-3 L5,-1 7,2 9,6 10,11 10,15 9,20 7,24 5,27 3,29","w":7},"*":{"d":"M8,7 L8,19 M3,10 L13,16 M13,10 L3,16","w":8},"+":{"d":"M13,4 L13,22 M4,13 L22,13","w":13},",":{"d":"M5,18 L4,19 3,18 4,17 5,18 5,20 3,22","w":4},"-":{"d":"M4,13 L22,13","w":13},".":{"d":"M4,17 L3,18 4,19 5,18 4,17","w":4},"/":{"d":"M20,-3 L2,29","w":11},":":{"d":"M4,10 L3,11 4,12 5,11 4,10 M4,17 L3,18 4,19 5,18 4,17","w":4},";":{"d":"M4,10 L3,11 4,12 5,11 4,10 M5,18 L4,19 3,18 4,17 5,18 5,20 3,22","w":4},"<":{"d":"M20,4 L4,13 20,22","w":12},"=":{"d":"M4,10 L22,10 M4,16 L22,16","w":13},">":{"d":"M4,4 L20,13 4,22","w":12},"?":{"d":"M3,6 L3,5 4,3 5,2 7,1 11,1 13,2 14,3 15,5 15,7 14,9 13,10 9,12 9,15 M9,20 L8,21 9,22 10,21 9,20","w":9},"@":{"d":"M18,9 L17,7 15,6 12,6 10,7 9,8 8,11 8,14 9,16 11,17 14,17 16,16 17,14 M12,6 L10,8 9,11 9,14 10,16 11,17 M18,6 L17,14 17,16 19,17 21,17 23,15 24,12 24,10 23,7 22,5 20,3 18,2 15,1 12,1 9,2 7,3 5,5 4,7 3,10 3,13 4,16 5,18 7,20 9,21 12,22 15,22 18,21 20,20 21,19 M19,6 L18,14 18,16 19,17","w":14},"A":{"d":"M0,22 L2,21 5,18 8,14 12,7 15,1 15,22 14,19 12,16 10,14 7,12 5,12 4,13 4,15 5,17 7,19 10,21 13,22 18,22","w":9},"B":{"d":"M13,3 L14,4 14,7 13,11 12,14 11,16 9,19 7,21 5,22 4,22 3,21 3,18 4,13 5,10 6,8 8,5 10,3 12,2 15,1 18,1 20,2 21,4 21,6 20,8 19,9 17,10 14,11 M13,11 L14,11 17,12 18,13 19,15 19,18 18,20 17,21 15,22 12,22 10,21 9,19","w":11},"C":{"d":"M12,7 L12,8 13,9 15,9 17,8 18,6 18,4 17,2 15,1 12,1 9,2 7,4 5,7 4,9 3,13 3,17 4,20 5,21 7,22 9,22 12,21 14,19 15,17","w":10},"D":{"d":"M13,1 L11,2 10,4 9,8 8,14 7,17 6,19 4,21 2,22 0,22 -1,21 -1,19 0,18 2,18 4,19 6,21 9,22 12,22 15,21 17,19 19,15 20,10 20,6 19,3 18,2 16,1 13,1 11,3 11,5 12,8 14,11 16,13 19,15 21,16","w":12},"E":{"d":"M14,5 L14,6 15,7 17,7 18,6 18,4 17,2 14,1 10,1 7,2 6,4 6,7 7,9 8,10 11,11 8,11 5,12 4,13 3,15 3,18 4,20 5,21 8,22 11,22 14,21 16,19 17,17","w":10},"F":{"d":"M10,7 L8,7 6,6 5,4 6,2 9,1 12,1 16,2 19,2 21,1 M16,2 L14,9 12,15 10,19 8,21 6,22 4,22 2,21 1,19 1,17 2,16 4,16 6,17 M9,11 L18,11","w":10},"G":{"d":"M0,22 L2,21 6,17 9,12 10,9 11,5 11,2 10,1 9,1 8,2 7,4 7,7 8,9 10,10 14,10 17,9 18,8 19,6 19,12 18,17 17,19 15,21 12,22 8,22 5,21 3,19 2,17 2,15","w":12},"H":{"d":"M7,8 L5,7 4,5 4,4 5,2 7,1 8,1 10,2 11,4 11,6 10,10 8,16 6,20 4,22 2,22 1,21 1,19 M7,13 L16,10 18,9 21,7 23,5 24,3 24,2 23,1 22,1 20,3 18,7 16,13 15,18 15,21 16,22 17,22 19,21 20,20 22,17","w":12},"I":{"d":"M14,17 L12,15 10,12 9,10 8,7 8,4 9,2 10,1 12,1 13,2 14,4 14,7 13,12 11,17 10,19 8,21 6,22 4,22 2,21 1,19 1,17 2,16 4,16 6,17","w":8},"J":{"d":"M10,25 L8,22 6,17 5,11 5,5 6,2 8,1 10,1 11,2 12,5 12,8 11,13 8,22 6,28 5,31 4,33 2,34 1,33 1,31 2,28 4,25 6,23 9,21 13,19","w":7},"K":{"d":"M7,8 L5,7 4,5 4,4 5,2 7,1 8,1 10,2 11,4 11,6 10,10 8,16 6,20 4,22 2,22 1,21 1,19 M24,4 L24,2 23,1 22,1 20,2 18,4 16,7 14,9 12,10 10,10 M12,10 L13,12 13,19 14,21 15,22 16,22 18,21 19,20 21,17","w":12},"L":{"d":"M4,13 L6,13 10,12 13,10 15,8 16,6 16,3 15,1 13,1 12,2 11,4 10,9 9,14 8,17 7,19 5,21 3,22 1,22 0,21 0,19 1,18 3,18 5,19 8,21 11,22 13,22 16,21 18,19","w":10},"M":{"d":"M5,8 L3,7 2,5 2,4 3,2 5,1 6,1 8,2 9,4 9,6 8,11 7,15 5,22 M7,15 L10,7 12,3 13,2 15,1 16,1 18,2 19,4 19,6 18,11 17,15 15,22 M17,15 L20,7 22,3 23,2 25,1 26,1 28,2 29,4 29,6 28,11 26,18 26,21 27,22 28,22 30,21 31,20 33,17","w":15},"N":{"d":"M5,8 L3,7 2,5 2,4 3,2 5,1 6,1 8,2 9,4 9,6 8,11 7,15 5,22 M7,15 L10,7 12,3 13,2 15,1 17,1 19,2 20,4 20,6 19,11 17,18 17,21 18,22 19,22 21,21 22,20 24,17","w":11},"O":{"d":"M12,1 L9,2 7,4 5,7 4,9 3,13 3,17 4,20 5,21 7,22 9,22 12,21 14,19 16,16 17,14 18,10 18,6 17,3 16,2 14,1 12,1 10,3 10,6 11,9 13,12 15,14 18,16 20,17","w":11},"P":{"d":"M13,3 L14,4 14,7 13,11 12,14 11,16 9,19 7,21 5,22 4,22 3,21 3,18 4,13 5,10 6,8 8,5 10,3 12,2 15,1 20,1 22,2 23,3 24,5 24,8 23,10 22,11 20,12 17,12 15,11 14,10","w":13},"Q":{"d":"M13,7 L12,9 11,10 9,11 7,11 6,9 6,7 7,4 9,2 12,1 15,1 17,2 18,4 18,8 17,11 15,14 11,18 8,20 6,21 3,22 1,22 0,21 0,19 1,18 3,18 5,19 8,21 11,22 14,22 17,21 19,19","w":12},"R":{"d":"M13,3 L14,4 14,7 13,11 12,14 11,16 9,19 7,21 5,22 4,22 3,21 3,18 4,13 5,10 6,8 8,5 10,3 12,2 15,1 19,1 21,2 22,3 23,5 23,8 22,10 21,11 19,12 16,12 13,11 14,12 15,14 15,19 16,21 18,22 20,21 21,20 23,17","w":13},"S":{"d":"M0,22 L2,21 4,19 7,15 9,12 11,8 12,5 12,2 11,1 10,1 9,2 8,4 8,6 9,8 11,10 14,12 16,14 17,16 17,18 16,20 15,21 12,22 8,22 5,21 3,19 2,17 2,15","w":10},"T":{"d":"M10,7 L8,7 6,6 5,4 6,2 9,1 12,1 16,2 19,2 21,1 M16,2 L14,9 12,15 10,19 8,21 6,22 4,22 2,21 1,19 1,17 2,16 4,16 6,17","w":9},"U":{"d":"M5,8 L3,7 2,5 2,4 3,2 5,1 6,1 8,2 9,4 9,6 8,10 7,13 6,17 6,19 7,21 9,22 11,22 13,21 14,20 16,16 19,8 21,1 M19,8 L18,12 17,18 17,21 18,22 19,22 21,21 22,20 24,17","w":11},"V":{"d":"M5,8 L3,7 2,5 2,4 3,2 5,1 6,1 8,2 9,4 9,6 8,10 7,13 6,17 6,20 7,22 9,22 11,21 14,18 16,15 18,11 19,8 20,4 20,2 19,1 18,1 17,2 16,4 16,6 17,9 19,11 21,12","w":11},"W":{"d":"M5,8 L3,7 2,5 2,4 3,2 5,1 6,1 8,2 9,4 9,7 8,22 M18,1 L8,22 M18,1 L16,22 M30,1 L28,2 25,5 22,9 19,15 16,22","w":13},"X":{"d":"M8,7 L6,7 5,6 5,4 6,2 8,1 10,1 12,2 13,4 13,7 11,16 11,19 12,21 14,22 16,22 18,21 19,19 19,17 18,16 16,16 M23,4 L23,2 22,1 20,1 18,2 16,4 14,7 10,16 8,19 6,21 4,22 2,22 1,21 1,19","w":12},"Y":{"d":"M5,8 L3,7 2,5 2,4 3,2 5,1 6,1 8,2 9,4 9,6 8,10 7,13 6,17 6,19 7,21 8,22 10,22 12,21 14,19 16,16 17,14 19,8 M21,1 L19,8 16,18 14,24 12,29 10,33 8,34 7,33 7,31 8,28 10,25 13,22 16,20 21,17","w":11},"Z":{"d":"M13,7 L12,9 11,10 9,11 7,11 6,9 6,7 7,4 9,2 12,1 15,1 17,2 18,4 18,8 17,11 15,15 12,18 8,21 6,22 3,22 2,21 2,19 3,18 6,18 8,19 9,20 10,22 10,25 9,28 8,30 6,33 4,34 3,33 3,31 4,28 6,25 9,22 12,20 18,17","w":11},"[":{"d":"M4,-3 L4,29 M5,-3 L5,29 M4,-3 L11,-3 M4,29 L11,29","w":7},"\\":{"d":"M0,1 L14,25","w":7},"]":{"d":"M9,-3 L9,29 M10,-3 L10,29 M3,-3 L10,-3 M3,29 L10,29","w":7},"^":{"d":"M8,-1 L0,13 M8,-1 L16,13","w":8},"_":{"d":"M0,29 L20,29","w":9},"`":{"d":"M5,6 L3,8 3,10 4,11 5,10 4,9 3,10","w":4},"a":{"d":"M9,16 L8,14 6,13 4,13 2,14 1,15 0,17 0,19 1,21 3,22 5,22 7,21 8,19 10,13 9,18 9,21 10,22 11,22 13,21 14,20 16,17","w":10},"b":{"d":"M0,17 L2,14 5,9 6,7 7,4 7,2 6,1 4,2 3,4 2,8 1,15 1,21 2,22 3,22 5,21 7,19 8,16 8,13 9,17 10,18 12,18 14,17","w":9},"c":{"d":"M7,15 L7,14 6,13 4,13 2,14 1,15 0,17 0,19 1,21 3,22 6,22 9,20 11,17","w":6},"d":{"d":"M9,16 L8,14 6,13 4,13 2,14 1,15 0,17 0,19 1,21 3,22 5,22 7,21 8,19 14,1 M10,13 L9,18 9,21 10,22 11,22 13,21 14,20 16,17","w":10},"e":{"d":"M1,20 L3,19 4,18 5,16 5,14 4,13 3,13 1,14 0,16 0,19 1,21 3,22 5,22 7,21 8,20 10,17","w":6},"f":{"d":"M0,17 L4,12 6,9 7,7 8,4 8,2 7,1 5,2 4,4 2,12 -1,21 -4,28 -5,31 -5,33 -4,34 -2,33 -1,30 0,21 1,22 3,22 5,21 6,20 8,17","w":5},"g":{"d":"M9,16 L8,14 6,13 4,13 2,14 1,15 0,17 0,19 1,21 3,22 5,22 7,21 8,20 M10,13 L8,20 4,31 3,33 1,34 0,33 0,31 1,28 4,25 7,23 9,22 12,20 15,17","w":9},"h":{"d":"M0,17 L2,14 5,9 6,7 7,4 7,2 6,1 4,2 3,4 2,8 1,14 0,22 M0,22 L1,19 2,17 4,14 6,13 8,13 9,14 9,16 8,19 8,21 9,22 10,22 12,21 13,20 15,17","w":10},"i":{"d":"M3,8 L3,9 4,9 4,8 3,8 M0,17 L2,13 0,19 0,21 1,22 2,22 4,21 5,20 7,17","w":5},"j":{"d":"M3,8 L3,9 4,9 4,8 3,8 M0,17 L2,13 -4,31 -5,33 -7,34 -8,33 -8,31 -7,28 -4,25 -1,23 1,22 4,20 7,17","w":5},"k":{"d":"M0,17 L2,14 5,9 6,7 7,4 7,2 6,1 4,2 3,4 2,8 1,14 0,22 M0,22 L1,19 2,17 4,14 6,13 8,13 9,14 9,16 7,17 4,17 M4,17 L6,18 7,21 8,22 9,22 11,21 12,20 14,17","w":9},"l":{"d":"M0,17 L2,14 5,9 6,7 7,4 7,2 6,1 4,2 3,4 2,8 1,15 1,21 2,22 3,22 5,21 6,20 8,17","w":5},"m":{"d":"M0,17 L2,14 4,13 5,14 5,15 4,19 3,22 M4,19 L5,17 7,14 9,13 11,13 12,14 12,15 11,19 10,22 M11,19 L12,17 14,14 16,13 18,13 19,14 19,16 18,19 18,21 19,22 20,22 22,21 23,20 25,17","w":12},"n":{"d":"M0,17 L2,14 4,13 5,14 5,15 4,19 3,22 M4,19 L5,17 7,14 9,13 11,13 12,14 12,16 11,19 11,21 12,22 13,22 15,21 16,20 18,17","w":10},"o":{"d":"M6,13 L4,13 2,14 1,15 0,17 0,19 1,21 3,22 5,22 7,21 8,20 9,18 9,16 8,14 6,13 5,14 5,16 6,18 8,19 11,19 13,18 14,17","w":8},"p":{"d":"M0,17 L2,14 3,12 2,16 -4,34 M2,16 L3,14 5,13 7,13 9,14 10,16 10,18 9,20 8,21 6,22 M2,21 L4,22 7,22 10,21 12,20 15,17","w":8},"q":{"d":"M9,16 L8,14 6,13 4,13 2,14 1,15 0,17 0,19 1,21 3,22 5,22 7,21 M10,13 L9,16 7,21 4,28 3,31 3,33 4,34 6,33 7,30 7,23 9,22 12,20 15,17","w":9},"r":{"d":"M0,17 L2,14 3,12 3,14 6,14 7,15 7,17 6,20 6,21 7,22 8,22 10,21 11,20 13,17","w":8},"s":{"d":"M0,17 L2,14 3,12 3,14 5,17 6,19 6,21 4,22 M0,21 L2,22 6,22 8,21 9,20 11,17","w":7},"t":{"d":"M0,17 L2,14 4,10 M7,1 L1,19 1,21 2,22 4,22 6,21 7,20 9,17 M1,9 L8,9","w":6},"u":{"d":"M0,17 L2,13 0,19 0,21 1,22 3,22 5,21 7,19 9,16 M10,13 L8,19 8,21 9,22 10,22 12,21 13,20 15,17","w":9},"v":{"d":"M0,17 L2,13 1,18 1,21 2,22 3,22 6,21 8,19 9,16 9,13 M9,13 L10,17 11,18 13,18 15,17","w":9},"w":{"d":"M3,13 L1,15 0,18 0,20 1,22 3,22 5,21 7,19 M9,13 L7,19 7,21 8,22 10,22 12,21 14,19 15,16 15,13 M15,13 L16,17 17,18 19,18 21,17","w":12},"x":{"d":"M0,17 L2,14 4,13 6,13 7,14 7,21 8,22 11,22 14,20 16,17 M13,14 L12,13 10,13 9,14 5,21 4,22 2,22 1,21","w":8},"y":{"d":"M0,17 L2,13 0,19 0,21 1,22 3,22 5,21 7,19 9,16 M10,13 L4,31 3,33 1,34 0,33 0,31 1,28 4,25 7,23 9,22 12,20 15,17","w":9},"z":{"d":"M0,17 L2,14 4,13 6,13 8,15 8,17 7,19 5,21 2,22 4,23 5,25 5,28 4,31 3,33 1,34 0,33 0,31 1,28 4,25 7,23 11,20 14,17","w":8},"{":{"d":"M9,-3 L7,-2 6,-1 5,1 5,3 6,5 7,6 8,8 8,10 6,12 M7,-2 L6,0 6,2 7,4 8,5 9,7 9,9 8,11 4,13 8,15 9,17 9,19 8,21 7,22 6,24 6,26 7,28 M6,14 L8,16 8,18 7,20 6,21 5,23 5,25 6,27 7,28 9,29","w":7},"|":{"d":"M4,-3 L4,29","w":4},"}":{"d":"M5,-3 L7,-2 8,-1 9,1 9,3 8,5 7,6 6,8 6,10 8,12 M7,-2 L8,0 8,2 7,4 6,5 5,7 5,9 6,11 10,13 6,15 5,17 5,19 6,21 7,22 8,24 8,26 7,28 M8,14 L6,16 6,18 7,20 8,21 9,23 9,25 8,27 7,28 5,29","w":7},"~":{"d":"M3,16 L3,14 4,11 6,10 8,10 10,11 14,14 16,15 18,15 20,14 21,12 M3,14 L4,12 6,11 8,11 10,12 14,15 16,16 18,16 20,15 21,12 21,10","w":12},"":{"d":"M0,1 L0,22 1,22 1,1 2,1 2,22 3,22 3,1 4,1 4,22 5,22 5,1 6,1 6,22 7,22 7,1 8,1 8,22 9,22 9,1 10,1 10,22 11,22 11,1 12,1 12,22 13,22 13,1 14,1 14,22 15,22 15,1 16,1 16,22","w":8}," ":{"d":"","w":10}}};
+
+var activeLineAnimation = null;
+
+function cancelActiveAnimation() {
+  if (activeLineAnimation) {
+    try {
+      activeLineAnimation.cancel();
+    } catch (e) {}
+    activeLineAnimation = null;
+  }
+}
+
+function cleanNarrationText(t) {
+  if (!t) return '';
+  var s = String(t).trim();
+  s = s.replace(/^(?:writing\s+)?step\s*\d+(?:\s*(?:of|\/)\s*\d+)?(?:\s*[:.·\-–—]\s*|\s+)/i, '');
+  s = s.replace(/^(?:first|second|third|fourth|fifth|sixth)\s+step(?:\s*[:.·\-–—]\s*|\s+)/i, '');
+  return s.trim();
+}
+
+function getStepDuration(narrationText) {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    return 0;
+  }
+  var clean = cleanNarrationText(narrationText);
+  var words = clean.split(/\s+/).filter(Boolean).length;
+  // Speech pacing estimate: ~2.5 words per second = 400ms per word.
+  // Paced with speech: floor at 2000ms, ceiling at 8000ms.
+  return Math.max(2000, Math.min(8000, Math.round(words * 400)));
+}
+
+function splitPathIntoStrokes(d) {
+  if (!d) return [];
+  var raw = d.trim().split(/(?=M)/);
+  return raw.map(function(s) { return s.trim(); }).filter(Boolean);
+}
+
+// --- Hershey Single-Line Stroke Font Renderer (Preserved for USE_STROKE_FONT = true) ---
+function buildHersheyStrokeLine(rawText) {
+  var svgNS = 'http://www.w3.org/2000/svg';
+  var svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('class', 'math-line-svg');
+  svg.setAttribute('height', '58');
+  svg.setAttribute('viewBox', '0 0 960 58');
+  svg.style.width = '100%';
+
+  var strokesGroup = document.createElementNS(svgNS, 'g');
+  strokesGroup.setAttribute('class', 'strokes-group');
+  svg.appendChild(strokesGroup);
+
+  var penTip = document.createElementNS(svgNS, 'circle');
+  penTip.setAttribute('class', 'pen-tip');
+  penTip.setAttribute('r', '3.5');
+  penTip.style.display = 'none';
+  svg.appendChild(penTip);
+
+  var strokeItems = [];
+  var curX = 14;
+
+  try {
+    var SCALE = 1.35;
+    var BASE_Y = 36;
+    var str = String(rawText || '');
+
+    // Tokenize line: math tokens vs normal text
+    var re = /(\^{2,})|(\bint\b)|(sqrt\()|(\bpi\b)|(\^\(([^)]+)\))|(\^(?:(-\d+)|\b(\d+)\b|([a-zA-Z])(?![a-zA-Z0-9])))/g;
+    var lastIdx = 0;
+    var match;
+    var tokens = [];
+
+    while ((match = re.exec(str)) !== null) {
+      if (match.index > lastIdx) {
+        tokens.push({ type: 'text', val: str.slice(lastIdx, match.index) });
+      }
+      if (match[1]) {
+        tokens.push({ type: 'text', val: match[1] });
+      } else if (match[2]) {
+        tokens.push({ type: 'int' });
+      } else if (match[3]) {
+        tokens.push({ type: 'sqrt' });
+        tokens.push({ type: 'text', val: '(' });
+      } else if (match[4]) {
+        tokens.push({ type: 'pi' });
+      } else if (match[5]) {
+        tokens.push({ type: 'sup', val: match[6] });
+      } else if (match[7]) {
+        var expVal = match[8] || match[9] || match[10];
+        tokens.push({ type: 'sup', val: expVal });
+      }
+      lastIdx = re.lastIndex;
+    }
+    if (lastIdx < str.length) {
+      tokens.push({ type: 'text', val: str.slice(lastIdx) });
+    }
+
+    function emitStroke(dStr, tx, ty, sScale) {
+      var p = document.createElementNS(svgNS, 'path');
+      p.setAttribute('class', 'math-stroke');
+      p.setAttribute('d', dStr);
+      p.setAttribute('transform', 'translate(' + tx + ',' + ty + ') scale(' + sScale + ')');
+      strokesGroup.appendChild(p);
+      strokeItems.push({
+        path: p,
+        tx: tx,
+        ty: ty,
+        scale: sScale
+      });
+    }
+
+    function emitGlyph(ch, isSup) {
+      if (ch === ' ') {
+        curX += (isSup ? 8 : 14);
+        return;
+      }
+      var glyph = HERSHEY_GLYPHS && HERSHEY_GLYPHS.chars && HERSHEY_GLYPHS.chars[ch];
+      var s = isSup ? (SCALE * 0.65) : SCALE;
+      var ty = isSup ? (BASE_Y - 18) : BASE_Y;
+
+      if (glyph && glyph.d) {
+        var subStrokes = splitPathIntoStrokes(glyph.d);
+        for (var k = 0; k < subStrokes.length; k++) {
+          emitStroke(subStrokes[k], curX, ty - (22 * s), s);
+        }
+        curX += (glyph.w * s) + (isSup ? 2 : 4);
+      } else {
+        // Fallback for character outside Hershey data: render with Reenie Beanie font
+        var txt = document.createElementNS(svgNS, 'text');
+        txt.setAttribute('x', curX);
+        txt.setAttribute('y', ty);
+        txt.setAttribute('font-family', "'Reenie Beanie', cursive");
+        txt.setAttribute('font-size', isSup ? '32' : '46');
+        txt.setAttribute('fill', 'url(#ai-ink-grad)');
+        txt.textContent = ch;
+        strokesGroup.appendChild(txt);
+        curX += (isSup ? 14 : 22);
+      }
+    }
+
+    for (var t = 0; t < tokens.length; t++) {
+      var tok = tokens[t];
+      if (tok.type === 'int') {
+        var intD = 'M 12 4 C 10 1.5, 6 2, 5 5 C 4 9, 7 18, 7 24 C 7 32, 4 39, 3 41 C 2 43, 4 43.5, 6 42';
+        emitStroke(intD, curX, BASE_Y - 32, 1.0);
+        curX += 20;
+      } else if (tok.type === 'sqrt') {
+        var sqrtD = 'M 1 20 L 4 23 L 9 7 L 19 7';
+        emitStroke(sqrtD, curX, BASE_Y - 26, 1.1);
+        curX += 24;
+      } else if (tok.type === 'pi') {
+        var piStrokes = [
+          'M 2 10 Q 12 7 22 9',
+          'M 7 9 L 6 27',
+          'M 17 9 C 17 18, 17 25, 20 26'
+        ];
+        for (var m = 0; m < piStrokes.length; m++) {
+          emitStroke(piStrokes[m], curX, BASE_Y - 26, 1.0);
+        }
+        curX += 26;
+      } else if (tok.type === 'sup') {
+        for (var c = 0; c < tok.val.length; c++) {
+          emitGlyph(tok.val[c], true);
+        }
+      } else if (tok.type === 'text') {
+        for (var j = 0; j < tok.val.length; j++) {
+          emitGlyph(tok.val[j], false);
+        }
+      }
+    }
+  } catch (err) {
+    var fb = document.createElementNS(svgNS, 'text');
+    fb.setAttribute('x', '14');
+    fb.setAttribute('y', '36');
+    fb.setAttribute('font-family', "'Reenie Beanie', cursive");
+    fb.setAttribute('font-size', '46');
+    fb.setAttribute('fill', 'url(#ai-ink-grad)');
+    fb.textContent = String(rawText || '');
+    strokesGroup.appendChild(fb);
+  }
+
+  return {
+    svg: svg,
+    el: svg,
+    penTip: penTip,
+    strokeItems: strokeItems,
+    totalWidth: curX,
+    isStrokeFont: true,
+    rawText: rawText
+  };
+}
+
+function animateHersheyStrokeLine(lineObj, duration) {
+  return new Promise(function(resolve) {
+    if (!lineObj || !lineObj.strokeItems || !lineObj.strokeItems.length) {
+      if (lineObj && lineObj.penTip) lineObj.penTip.style.display = 'none';
+      resolve();
+      return;
+    }
+
+    var items = lineObj.strokeItems;
+    var penTip = lineObj.penTip;
+    var isReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (duration <= 0 || isReduced) {
+      for (var i = 0; i < items.length; i++) {
+        items[i].path.style.strokeDashoffset = '0';
+      }
+      penTip.style.display = 'none';
+      resolve();
+      return;
+    }
+
+    var lengths = [];
+    var totalLen = 0;
+    for (var k = 0; k < items.length; k++) {
+      var len = items[k].path.getTotalLength();
+      lengths.push(len);
+      totalLen += len;
+      items[k].path.style.strokeDasharray = len + ' ' + len;
+      items[k].path.style.strokeDashoffset = len;
+    }
+
+    if (totalLen === 0) {
+      penTip.style.display = 'none';
+      resolve();
+      return;
+    }
+
+    penTip.style.display = 'block';
+    var startTime = performance.now();
+    var animFrameId = null;
+    var cancelled = false;
+
+    var controller = {
+      cancel: function() {
+        cancelled = true;
+        if (animFrameId) cancelAnimationFrame(animFrameId);
+        penTip.style.display = 'none';
+        for (var n = 0; n < items.length; n++) {
+          items[n].path.style.strokeDashoffset = '0';
+        }
+        resolve();
+      }
+    };
+    activeLineAnimation = controller;
+
+    function step(now) {
+      if (cancelled) return;
+      var elapsed = now - startTime;
+      var progress = Math.min(1, elapsed / duration);
+      var currentDist = progress * totalLen;
+
+      var accumulated = 0;
+      for (var j = 0; j < items.length; j++) {
+        var sLen = lengths[j];
+        if (currentDist >= accumulated + sLen) {
+          items[j].path.style.strokeDashoffset = '0';
+          accumulated += sLen;
+        } else if (currentDist > accumulated) {
+          var distOnStroke = currentDist - accumulated;
+          items[j].path.style.strokeDashoffset = (sLen - distOnStroke);
+
+          var pt = items[j].path.getPointAtLength(distOnStroke);
+          var s = items[j].scale;
+          var penX = pt.x * s + items[j].tx;
+          var penY = pt.y * s + items[j].ty;
+          penTip.setAttribute('cx', penX);
+          penTip.setAttribute('cy', penY);
+          accumulated += sLen;
+        } else {
+          items[j].path.style.strokeDashoffset = sLen;
+        }
+      }
+
+      if (progress < 1) {
+        animFrameId = requestAnimationFrame(step);
+      } else {
+        penTip.style.display = 'none';
+        for (var m = 0; m < items.length; m++) {
+          items[m].path.style.strokeDashoffset = '0';
+        }
+        activeLineAnimation = null;
+        resolve();
+      }
+    }
+
+    animFrameId = requestAnimationFrame(step);
+  });
+}
+
+// --- Reenie Beanie Cursive Renderer with Pen-Style Reveal Animation ---
+function buildReenieLine(rawText) {
+  var container = document.createElement('div');
+  container.className = 'ai-line-container';
+
+  var textEl = document.createElement('span');
+  textEl.className = 'ai-reenie-line';
+  textEl.style.fontSize = (window.AI_FONT_SIZE || 'calc(var(--g) * 1.85)');
+  textEl.appendChild(formatMathLine(rawText));
+  container.appendChild(textEl);
+
+  var penTip = document.createElement('div');
+  penTip.className = 'ai-pen-tip-dot';
+  container.appendChild(penTip);
+
+  return {
+    svg: container,     // Aliased to svg so caller stepEl.appendChild(lineObj.svg) works identically
+    el: container,
+    container: container,
+    textEl: textEl,
+    penTip: penTip,
+    isStrokeFont: false,
+    rawText: rawText
+  };
+}
+
+function animateReenieLine(lineObj, duration) {
+  return new Promise(function(resolve) {
+    if (!lineObj || !lineObj.textEl) {
+      if (lineObj && lineObj.penTip) lineObj.penTip.style.display = 'none';
+      resolve();
+      return;
+    }
+
+    var textEl = lineObj.textEl;
+    var penTip = lineObj.penTip;
+    var isReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (duration <= 0 || isReduced) {
+      textEl.style.clipPath = 'none';
+      if (penTip) penTip.style.display = 'none';
+      resolve();
+      return;
+    }
+
+    if (penTip) {
+      penTip.style.display = 'block';
+      penTip.style.left = '0px';
+      penTip.style.top = '50%';
+    }
+    textEl.style.clipPath = 'inset(-16px 100% -16px 0)';
+
+    var startTime = performance.now();
+    var animFrameId = null;
+    var cancelled = false;
+
+    var controller = {
+      cancel: function() {
+        cancelled = true;
+        if (animFrameId) cancelAnimationFrame(animFrameId);
+        textEl.style.clipPath = 'none';
+        if (penTip) penTip.style.display = 'none';
+        resolve();
+      }
+    };
+    activeLineAnimation = controller;
+
+    function step(now) {
+      if (cancelled) return;
+      var elapsed = now - startTime;
+      var progress = Math.min(1, elapsed / duration);
+
+      var rightInset = ((1 - progress) * 100).toFixed(2);
+      textEl.style.clipPath = 'inset(-16px ' + rightInset + '% -16px 0)';
+
+      if (penTip) {
+        var totalW = textEl.offsetWidth || textEl.getBoundingClientRect().width || 0;
+        var currentX = progress * totalW;
+        penTip.style.left = currentX + 'px';
+        var bob = Math.sin(progress * 40) * 2;
+        penTip.style.top = 'calc(50% + ' + bob + 'px)';
+      }
+
+      if (progress < 1) {
+        animFrameId = requestAnimationFrame(step);
+      } else {
+        textEl.style.clipPath = 'none';
+        if (penTip) penTip.style.display = 'none';
+        activeLineAnimation = null;
+        resolve();
+      }
+    }
+
+    animFrameId = requestAnimationFrame(step);
+  });
+}
+
+// --- Universal Dispatchers ---
+function buildLineSvg(rawText) {
+  if (window.USE_STROKE_FONT) {
+    return buildHersheyStrokeLine(rawText);
+  }
+  return buildReenieLine(rawText);
+}
+
+function animateLineWriting(lineObj, duration) {
+  if (lineObj && lineObj.isStrokeFont) {
+    return animateHersheyStrokeLine(lineObj, duration);
+  }
+  return animateReenieLine(lineObj, duration);
+}
+
+window.buildLineSvg = buildLineSvg;
+window.animateLineWriting = animateLineWriting;
+window.buildReenieLine = buildReenieLine;
+window.animateReenieLine = animateReenieLine;
+window.buildHersheyStrokeLine = buildHersheyStrokeLine;
+window.animateHersheyStrokeLine = animateHersheyStrokeLine;
+window.cancelActiveAnimation = cancelActiveAnimation;
+window.HERSHEY_GLYPHS = HERSHEY_GLYPHS;
+
+// --- Math Token Inline SVG Symbol Generator ---
+function createSvgSymbol(type) {
+  var svgNS = 'http://www.w3.org/2000/svg';
+  var svg = document.createElementNS(svgNS, 'svg');
+  var path = document.createElementNS(svgNS, 'path');
+  svg.setAttribute('class', 'math-svg math-' + type);
+  svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', type);
+
+  var strokeW = (type === 'int') ? (window.INTEGRAL_STROKE_WIDTH || 2.4) :
+                (type === 'sqrt') ? (window.SQRT_STROKE_WIDTH || 2.3) :
+                (window.PI_STROKE_WIDTH || 2.3);
+  path.setAttribute('stroke-width', strokeW);
+
+  if (type === 'int') {
+    svg.setAttribute('viewBox', '0 0 16 44');
+    var intScale = (window.INTEGRAL_SCALE || 1.55);
+    svg.style.height = intScale + 'em';
+    svg.style.verticalAlign = (window.INTEGRAL_VERTICAL_ALIGN || '-0.28em');
+    svg.style.marginLeft = (window.INTEGRAL_LEFT_GAP || '0.06em');
+    svg.style.marginRight = (window.INTEGRAL_RIGHT_GAP || '0.16em');
+    path.setAttribute('d', 'M 12 4 C 10 1.5, 6 2, 5 5 C 4 9, 7 18, 7 24 C 7 32, 4 39, 3 41 C 2 43, 4 43.5, 6 42');
+  } else if (type === 'sqrt') {
+    svg.setAttribute('viewBox', '0 0 20 36');
+    var sqrtScale = (window.SQRT_SCALE || 1.15);
+    svg.style.height = sqrtScale + 'em';
+    svg.style.verticalAlign = '-0.18em';
+    path.setAttribute('d', 'M 1 20 L 4 23 L 9 7 L 19 7');
+  } else if (type === 'pi') {
+    svg.setAttribute('viewBox', '0 0 24 32');
+    var piScale = (window.PI_SCALE || 0.95);
+    svg.style.height = piScale + 'em';
+    svg.style.verticalAlign = '-0.14em';
+    path.setAttribute('d', 'M 2 10 Q 12 7 22 9 M 7 9 L 6 27 M 17 9 C 17 18, 17 25, 20 26');
+  }
+  svg.appendChild(path);
+  return svg;
+}
+window.createSvgSymbol = createSvgSymbol;
+
+// --- Math Token Formatting ---
+function formatMathLine(raw) {
+  var frag = document.createDocumentFragment();
+  if (raw === null || raw === undefined) return frag;
+  var str = String(raw);
+  if (!str) return frag;
+
+  try {
+    var re = /(\^{2,})|(\bint\b\s*)|(sqrt\()|(\bpi\b)|(\^\(([^)]+)\))|(\^(?:(-\d+)|\b(\d+)\b|([a-zA-Z])(?![a-zA-Z0-9])))|(\s+\b(d[xyzut])\b(?!\/))/g;
+    var lastIdx = 0;
+    var match;
+
+    while ((match = re.exec(str)) !== null) {
+      if (match.index > lastIdx) {
+        frag.appendChild(document.createTextNode(str.slice(lastIdx, match.index)));
+      }
+      if (match[1]) {
+        frag.appendChild(document.createTextNode(match[1]));
+      } else if (match[2]) {
+        frag.appendChild(createSvgSymbol('int'));
+      } else if (match[3]) {
+        frag.appendChild(createSvgSymbol('sqrt'));
+        frag.appendChild(document.createTextNode('('));
+      } else if (match[4]) {
+        frag.appendChild(createSvgSymbol('pi'));
+      } else if (match[5]) {
+        var supEl = document.createElement('span');
+        supEl.className = 'math-sup';
+        supEl.style.fontSize = (window.EXPONENT_SCALE || 0.60) + 'em';
+        supEl.style.verticalAlign = (window.EXPONENT_SHIFT || '0.38em');
+        supEl.style.marginRight = (window.EXPONENT_RIGHT_GAP || '0.14em');
+        supEl.appendChild(formatMathLine(match[6]));
+        frag.appendChild(supEl);
+      } else if (match[7]) {
+        var expVal = match[8] || match[9] || match[10];
+        var sEl = document.createElement('span');
+        sEl.className = 'math-sup';
+        sEl.style.fontSize = (window.EXPONENT_SCALE || 0.60) + 'em';
+        sEl.style.verticalAlign = (window.EXPONENT_SHIFT || '0.38em');
+        sEl.style.marginRight = (window.EXPONENT_RIGHT_GAP || '0.14em');
+        sEl.appendChild(document.createTextNode(expVal));
+        frag.appendChild(sEl);
+      } else if (match[11]) {
+        var diffSpan = document.createElement('span');
+        diffSpan.className = 'math-diff';
+        diffSpan.style.marginLeft = (window.DIFFERENTIAL_GAP || '0.22em');
+        diffSpan.textContent = match[12];
+        frag.appendChild(diffSpan);
+      }
+      lastIdx = re.lastIndex;
+    }
+    if (lastIdx < str.length) {
+      frag.appendChild(document.createTextNode(str.slice(lastIdx)));
+    }
+    return frag;
+  } catch (e) {
+    frag.textContent = '';
+    frag.appendChild(document.createTextNode(str));
+    return frag;
+  }
+}
+window.formatMathLine = formatMathLine;
+
+function loadPersistedData() {
+  try {
+    var rawStrokes = localStorage.getItem(STROKES_KEY);
+    if (rawStrokes) pageStrokes = JSON.parse(rawStrokes) || {};
+  } catch (e) { pageStrokes = {}; }
+
+  try {
+    var rawPages = localStorage.getItem(PAGES_KEY);
+    if (rawPages) {
+      var custom = JSON.parse(rawPages);
+      if (Array.isArray(custom)) {
+        custom.forEach(function(cp) {
+          if (cp && cp.t && pages.length < 30) {
+            pages.push(cp);
+          }
+        });
+      }
+    }
+  } catch (e) {}
+
+  try {
+    var rawAi = localStorage.getItem(AI_OUTPUT_KEY);
+    if (rawAi) pageAiOutput = JSON.parse(rawAi) || {};
+  } catch (e) { pageAiOutput = {}; }
+}
+
+function savePersistedStrokes() {
+  try {
+    localStorage.setItem(STROKES_KEY, JSON.stringify(pageStrokes));
+  } catch (e) {}
+}
+
+function savePersistedPages() {
+  try {
+    var custom = pages.slice(SEEDED_PAGES.length);
+    localStorage.setItem(PAGES_KEY, JSON.stringify(custom));
+  } catch (e) {}
+}
+
+function savePersistedAiOutput() {
+  try {
+    localStorage.setItem(AI_OUTPUT_KEY, JSON.stringify(pageAiOutput));
+  } catch (e) {}
+}
+
+function getStrokes(pageId) {
+  return pageStrokes[pageId] ? pageStrokes[pageId].slice() : [];
+}
+
+function setStrokes(pageId, strokes) {
+  pageStrokes[pageId] = (strokes || []).slice();
+  savePersistedStrokes();
+  if (cur === pageId) redraw();
+}
+
+window.getStrokes = getStrokes;
+window.setStrokes = setStrokes;
+
+loadPersistedData();
+
+// --- Geometry Helpers for Distance & Stroke Intersection ---
+function distToSegment(px, py, x1, y1, x2, y2) {
+  var dx = x2 - x1, dy = y2 - y1;
+  var l2 = dx * dx + dy * dy;
+  if (l2 === 0) return Math.hypot(px - x1, py - y1);
+  var t = ((px - x1) * dx + (py - y1) * dy) / l2;
+  t = Math.max(0, Math.min(1, t));
+  return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
+}
+
+function strokeHits(s, px, py, radius) {
+  var pts = s.points;
+  if (!pts || !pts.length) return false;
+  var thresh = radius + ((s.width || 2.4) / 2);
+  if (pts.length === 1) {
+    return Math.hypot(pts[0].x - px, pts[0].y - py) <= thresh;
+  }
+  for (var i = 0; i < pts.length - 1; i++) {
+    if (distToSegment(px, py, pts[i].x, pts[i].y, pts[i + 1].x, pts[i + 1].y) <= thresh) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function eraseAt(px, py) {
+  var list = getStrokes(cur);
+  var ERASE_RADIUS = 16;
+  var remaining = list.filter(function(s) {
+    return !strokeHits(s, px, py, ERASE_RADIUS);
+  });
+  if (remaining.length !== list.length) {
+    setStrokes(cur, remaining);
+    redoHistory[cur] = [];
+    redraw();
+  }
+}
+
+// --- Stroke Rendering with Smooth Quadratic Curves ---
+function renderStroke(s, targetCx) {
+  var ctx = targetCx || cx;
+  var p = s.points;
+  if (!p || p.length === 0) return;
+  ctx.save();
+  ctx.strokeStyle = s.color || '#111118';
+  ctx.fillStyle = s.color || '#111118';
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.lineWidth = s.width || 2.4;
+
+  if (p.length === 1) {
+    ctx.beginPath();
+    ctx.arc(p[0].x, p[0].y, (s.width || 2.4) / 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    return;
+  }
+
+  if (p.length === 2) {
+    ctx.beginPath();
+    ctx.moveTo(p[0].x, p[0].y);
+    ctx.lineTo(p[1].x, p[1].y);
+    ctx.stroke();
+    ctx.restore();
+    return;
+  }
+
+  ctx.beginPath();
+  ctx.moveTo(p[0].x, p[0].y);
+  for (var i = 1; i < p.length - 1; i++) {
+    var midX = (p[i].x + p[i + 1].x) / 2;
+    var midY = (p[i].y + p[i + 1].y) / 2;
+    ctx.quadraticCurveTo(p[i].x, p[i].y, midX, midY);
+  }
+  ctx.lineTo(p[p.length - 1].x, p[p.length - 1].y);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function redraw() {
+  var r = paper.getBoundingClientRect();
+  cx.clearRect(0, 0, r.width, r.height);
+  var list = getStrokes(cur);
+  for (var i = 0; i < list.length; i++) {
+    renderStroke(list[i]);
+  }
+  if (currentStroke) {
+    renderStroke(currentStroke);
+  }
+}
+
+function size() {
+  var r = paper.getBoundingClientRect();
+  if (!r.width || !r.height) return;
+  var d = window.devicePixelRatio || 1;
+  cv.width = Math.round(r.width * d);
+  cv.height = Math.round(r.height * d);
+  cv.style.width = r.width + 'px';
+  cv.style.height = r.height + 'px';
+  cx.setTransform(d, 0, 0, d, 0, 0);
+
+  ov.width = cv.width;
+  ov.height = cv.height;
+  ov.style.width = r.width + 'px';
+  ov.style.height = r.height + 'px';
+  ox.setTransform(d, 0, 0, d, 0, 0);
+
+  redraw();
+}
+
+if (window.ResizeObserver) {
+  new ResizeObserver(function() { size(); }).observe(paper);
+}
+window.addEventListener('resize', size);
+
+// --- Drawing / Pointer Event State ---
+var currentStroke = null;
+var loopPoints = null;
+var activePointerId = null;
+var lastPenTime = 0;
+var currentCircleBox = null;
+
+function getPt(e) {
+  var r = cv.getBoundingClientRect();
+  return {
+    x: e.clientX - r.left,
+    y: e.clientY - r.top,
+    pressure: (e.pointerType === 'pen' && e.pressure > 0) ? e.pressure : 0.5,
+    t: Date.now()
+  };
+}
+
+cv.addEventListener('pointerdown', function(e) {
+  if (busy || e.button > 0) return;
+
+  if (e.pointerType === 'pen') {
+    lastPenTime = Date.now();
+  } else if (e.pointerType === 'touch') {
+    if (Date.now() - lastPenTime < 1000) {
+      e.preventDefault();
+      return;
+    }
+  }
+
+  e.preventDefault();
+  activePointerId = e.pointerId;
+  try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+
+  var pt = getPt(e);
+
+  if (tool === 'era') {
+    eraseAt(pt.x, pt.y);
+    return;
+  }
+
+  if (tool === 'circle') {
+    ring.classList.remove('on');
+    hideConfirmPanel();
+    loopPoints = [pt];
+    var r = paper.getBoundingClientRect();
+    ox.clearRect(0, 0, r.width, r.height);
+    return;
+  }
+
+  var isPen = e.pointerType === 'pen' && e.pressure > 0;
+  var w = isPen ? (1.5 + e.pressure * 2.8) : 2.4;
+
+  currentStroke = {
+    tool: 'pen',
+    color: col,
+    width: w,
+    points: [pt]
+  };
+
+  renderStroke(currentStroke);
+});
+
+cv.addEventListener('pointermove', function(e) {
+  if (activePointerId === null || e.pointerId !== activePointerId) return;
+  e.preventDefault();
+
+  var evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+
+  if (tool === 'era') {
+    for (var i = 0; i < evs.length; i++) {
+      var p = getPt(evs[i]);
+      eraseAt(p.x, p.y);
+    }
+    return;
+  }
+
+  if (tool === 'circle') {
+    if (!loopPoints) return;
+    for (var k = 0; k < evs.length; k++) {
+      loopPoints.push(getPt(evs[k]));
+    }
+    drawLoopPreview();
+    return;
+  }
+
+  if (!currentStroke) return;
+
+  for (var j = 0; j < evs.length; j++) {
+    currentStroke.points.push(getPt(evs[j]));
+  }
+
+  redraw();
+});
+
+function drawLoopPreview() {
+  var r = paper.getBoundingClientRect();
+  ox.clearRect(0, 0, r.width, r.height);
+  if (!loopPoints || loopPoints.length < 2) return;
+  ox.save();
+  ox.strokeStyle = '#7C5CFF';
+  ox.lineWidth = 2.4;
+  ox.setLineDash([5, 4]);
+  ox.beginPath();
+  ox.moveTo(loopPoints[0].x, loopPoints[0].y);
+  for (var i = 1; i < loopPoints.length; i++) {
+    ox.lineTo(loopPoints[i].x, loopPoints[i].y);
+  }
+  ox.stroke();
+  ox.restore();
+}
+
+function endStroke(e) {
+  if (activePointerId === null || (e && e.pointerId !== activePointerId)) return;
+  try {
+    if (cv.hasPointerCapture && cv.hasPointerCapture(activePointerId)) {
+      cv.releasePointerCapture(activePointerId);
+    }
+  } catch (err) {}
+  activePointerId = null;
+
+  if (tool === 'era') return;
+
+  if (tool === 'circle') {
+    var r = paper.getBoundingClientRect();
+    ox.clearRect(0, 0, r.width, r.height);
+    if (!loopPoints || loopPoints.length < 3) {
+      loopPoints = null;
+      return;
+    }
+    handleCircleGesture(loopPoints);
+    loopPoints = null;
+    return;
+  }
+
+  if (currentStroke && currentStroke.points.length > 0) {
+    var list = getStrokes(cur);
+    list.push(currentStroke);
+    setStrokes(cur, list);
+    redoHistory[cur] = [];
+    currentStroke = null;
+    redraw();
+  }
+}
+
+cv.addEventListener('pointerup', endStroke);
+cv.addEventListener('pointercancel', endStroke);
+
+// --- Toolbar Controls ---
+function setTool(t) {
+  tool = t;
+  document.querySelectorAll('[data-t]').forEach(function(x) {
+    x.classList.toggle('on', x.dataset.t === t);
+  });
+}
+
+document.querySelectorAll('[data-t]').forEach(function(b) {
+  b.onclick = function() {
+    setTool(b.dataset.t);
+  };
+});
+
+// Color selection (black, violet, coral)
+document.querySelectorAll('[data-c]').forEach(function(b) {
+  b.onclick = function() {
+    col = b.dataset.c;
+    setTool('pen');
+    document.querySelectorAll('[data-c]').forEach(function(x) {
+      x.classList.toggle('on', x === b);
+    });
+  };
+});
+
+// Undo
+$('#undo').onclick = function() {
+  if (busy) return;
+  var list = getStrokes(cur);
+  if (list.length === 0) return;
+  var popped = list.pop();
+  redoHistory[cur] = redoHistory[cur] || [];
+  redoHistory[cur].push(popped);
+  setStrokes(cur, list);
+  redraw();
+};
+
+function toast(m) {
+  var t = $('#toast');
+  t.textContent = m;
+  t.classList.add('on');
+  clearTimeout(toast.h);
+  toast.h = setTimeout(function() { t.classList.remove('on'); }, 2600);
+}
+
+function updateMemCount() {
+  var el = $('#mem-count');
+  if (el) el.textContent = pages.length + ' pages indexed';
+}
+
+function list() {
+  $('#pl').innerHTML = pages.map(function(p, i) {
+    var n = i + 1;
+    if (filt && (p.t + ' page ' + n).toLowerCase().indexOf(filt) < 0) return '';
+    return '<button class="pi' + (n === cur ? ' on' : '') + '" data-i="' + n + '"><span class="th"></span><span><b>Page ' + n + '</b><small>' + escapeHtml(p.t) + '</small></span></button>';
+  }).join('');
+  updateMemCount();
+}
+
+function render() {
+  stopVoiceAndAnimation();
+  hideConfirmPanel();
+  ring.classList.remove('on');
+  var r = paper.getBoundingClientRect();
+  ox.clearRect(0, 0, r.width, r.height);
+
+  var p = pages[cur - 1];
+  $('#pg').textContent = 'Page ' + cur + ' · ' + (p ? p.t : '');
+
+  // Render AI Output if present on this page
+  var ai = pageAiOutput[cur];
+  if (ai && ai.steps && ai.steps.length > 0) {
+    notes.innerHTML = '';
+    var qDiv = document.createElement('div');
+    qDiv.className = 'ln';
+    qDiv.style.cssText = 'font-weight:600;font-size:calc(var(--g)*1.15);color:var(--tx2);margin-bottom:calc(var(--g)*0.3);';
+    qDiv.textContent = ai.question || '';
+    notes.appendChild(qDiv);
+
+    var spDiv = document.createElement('div');
+    spDiv.className = 'sp';
+    notes.appendChild(spDiv);
+
+    ai.steps.forEach(function(st, idx) {
+      var stepDiv = document.createElement('div');
+      stepDiv.className = 'ln ai';
+      stepDiv.id = 'step-' + idx;
+      var lineObj = buildLineSvg(st.write);
+      stepDiv.appendChild(lineObj.svg);
+      notes.appendChild(stepDiv);
+      animateLineWriting(lineObj, 0);
+    });
+
+    if (ai.cited) {
+      var mkBtn = document.createElement('button');
+      mkBtn.className = 'mk show';
+      mkBtn.id = 'mk';
+      mkBtn.dataset.p = ai.cited;
+      mkBtn.textContent = '← your Page ' + ai.cited + ', again';
+      notes.appendChild(mkBtn);
+    }
+  } else if (cur === 8 && p && p.q) {
+    notes.innerHTML = '<div class="ln" id="qq">Q3. Differentiate y = sin(3x²)</div><div class="sp"></div><div class="ln ai">Let u = 3x²,  du/dx = 6x</div><div class="ln ai">y′ = cos(u) · du/dx</div><div class="ln ai">y′ = 6x cos(3x²)</div><button class="mk" id="mk">← your Page 1, again</button>';
+  } else if (p && p.l) {
+    notes.innerHTML = p.l.map(function(s, i) {
+      return '<div class="ln"' + (i ? '' : ' style="font-size:calc(var(--g)*2.3)"') + '>' + escapeHtml(s) + '</div>';
+    }).join('');
+  } else {
+    notes.innerHTML = '';
+  }
+
+  $('#chip').classList.remove('on');
+  redraw();
+  list();
+}
+
+function go(n) {
+  stopVoiceAndAnimation();
+  cur = n;
+  render();
+  app.classList.remove('open');
+}
+
+// Add New Page Control (+ New page)
+$('#add-page').onclick = function() {
+  if (busy) return;
+  if (pages.length >= 30) {
+    toast('Page limit reached');
+    say('Page limit reached (maximum 30 pages)');
+    return;
+  }
+
+  var nextNum = pages.length + 1;
+  var newPage = { t: 'Page ' + nextNum, id: nextNum };
+  pages.push(newPage);
+  savePersistedPages();
+  list();
+  go(nextNum);
+  toast('Created Page ' + nextNum);
+};
+
+var VOICE_LANGS = [
+  { code: 'en-US', name: 'English' },
+  { code: 'ta-IN', name: 'Tamil / Tanglish' },
+  { code: 'hi-IN', name: 'Hindi' }
+];
+var voiceLangIdx = 0;
+
+var cachedVoices = [];
+function loadVoices() {
+  if (typeof window !== 'undefined' && window.speechSynthesis) {
+    cachedVoices = window.speechSynthesis.getVoices() || [];
+  }
+}
+if (typeof window !== 'undefined' && window.speechSynthesis) {
+  loadVoices();
+  if (window.speechSynthesis.onvoiceschanged !== undefined) {
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }
+}
+
+var hasLoggedVoice = false;
+function logVoiceOnce(v) {
+  if (!hasLoggedVoice && v && v.name) {
+    hasLoggedVoice = true;
+    console.log(v.name);
+  }
+}
+
+function pickBestVoice(targetLangCode) {
+  if (!cachedVoices || !cachedVoices.length) {
+    loadVoices();
+  }
+  var voices = cachedVoices;
+  if (!voices || !voices.length) return null;
+
+  var chosen = null;
+  var langPrefix = (targetLangCode || 'en-US').split('-')[0].toLowerCase();
+  if (langPrefix === 'en') {
+    // 1. Prefer en-IN voice if present
+    var enIn = voices.find(function(v) {
+      return v.lang && v.lang.toLowerCase().replace('_', '-').startsWith('en-in');
+    });
+    if (enIn) chosen = enIn;
+
+    // 2. Otherwise a voice whose name includes 'Natural', 'Google', or 'Neural'
+    if (!chosen) {
+      var premiumEn = voices.find(function(v) {
+        if (!v.lang || !v.lang.toLowerCase().startsWith('en')) return false;
+        var name = (v.name || '').toLowerCase();
+        return name.includes('natural') || name.includes('google') || name.includes('neural');
+      });
+      if (premiumEn) chosen = premiumEn;
+    }
+
+    // 3. Otherwise any English voice
+    if (!chosen) {
+      var anyEn = voices.find(function(v) {
+        return v.lang && v.lang.toLowerCase().startsWith('en');
+      });
+      if (anyEn) chosen = anyEn;
+    }
+  } else {
+    var match = voices.find(function(v) {
+      return v.lang && v.lang.toLowerCase().replace('_', '-').startsWith(langPrefix);
+    });
+    if (match) chosen = match;
+  }
+
+  if (chosen) logVoiceOnce(chosen);
+  return chosen;
+}
+
+var activeSolveSeqId = 0;
+var activeStepTimer = null;
+
+function stopVoiceAndAnimation() {
+  activeSolveSeqId++;
+  if (activeStepTimer) {
+    clearTimeout(activeStepTimer);
+    activeStepTimer = null;
+  }
+  cancelActiveAnimation();
+  if (typeof window !== 'undefined' && window.speechSynthesis) {
+    try {
+      window.speechSynthesis.cancel();
+    } catch (e) {}
+  }
+  var chip = $('#chip');
+  if (chip) chip.classList.remove('on');
+  setBusy(false);
+}
+
+function interruptibleWait(ms, seqId) {
+  return new Promise(function(resolve) {
+    var t = setTimeout(function() {
+      if (seqId !== undefined && seqId !== activeSolveSeqId) {
+        resolve(false);
+      } else {
+        resolve(true);
+      }
+    }, ms);
+    activeStepTimer = t;
+  });
+}
+
+function speakNarration(text, estimatedDur, seqId) {
+  return new Promise(function(resolve) {
+    var clean = cleanNarrationText(text);
+    var chip = $('#chip');
+    var ct = $('#ct');
+    if (ct) ct.textContent = clean;
+    if (chip) chip.classList.add('on');
+
+    if (!voice || typeof window === 'undefined' || !window.speechSynthesis) {
+      var t = setTimeout(function() {
+        resolve();
+      }, estimatedDur || 2000);
+      activeStepTimer = t;
+      return;
+    }
+
+    var settled = false;
+    var safetyTimer = null;
+
+    function settle() {
+      if (settled) return;
+      settled = true;
+      if (safetyTimer) {
+        clearTimeout(safetyTimer);
+        safetyTimer = null;
+      }
+      resolve();
+    }
+
+    try {
+      var u = new SpeechSynthesisUtterance(clean);
+      var curLang = VOICE_LANGS[voiceLangIdx] || { code: 'en-US' };
+      u.lang = curLang.code;
+      u.rate = VOICE_RATE;
+      u.pitch = VOICE_PITCH;
+
+      var chosenVoice = pickBestVoice(curLang.code);
+      if (chosenVoice) u.voice = chosenVoice;
+
+      u.onend = settle;
+      u.onerror = settle;
+
+      var safetyTimeoutMs = (estimatedDur || 2000) + 3000;
+      safetyTimer = setTimeout(settle, safetyTimeoutMs);
+
+      window.speechSynthesis.speak(u);
+    } catch (err) {
+      settle();
+    }
+  });
+}
+
+$('#vo').onclick = function(e) {
+  if (e.shiftKey) {
+    voiceLangIdx = (voiceLangIdx + 1) % VOICE_LANGS.length;
+    toast('Voice: ' + VOICE_LANGS[voiceLangIdx].name);
+    say('Language switched to ' + VOICE_LANGS[voiceLangIdx].name);
+    return;
+  }
+  voice = !voice;
+  this.classList.toggle('on', voice);
+  toast(voice ? ('Voice on (' + VOICE_LANGS[voiceLangIdx].name + ')') : 'Voice muted');
+  if (!voice) {
+    stopVoiceAndAnimation();
+  }
+};
+
+window.addEventListener('beforeunload', function() {
+  stopVoiceAndAnimation();
+});
+
+$('#menu').onclick = function() {
+  if (innerWidth <= 820) app.classList.toggle('open');
+  else app.classList.toggle('hide');
+  setTimeout(size, 360);
+};
+
+$('#scrim').onclick = function() {
+  app.classList.remove('open');
+};
+
+$('#pl').onclick = function(e) {
+  var b = e.target.closest('.pi');
+  if (b) go(+b.dataset.i);
+};
+
+$('#q').oninput = function() {
+  filt = this.value.trim().toLowerCase();
+  list();
+};
+
+notes.addEventListener('click', function(e) {
+  var mk = e.target.closest('#mk');
+  if (mk) {
+    var p = mk.dataset.p ? +mk.dataset.p : 1;
+    go(p);
+  }
+});
+
+function wait(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+
+function say(t) {
+  var clean = cleanNarrationText(t);
+  var ct = $('#ct');
+  if (ct) ct.textContent = clean;
+  var chip = $('#chip');
+  if (chip) chip.classList.add('on');
+
+  if (voice && typeof window !== 'undefined' && window.speechSynthesis) {
+    try {
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(clean);
+      var curLang = VOICE_LANGS[voiceLangIdx] || { code: 'en-US' };
+      u.lang = curLang.code;
+      u.rate = VOICE_RATE;
+      u.pitch = VOICE_PITCH;
+      var chosenVoice = pickBestVoice(curLang.code);
+      if (chosenVoice) u.voice = chosenVoice;
+      window.speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+}
+
+function setBusy(state) {
+  busy = state;
+  $('#solve').disabled = state;
+  $('#hint-btn').disabled = state;
+  $('#tool-circle').disabled = state;
+  $('#tool-pen').disabled = state;
+  $('#tool-era').disabled = state;
+  $('#undo').disabled = state;
+  $('#add-page').disabled = state;
+}
+
+function showConfirmPanel(questionText, noteText) {
+  $('#cp-text').value = questionText || '';
+  var noteEl = $('#cp-note');
+  if (noteText) {
+    noteEl.textContent = noteText;
+    noteEl.style.display = 'block';
+  } else {
+    noteEl.style.display = 'none';
+  }
+  confirmPanel.style.display = 'flex';
+  setTimeout(function() { $('#cp-text').focus(); }, 60);
+}
+
+function hideConfirmPanel() {
+  confirmPanel.style.display = 'none';
+  $('#cp-note').style.display = 'none';
+}
+
+$('#cp-cancel').onclick = function() {
+  hideConfirmPanel();
+  ring.classList.remove('on');
+  currentCircleBox = null;
+  setBusy(false);
+  $('#chip').classList.remove('on');
+};
+
+$('#cp-hint').onclick = function() {
+  var q = $('#cp-text').value.trim();
+  if (!q) {
+    toast('Please enter or correct the question');
+    return;
+  }
+  hideConfirmPanel();
+  runHintLadder(q, currentCircleBox);
+};
+
+$('#cp-solve').onclick = function() {
+  var q = $('#cp-text').value.trim();
+  if (!q) {
+    toast('Please enter or correct the question');
+    return;
+  }
+  hideConfirmPanel();
+  runSolvePipeline(q, currentCircleBox);
+};
+
+// --- Part B: Circle Gesture & Recognition ---
+function handleCircleGesture(pts) {
+  // Closed loop gesture check
+  var totalLen = 0;
+  for (var i = 0; i < pts.length - 1; i++) {
+    totalLen += Math.hypot(pts[i + 1].x - pts[i].x, pts[i + 1].y - pts[i].y);
+  }
+  var p0 = pts[0], pEnd = pts[pts.length - 1];
+  var endDist = Math.hypot(pEnd.x - p0.x, pEnd.y - p0.y);
+
+  var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (var j = 0; j < pts.length; j++) {
+    var p = pts[j];
+    if (p.x < minX) minX = p.x;
+    if (p.y < minY) minY = p.y;
+    if (p.x > maxX) maxX = p.x;
+    if (p.y > maxY) maxY = p.y;
+  }
+  var w = maxX - minX, h = maxY - minY;
+  var closeThresh = Math.max(30, totalLen * 0.15);
+  var isClosed = (endDist <= closeThresh) && (w >= 40) && (h >= 40);
+
+  if (!isClosed) {
+    toast('Draw a closed circle around the question');
+    say('Draw a closed circle around the question');
+    return;
+  }
+
+  // Bounding box with 12px padding
+  var pad = 12;
+  var rPaper = paper.getBoundingClientRect();
+  var box = {
+    x: Math.max(0, minX - pad),
+    y: Math.max(0, minY - pad),
+    w: Math.min(rPaper.width, w + pad * 2),
+    h: Math.min(rPaper.height, h + pad * 2)
+  };
+  currentCircleBox = box;
+
+  // Position violet ring around the circled area
+  ring.style.cssText = 'left:' + box.x + 'px;top:' + box.y + 'px;width:' + box.w + 'px;height:' + box.h + 'px';
+  ring.classList.add('on');
+
+  // Find student strokes that intersect the box
+  var strokes = getStrokes(cur);
+  var insideStrokes = strokes.filter(function(s) {
+    if (!s.points || !s.points.length) return false;
+    for (var k = 0; k < s.points.length; k++) {
+      var pt = s.points[k];
+      if (pt.x >= box.x && pt.x <= box.x + box.w && pt.y >= box.y && pt.y <= box.y + box.h) {
+        return true;
+      }
+    }
+    return false;
+  });
+
+  if (insideStrokes.length === 0) {
+    ring.classList.remove('on');
+    currentCircleBox = null;
+    toast('Nothing written inside that circle');
+    say('Nothing written inside that circle');
+    return;
+  }
+
+  // Render ONLY student strokes inside box onto offscreen canvas (white bg, black ink)
+  var offW = Math.max(1, Math.round(box.w));
+  var offH = Math.max(1, Math.round(box.h));
+  var offCv = document.createElement('canvas');
+  offCv.width = offW;
+  offCv.height = offH;
+  var offCtx = offCv.getContext('2d');
+
+  offCtx.fillStyle = '#ffffff';
+  offCtx.fillRect(0, 0, offW, offH);
+
+  offCtx.save();
+  offCtx.translate(-box.x, -box.y);
+  for (var m = 0; m < insideStrokes.length; m++) {
+    var orig = insideStrokes[m];
+    var blackStroke = {
+      color: '#000000',
+      width: Math.max(3, orig.width || 2.4),
+      points: orig.points
+    };
+    renderStroke(blackStroke, offCtx);
+  }
+  offCtx.restore();
+
+  // Scale so longest side is at most 1024px
+  var longest = Math.max(offW, offH);
+  var scale = longest > 1024 ? (1024 / longest) : 1;
+  var finalCv = document.createElement('canvas');
+  finalCv.width = Math.round(offW * scale);
+  finalCv.height = Math.round(offH * scale);
+  var finalCtx = finalCv.getContext('2d');
+  finalCtx.fillStyle = '#ffffff';
+  finalCtx.fillRect(0, 0, finalCv.width, finalCv.height);
+  finalCtx.drawImage(offCv, 0, 0, finalCv.width, finalCv.height);
+
+  var dataUrl = finalCv.toDataURL('image/png');
+  var b64 = dataUrl.split(',')[1];
+
+  sendRecognizeRequest(b64);
+}
+
+async function sendRecognizeRequest(b64) {
+  setBusy(true);
+  say('Reading your question…');
+
+  var controller = new AbortController();
+  var timer = setTimeout(function() { controller.abort(); }, 60000);
+
+  try {
+    var response = await fetch('/api/recognize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        image_base64: b64,
+        media_type: 'image/png'
+      }),
+      signal: controller.signal
+    });
+    clearTimeout(timer);
+
+    if (!response.ok) {
+      var errData = await response.json().catch(function() { return {}; });
+      var msg = errData.detail || ('Server status ' + response.status);
+      toast('Recognition error: ' + msg);
+      say('Could not read question automatically. Type it below.');
+      showConfirmPanel('', 'Recognition error: ' + msg + '. Type question manually:');
+      return;
+    }
+
+    var data = await response.json();
+    if (data.readable === false) {
+      say(data.note || 'Could not read handwriting. Type question below.');
+      showConfirmPanel('', data.note || 'Handwriting not recognized. Type question manually:');
+    } else {
+      say('Question recognized. Confirm or edit to solve.');
+      showConfirmPanel(data.question_text || data.latex || '', data.note || '');
+    }
+  } catch (err) {
+    clearTimeout(timer);
+    var isTimeout = err.name === 'AbortError';
+    var errMsg = isTimeout ? 'Recognition timed out (60s)' : 'Backend unreachable (' + err.message + ')';
+    toast(errMsg);
+    say(errMsg + '. Type question below.');
+    showConfirmPanel('', errMsg + '. Please type question manually:');
+  } finally {
+    setBusy(false);
+  }
+}
+
+// --- Hint Ladder State & Handler ---
+var hintCache = {};
+
+async function runHintLadder(questionText, box) {
+  if (busy) return;
+  hideConfirmPanel();
+
+  if (!hintCache[questionText]) {
+    setBusy(true);
+    say('Finding hint…');
+
+    var contextPages = [];
+    var cited = null;
+    var citedTitle = null;
+
+    try {
+      var retResp = await fetch('/api/retrieve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: questionText, threshold: 0.65, top_k: 2 })
+      });
+      if (retResp.ok) {
+        var retData = await retResp.json();
+        if (retData.matches && retData.matches.length > 0) {
+          var top = retData.top_match || retData.matches[0];
+          cited = top.page;
+          citedTitle = top.title;
+          contextPages = retData.matches.map(function(m) {
+            return { page: m.page, snippet: m.title + ': ' + m.snippet };
+          });
+        }
+      }
+    } catch (e) {}
+
+    try {
+      var sResp = await fetch('/api/solve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: questionText, context: contextPages })
+      });
+      var sData = await sResp.json();
+      if (!sData.verified || !sData.steps || sData.steps.length === 0) {
+        toast('Cannot generate hint: verification failed');
+        setBusy(false);
+        return;
+      }
+      var nudgeMsg = citedTitle
+        ? ('Recall ' + citedTitle.toLowerCase() + ' from Page ' + cited + ' to break down this expression.')
+        : (sData.steps[0].narration || 'Start by identifying the outer and inner functions.');
+
+      hintCache[questionText] = {
+        question: questionText,
+        steps: sData.steps,
+        cited: (sData.cites_pages && sData.cites_pages[0]) || cited,
+        nudge: nudgeMsg,
+        box: box,
+        level: 0
+      };
+    } catch (err) {
+      toast('Hint error: ' + err.message);
+      setBusy(false);
+      return;
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  var hData = hintCache[questionText];
+  hData.level = (hData.level || 0) + 1;
+
+  if (hData.level === 1) {
+    var cleanNudge = cleanNarrationText(hData.nudge);
+    toast('Hint 1/3 (Nudge): ' + cleanNudge);
+    say(cleanNudge);
+    var mkHtml = '<div class="ln" style="font-weight:600;font-size:calc(var(--g)*1.15);color:var(--tx2);margin-bottom:calc(var(--g)*0.3);">' + escapeHtml(questionText) + '</div><div class="sp"></div><div class="ln" style="font-size:calc(var(--g)*1.2);color:var(--tx2);font-style:italic;">💡 Nudge: ' + escapeHtml(cleanNudge) + '</div>';
+    if (hData.cited) {
+      mkHtml += '<button class="mk show" id="mk" data-p="' + hData.cited + '">← your Page ' + hData.cited + ', again</button>';
+    }
+    notes.innerHTML = mkHtml;
+  } else if (hData.level === 2) {
+    stopVoiceAndAnimation();
+    var hintSeqId = activeSolveSeqId;
+    var firstStep = hData.steps[0];
+    var cleanFirstStep = cleanNarrationText(firstStep.narration);
+    toast('Hint 2/3 (Next step): ' + firstStep.write);
+    notes.innerHTML = '';
+    var qH = document.createElement('div');
+    qH.className = 'ln';
+    qH.style.cssText = 'font-weight:600;font-size:calc(var(--g)*1.15);color:var(--tx2);margin-bottom:calc(var(--g)*0.3);';
+    qH.textContent = questionText || '';
+    notes.appendChild(qH);
+
+    var spH = document.createElement('div');
+    spH.className = 'sp';
+    notes.appendChild(spH);
+
+    var stepH = document.createElement('div');
+    stepH.className = 'ln ai';
+    stepH.id = 'step-0';
+    var lineObj = buildLineSvg(firstStep.write);
+    stepH.appendChild(lineObj.svg);
+    notes.appendChild(stepH);
+
+    if (hData.cited) {
+      var mkH = document.createElement('button');
+      mkH.className = 'mk show';
+      mkH.id = 'mk';
+      mkH.dataset.p = hData.cited;
+      mkH.textContent = '← your Page ' + hData.cited + ', again';
+      notes.appendChild(mkH);
+    }
+
+    var dur = getStepDuration(cleanFirstStep);
+    var sPromise = speakNarration(cleanFirstStep, dur, hintSeqId);
+    var dPromise = lineObj ? animateLineWriting(lineObj, dur) : Promise.resolve();
+    await Promise.all([sPromise, dPromise]);
+  } else {
+    toast('Hint 3/3: Full solution');
+    hData.level = 0;
+    runSolvePipeline(questionText, box);
+  }
+}
+
+// --- Solve Pipeline with Retrieval & Verification ---
+async function runSolvePipeline(questionText, box) {
+  stopVoiceAndAnimation();
+  var currentSolveSeqId = activeSolveSeqId;
+  setBusy(true);
+  say('Searching notebook memory…');
+
+  // Step 1: Memory index retrieval via /api/retrieve
+  var contextPages = [];
+  var cited = null;
+  try {
+    var retResp = await fetch('/api/retrieve', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: questionText,
+        threshold: 0.65,
+        top_k: 2
+      })
+    });
+    if (retResp.ok) {
+      var retData = await retResp.json();
+      if (retData.matches && retData.matches.length > 0) {
+        var top = retData.top_match || retData.matches[0];
+        cited = top.page;
+        say('Found ' + top.title.toLowerCase() + ' on Page ' + top.page);
+        await interruptibleWait(1800, currentSolveSeqId);
+        contextPages = retData.matches.map(function(m) {
+          return {
+            page: m.page,
+            snippet: m.title + ': ' + m.snippet
+          };
+        });
+      }
+    }
+  } catch (retErr) {
+    console.warn('Memory retrieval skipped:', retErr);
+  }
+
+  if (currentSolveSeqId !== activeSolveSeqId) return;
+
+  if (!cited) {
+    say('Solving question…');
+  }
+
+  // Step 2: Solve with SymPy verification
+  try {
+    var response = await fetch('/api/solve', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        question: questionText,
+        context: contextPages
+      })
+    });
+
+    if (currentSolveSeqId !== activeSolveSeqId) return;
+
+    if (!response.ok) {
+      var errJson = await response.json().catch(function() { return {}; });
+      throw new Error(errJson.detail || ('Server status ' + response.status));
+    }
+
+    var data = await response.json();
+
+    if (!data.verified) {
+      var failMsg = data.error || 'SymPy rejected answer';
+      say('Verification check failed: ' + failMsg);
+      toast('SymPy verification failed: ' + failMsg);
+      showConfirmPanel(questionText, 'Verification failed: ' + failMsg + '. Adjust and retry:');
+      await interruptibleWait(3000, currentSolveSeqId);
+      $('#chip').classList.remove('on');
+      return;
+    }
+
+    // Cited earlier page callback from verified solver response
+    if (data.cites_pages && data.cites_pages.length > 0) {
+      cited = data.cites_pages[0];
+    }
+
+    // Save AI output for the current page
+    pageAiOutput[cur] = {
+      question: questionText,
+      steps: data.steps,
+      cited: cited,
+      box: box
+    };
+    savePersistedAiOutput();
+
+    // Render real AI steps returned by backend onto the page
+    notes.innerHTML = '';
+    var qEl = document.createElement('div');
+    qEl.className = 'ln';
+    qEl.style.cssText = 'font-weight:600;font-size:calc(var(--g)*1.15);color:var(--tx2);margin-bottom:calc(var(--g)*0.3);';
+    qEl.textContent = questionText || '';
+    notes.appendChild(qEl);
+
+    var spEl = document.createElement('div');
+    spEl.className = 'sp';
+    notes.appendChild(spEl);
+
+    var stepLineObjs = [];
+    data.steps.forEach(function(st, idx) {
+      var stepEl = document.createElement('div');
+      stepEl.className = 'ln ai';
+      stepEl.id = 'step-' + idx;
+      var lineObj = buildLineSvg(st.write);
+      stepEl.appendChild(lineObj.svg);
+      notes.appendChild(stepEl);
+      stepLineObjs.push(lineObj);
+    });
+
+    if (cited) {
+      var mkEl = document.createElement('button');
+      mkEl.className = 'mk';
+      mkEl.id = 'mk';
+      mkEl.dataset.p = cited;
+      mkEl.textContent = '← your Page ' + cited + ', again';
+      notes.appendChild(mkEl);
+    }
+
+    // Animate each step with voice narration and real pen-stroke drawing
+    for (var i = 0; i < data.steps.length; i++) {
+      if (currentSolveSeqId !== activeSolveSeqId) return;
+
+      var step = data.steps[i];
+      var cleanText = cleanNarrationText(step.narration);
+      var lineObj = stepLineObjs[i];
+      var stepDuration = getStepDuration(cleanText);
+
+      var speechPromise = speakNarration(cleanText, stepDuration, currentSolveSeqId);
+      var drawPromise = lineObj ? animateLineWriting(lineObj, stepDuration) : Promise.resolve();
+
+      await Promise.all([speechPromise, drawPromise]);
+
+      if (currentSolveSeqId !== activeSolveSeqId) return;
+
+      if (i < data.steps.length - 1) {
+        await interruptibleWait(400, currentSolveSeqId);
+      }
+    }
+
+    if (currentSolveSeqId !== activeSolveSeqId) return;
+    say('Verified symbolically with SymPy');
+    var mkBtn = $('#mk');
+    if (mkBtn) mkBtn.classList.add('show');
+    await interruptibleWait(2200, currentSolveSeqId);
+
+  } catch (err) {
+    if (currentSolveSeqId === activeSolveSeqId) {
+      console.error('Solve error:', err);
+      toast('API error: ' + err.message);
+      say('Error solving problem: ' + err.message);
+      showConfirmPanel(questionText, 'Error solving: ' + err.message);
+      await interruptibleWait(2000, currentSolveSeqId);
+    }
+  } finally {
+    if (currentSolveSeqId === activeSolveSeqId) {
+      $('#chip').classList.remove('on');
+      setBusy(false);
+    }
+  }
+}
+
+// Solve Button Click in Header
+$('#solve').onclick = function() {
+  if (busy) return;
+  if (confirmPanel.style.display === 'flex') {
+    $('#cp-solve').click();
+    return;
+  }
+  if (cur === 8 && !currentCircleBox) {
+    var qq = $('#qq');
+    if (qq) {
+      runSolvePipeline('Q3. Differentiate y = sin(3x²)', null);
+      return;
+    }
+  }
+  setTool('circle');
+  toast('Circle a question');
+  say('Circle a question on the page');
+};
+
+// Hint Button Click in Header
+$('#hint-btn').onclick = function() {
+  if (busy) return;
+  if (confirmPanel.style.display === 'flex') {
+    $('#cp-hint').click();
+    return;
+  }
+  if (cur === 8) {
+    runHintLadder('Q3. Differentiate y = sin(3x²)', null);
+    return;
+  }
+  setTool('circle');
+  toast('Circle a question for hints');
+  say('Circle a question for hints');
+};
+
+// Scripted Demo Fallback (callable via console: window.runScriptedDemo())
+window.runScriptedDemo = async function() {
+  if (busy) return;
+  go(8);
+  await wait(300);
+  var q = $('#qq');
+  if (!q) return;
+  var a = paper.getBoundingClientRect(), b = q.getBoundingClientRect();
+  var box = {
+    x: b.left - a.left - 14,
+    y: b.top - a.top + 2,
+    w: b.width + 28,
+    h: b.height - 4
+  };
+  currentCircleBox = box;
+  ring.style.cssText = 'left:' + box.x + 'px;top:' + box.y + 'px;width:' + box.w + 'px;height:' + box.h + 'px';
+  ring.classList.add('on');
+  runSolvePipeline('Differentiate y = sin(3x^2)', box);
+};
+
+if (innerWidth <= 820) app.classList.remove('open');
+render();
+size();
+(document.fonts && document.fonts.ready || Promise.resolve()).then(function() {
+  render();
+  size();
+});
+</script>
+</body>
+</html>
