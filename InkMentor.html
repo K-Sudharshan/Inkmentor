@@ -3594,6 +3594,7 @@ async function runSolvePipeline(questionText, box) {
   if (!data.verified) {
     clearStatusStage();
     var failMsg = data.error || 'SymPy rejected answer';
+    console.warn('[Solve Verification Failed]', failMsg, data);
     say('Verification check failed: ' + failMsg);
     toast('SymPy verification failed: ' + failMsg);
     showConfirmPanel(questionText, 'Verification failed: ' + failMsg + '. Adjust and retry:');

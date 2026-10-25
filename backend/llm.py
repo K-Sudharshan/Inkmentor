@@ -10,7 +10,11 @@ def _get_required_env(var_name: str) -> str:
     if var_name == "LLM_PROVIDER":
         return (os.environ.get("LLM_PROVIDER") or "gemini").strip()
     if var_name == "LLM_MODEL":
-        return (os.environ.get("LLM_MODEL") or "gemini-2.5-flash").strip()
+        val = (os.environ.get("LLM_MODEL") or "gemini-3.5-flash-lite").strip()
+        # Automatically map deprecated models to active gemini-3.5-flash-lite
+        if val in ("gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash", "gemini-2.5-flash-lite") or "2.5-flash" in val or "2.0-flash" in val:
+            return "gemini-3.5-flash-lite"
+        return val
     if var_name == "LLM_API_KEY":
         val = os.environ.get("LLM_API_KEY") or os.environ.get("GEMINI_API_KEY")
         if not val or not val.strip():
@@ -85,11 +89,22 @@ def call_llm_with_meta(system: str, user: str) -> Tuple[str, Dict[str, Any]]:
                 temperature=0.0,
             )
 
-        response = client.models.generate_content(
-            model=model_name,
-            contents=user,
-            config=config,
-        )
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=user,
+                config=config,
+            )
+        except Exception as api_err:
+            err_str = str(api_err).lower()
+            if model_name != "gemini-3.5-flash-lite" and ("404" in err_str or "not found" in err_str or "no longer available" in err_str):
+                response = client.models.generate_content(
+                    model="gemini-3.5-flash-lite",
+                    contents=user,
+                    config=config,
+                )
+            else:
+                raise
         duration_ms = round((time.time() - t0) * 1000.0, 2)
         if not response.text:
             raise RuntimeError("LLM returned an empty response")
@@ -154,11 +169,22 @@ def call_vision_llm_with_meta(
         else:
             config = types.GenerateContentConfig(temperature=0.0)
 
-        response = client.models.generate_content(
-            model=model_name,
-            contents=[prompt, part],
-            config=config,
-        )
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=[prompt, part],
+                config=config,
+            )
+        except Exception as api_err:
+            err_str = str(api_err).lower()
+            if model_name != "gemini-3.5-flash-lite" and ("404" in err_str or "not found" in err_str or "no longer available" in err_str):
+                response = client.models.generate_content(
+                    model="gemini-3.5-flash-lite",
+                    contents=[prompt, part],
+                    config=config,
+                )
+            else:
+                raise
         duration_ms = round((time.time() - t0) * 1000.0, 2)
         if not response.text:
             raise RuntimeError("Vision model returned an empty response")

@@ -184,7 +184,7 @@ def test_resilient_env_defaults_and_gemini_key_fallback():
     }
     with patch.dict(os.environ, clean_env):
         assert _get_required_env("LLM_PROVIDER") == "gemini"
-        assert _get_required_env("LLM_MODEL") == "gemini-2.5-flash"
+        assert _get_required_env("LLM_MODEL") == "gemini-3.5-flash-lite"
         assert _get_required_env("LLM_API_KEY") == "AIzaSy_fallback_key"
         # Must not raise
         validate_llm_env()

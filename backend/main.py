@@ -203,7 +203,7 @@ async def deep_health_check() -> Dict[str, Any]:
             "status": "ok",
             "gemini": "connected",
             "latency_ms": dur_ms,
-            "model": os.environ.get("LLM_MODEL", "gemini-2.5-flash"),
+            "model": os.environ.get("LLM_MODEL", "gemini-3.5-flash-lite"),
         }
     except Exception as exc:
         err_msg = str(exc)
