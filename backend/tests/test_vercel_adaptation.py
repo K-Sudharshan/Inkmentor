@@ -148,3 +148,44 @@ def test_static_routes_serve_index_and_font():
     resp_font = client.get("/fonts/Caveat-Regular.ttf")
     assert resp_font.status_code == 200
     assert resp_font.headers.get("content-type") == "font/ttf"
+
+
+def test_dual_routes_accessible_without_api_prefix():
+    """Endpoints are reachable both with /api prefix and without (handles Vercel path stripping)."""
+    resp_health_api = client.get("/api/health?verbose=true")
+    assert resp_health_api.status_code == 200
+
+    resp_health_stripped = client.get("/health?verbose=true")
+    assert resp_health_stripped.status_code == 200
+    assert resp_health_stripped.json()["status"] == "ok"
+
+    resp_tts_status_stripped = client.get("/tts/status")
+    assert resp_tts_status_stripped.status_code == 200
+
+
+def test_middleware_recovers_path_from_x_matched_path():
+    """Middleware rewrites scope path if Vercel passes /api/index.py."""
+    headers = {"x-matched-path": "/api/health?verbose=true"}
+    resp = client.get("/api/index.py", headers=headers)
+    assert resp.status_code == 200
+    assert resp.json()["status"] == "ok"
+
+
+def test_resilient_env_defaults_and_gemini_key_fallback():
+    """_get_required_env and validate_llm_env fall back to gemini defaults and GEMINI_API_KEY."""
+    from backend.llm import _get_required_env, validate_llm_env
+
+    # Clean env with only GEMINI_API_KEY set
+    clean_env = {
+        "LLM_PROVIDER": "",
+        "LLM_MODEL": "",
+        "LLM_API_KEY": "",
+        "GEMINI_API_KEY": "AIzaSy_fallback_key",
+    }
+    with patch.dict(os.environ, clean_env):
+        assert _get_required_env("LLM_PROVIDER") == "gemini"
+        assert _get_required_env("LLM_MODEL") == "gemini-2.5-flash"
+        assert _get_required_env("LLM_API_KEY") == "AIzaSy_fallback_key"
+        # Must not raise
+        validate_llm_env()
+

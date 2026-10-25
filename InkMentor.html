@@ -217,24 +217,50 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-off
 (function initServerWakeupCheck() {
   var backoffMs = 1000;
   var maxBackoff = 8000;
+  var attempts = 0;
   function getToast() { return document.getElementById('server-wakeup-toast'); }
-  function showNotice() { var el = getToast(); if (el) el.classList.add('show'); }
-  function hideNotice() { var el = getToast(); if (el) el.classList.remove('show'); }
+  function showNotice(msg) {
+    var el = getToast();
+    if (el) {
+      if (msg) {
+        var label = el.querySelector('span:last-child');
+        if (label) label.textContent = msg;
+      }
+      el.classList.add('show');
+    }
+  }
+  function hideNotice() {
+    var el = getToast();
+    if (el) el.classList.remove('show');
+  }
 
   async function checkHealth() {
-    var timer = setTimeout(showNotice, 3000);
+    attempts++;
+    var timer = setTimeout(function() {
+      showNotice('Waking up the server…');
+    }, 2000);
     try {
       var res = await fetch((window.API_BASE || '') + '/api/health');
       clearTimeout(timer);
       if (res.ok) {
         hideNotice();
       } else {
-        showNotice();
+        console.warn('[Serverless Wakeup] /api/health returned HTTP ' + res.status);
+        if (attempts >= 4) {
+          showNotice('Server starting up (attempt ' + attempts + ')… Check Vercel logs if delayed');
+        } else {
+          showNotice('Waking up the server…');
+        }
         retry();
       }
     } catch (e) {
       clearTimeout(timer);
-      showNotice();
+      console.warn('[Serverless Wakeup] Health fetch failed:', e);
+      if (attempts >= 4) {
+        showNotice('Server starting up (attempt ' + attempts + ')… Check Vercel logs if delayed');
+      } else {
+        showNotice('Waking up the server…');
+      }
       retry();
     }
   }

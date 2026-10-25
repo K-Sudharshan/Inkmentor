@@ -7,6 +7,15 @@ load_dotenv(os.path.join(os.path.dirname(__file__), ".env"), override=False)
 
 
 def _get_required_env(var_name: str) -> str:
+    if var_name == "LLM_PROVIDER":
+        return (os.environ.get("LLM_PROVIDER") or "gemini").strip()
+    if var_name == "LLM_MODEL":
+        return (os.environ.get("LLM_MODEL") or "gemini-2.5-flash").strip()
+    if var_name == "LLM_API_KEY":
+        val = os.environ.get("LLM_API_KEY") or os.environ.get("GEMINI_API_KEY")
+        if not val or not val.strip():
+            raise RuntimeError("Missing required environment variable: LLM_API_KEY (or GEMINI_API_KEY)")
+        return val.strip()
     val = os.environ.get(var_name)
     if not val or not val.strip():
         raise RuntimeError(f"Missing required environment variable: {var_name}")

@@ -36,13 +36,33 @@ from backend.tts import TTSAllProvidersFailed, generate_tts_wav, get_tts_config
 async def lifespan(app: FastAPI):
     # Verify required environment variables on startup unless explicitly in test mode
     if os.environ.get("TEST_MODE") != "true":
-        validate_llm_env()
+        try:
+            validate_llm_env()
+        except Exception as exc:
+            logger.warning(f"[STARTUP WARNING] LLM environment check: {exc}")
     yield
     from backend.verify import shutdown_sympy_worker_pool
     shutdown_sympy_worker_pool()
 
 
-app = FastAPI(title="InkMentor Math Solver API", version="1.0.0", lifespan=lifespan)
+app = FastAPI(
+    title="InkMentor Math Solver API",
+    version="1.0.0",
+    lifespan=lifespan,
+    redirect_slashes=False,
+)
+
+
+@app.middleware("http")
+async def vercel_path_rewrite_middleware(request: Request, call_next):
+    """Normalizes path if Vercel serverless gateway passes the script name or rewrites stripped prefix."""
+    path = request.scope.get("path", "")
+    if path in ("/api/index.py", "/api/index", "/index.py", "/api"):
+        matched = request.headers.get("x-matched-path") or request.headers.get("x-forwarded-uri")
+        if matched:
+            request.scope["path"] = matched.split("?")[0]
+    return await call_next(request)
+
 
 # CORS configuration
 default_origins = "http://localhost:3000,http://localhost:5173,http://127.0.0.1:5500,http://localhost:8000,http://127.0.0.1:8000,null"
@@ -64,6 +84,7 @@ app.add_middleware(
         "X-Trace-Id",
     ],
 )
+
 
 
 # Static paths for local development and fallback serving
@@ -133,15 +154,16 @@ async def serve_font(font_name: str):
 
 
 @app.get("/api/health")
+@app.get("/health")
 async def health_check(request: Request) -> Dict[str, Any]:
     """Fast health check: returns ok and flags without external API calls."""
     if os.environ.get("TEST_MODE") == "true" and not request.query_params.get("verbose"):
         return {"status": "ok"}
 
     from backend.memory import _SEEDED_PAGES_CACHE
-    gemini_key = bool(os.environ.get("LLM_API_KEY", "").strip())
+    gemini_key = bool((os.environ.get("LLM_API_KEY") or os.environ.get("GEMINI_API_KEY") or "").strip())
     groq_key = bool(os.environ.get("GROQ_API_KEY", "").strip())
-    tts_key = bool((os.environ.get("TTS_API_KEY") or os.environ.get("LLM_API_KEY") or "").strip())
+    tts_key = bool((os.environ.get("TTS_API_KEY") or os.environ.get("LLM_API_KEY") or os.environ.get("GEMINI_API_KEY") or "").strip())
     memory_loaded = bool(_SEEDED_PAGES_CACHE is not None and len(_SEEDED_PAGES_CACHE) > 0)
     gemini_disabled = os.environ.get("TTS_DISABLE_GEMINI", "false").lower() in ("true", "1", "yes")
     groq_disabled = os.environ.get("TTS_DISABLE_GROQ", "false").lower() in ("true", "1", "yes")
@@ -162,6 +184,7 @@ async def health_check(request: Request) -> Dict[str, Any]:
 
 
 @app.get("/api/health/deep")
+@app.get("/health/deep")
 async def deep_health_check() -> Dict[str, Any]:
     """Optional deep health check: makes 1 minimal Gemini call to verify key and model connectivity."""
     enabled = os.environ.get("ENABLE_DEEP_HEALTH", "false").lower() in ("true", "1", "yes")
@@ -197,6 +220,7 @@ logger = logging.getLogger("inkmentor.api")
 
 
 @app.post("/api/solve", response_model=SolveResponse)
+@app.post("/solve", response_model=SolveResponse)
 async def solve_endpoint(request: SolveRequest, req: Request, res: Response) -> SolveResponse:
     trace_id = req.headers.get("x-trace-id", "")
     if trace_id:
@@ -240,6 +264,7 @@ async def solve_endpoint(request: SolveRequest, req: Request, res: Response) -> 
 
 
 @app.post("/api/recognize", response_model=RecognizeResponse, response_model_exclude_none=True)
+@app.post("/recognize", response_model=RecognizeResponse, response_model_exclude_none=True)
 async def recognize_endpoint(request: RecognizeRequest, req: Request, res: Response) -> RecognizeResponse:
     trace_id = req.headers.get("x-trace-id", "")
     if trace_id:
@@ -282,6 +307,7 @@ async def recognize_endpoint(request: RecognizeRequest, req: Request, res: Respo
 
 
 @app.post("/api/retrieve", response_model=RetrieveResponse)
+@app.post("/retrieve", response_model=RetrieveResponse)
 async def retrieve_endpoint(request: RetrieveRequest) -> RetrieveResponse:
     try:
         response = await asyncio.to_thread(
@@ -314,6 +340,7 @@ async def retrieve_endpoint(request: RetrieveRequest) -> RetrieveResponse:
 
 
 @app.post("/api/tts")
+@app.post("/tts")
 async def tts_endpoint(request: TTSRequest, req: Request):
     client_ip = get_client_ip(req)
     try:
@@ -386,9 +413,10 @@ async def tts_endpoint(request: TTSRequest, req: Request):
 
 
 @app.get("/api/tts/status", response_model=TTSStatusResponse)
+@app.get("/tts/status", response_model=TTSStatusResponse)
 async def tts_status_endpoint() -> TTSStatusResponse:
     model, voice, rate, _ = get_tts_config()
-    api_key = os.environ.get("LLM_API_KEY", "").strip()
+    api_key = (os.environ.get("LLM_API_KEY") or os.environ.get("GEMINI_API_KEY") or "").strip()
     configured = bool(api_key and model)
     return TTSStatusResponse(
         configured=configured,
