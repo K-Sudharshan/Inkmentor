@@ -3,7 +3,11 @@
   "functions": {
     "api/index.py": {
       "maxDuration": 60,
-      "includeFiles": "backend/seed_embeddings.json"
+      "includeFiles": "backend/**"
+    },
+    "index.py": {
+      "maxDuration": 60,
+      "includeFiles": "backend/**"
     }
   },
   "rewrites": [

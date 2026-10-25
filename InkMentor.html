@@ -245,9 +245,15 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-off
       if (res.ok) {
         hideNotice();
       } else {
-        console.warn('[Serverless Wakeup] /api/health returned HTTP ' + res.status);
+        var errDetail = '';
+        try {
+          var data = await res.json();
+          errDetail = data.detail || data.message || data.error || '';
+        } catch (_) {}
+        console.warn('[Serverless Wakeup] /api/health returned HTTP ' + res.status + (errDetail ? ' (' + errDetail + ')' : ''));
         if (attempts >= 4) {
-          showNotice('Server starting up (attempt ' + attempts + ')… Check Vercel logs if delayed');
+          var extra = errDetail ? ' [' + errDetail + ']' : '';
+          showNotice('Server starting up (attempt ' + attempts + ')' + extra + '… Check Vercel logs if delayed');
         } else {
           showNotice('Waking up the server…');
         }
