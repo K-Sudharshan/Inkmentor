@@ -37,9 +37,8 @@ async def lifespan(app: FastAPI):
     # Verify required environment variables on startup unless explicitly in test mode
     if os.environ.get("TEST_MODE") != "true":
         validate_llm_env()
-    from backend.verify import warm_sympy_worker_pool, shutdown_sympy_worker_pool
-    warm_sympy_worker_pool()
     yield
+    from backend.verify import shutdown_sympy_worker_pool
     shutdown_sympy_worker_pool()
 
 
@@ -67,11 +66,35 @@ app.add_middleware(
 )
 
 
-HTML_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "InkMentor.html"))
+# Static paths for local development and fallback serving
+PUBLIC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "public"))
+HTML_PATH = os.path.join(PUBLIC_DIR, "index.html")
+if not os.path.exists(HTML_PATH):
+    HTML_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "InkMentor.html"))
+
+FONTS_DIR = os.path.join(PUBLIC_DIR, "fonts")
+if not os.path.exists(FONTS_DIR):
+    FONTS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "fonts"))
+
+
+def get_client_ip(req: Request) -> str:
+    """Resolves client IP, trusting proxy forwarded headers only when TRUST_PROXY_HEADERS is true."""
+    trust_proxy = os.environ.get("TRUST_PROXY_HEADERS", "false").lower() in ("true", "1", "yes")
+    if trust_proxy:
+        forwarded = req.headers.get("x-forwarded-for")
+        if forwarded:
+            return forwarded.split(",")[0].strip()
+        real_ip = req.headers.get("x-real-ip")
+        if real_ip:
+            return real_ip.strip()
+    if req.client and req.client.host:
+        return req.client.host
+    return "127.0.0.1"
 
 
 @app.get("/")
 @app.get("/InkMentor.html")
+@app.get("/index.html")
 async def serve_index():
     if os.path.exists(HTML_PATH):
         return FileResponse(
@@ -85,11 +108,8 @@ async def serve_index():
         )
     return JSONResponse(
         status_code=404,
-        content={"detail": "InkMentor.html not found"},
+        content={"detail": "index.html not found"},
     )
-
-
-FONTS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "fonts"))
 
 
 @app.api_route("/fonts/{font_name}", methods=["GET", "HEAD"])
@@ -113,8 +133,64 @@ async def serve_font(font_name: str):
 
 
 @app.get("/api/health")
-async def health_check() -> Dict[str, str]:
-    return {"status": "ok"}
+async def health_check(request: Request) -> Dict[str, Any]:
+    """Fast health check: returns ok and flags without external API calls."""
+    if os.environ.get("TEST_MODE") == "true" and not request.query_params.get("verbose"):
+        return {"status": "ok"}
+
+    from backend.memory import _SEEDED_PAGES_CACHE
+    gemini_key = bool(os.environ.get("LLM_API_KEY", "").strip())
+    groq_key = bool(os.environ.get("GROQ_API_KEY", "").strip())
+    tts_key = bool((os.environ.get("TTS_API_KEY") or os.environ.get("LLM_API_KEY") or "").strip())
+    memory_loaded = bool(_SEEDED_PAGES_CACHE is not None and len(_SEEDED_PAGES_CACHE) > 0)
+    gemini_disabled = os.environ.get("TTS_DISABLE_GEMINI", "false").lower() in ("true", "1", "yes")
+    groq_disabled = os.environ.get("TTS_DISABLE_GROQ", "false").lower() in ("true", "1", "yes")
+
+    return {
+        "status": "ok",
+        "keys": {
+            "gemini": gemini_key,
+            "groq": groq_key,
+            "tts_gemini": tts_key,
+        },
+        "memory_index_loaded": memory_loaded,
+        "tts_disabled": {
+            "gemini": gemini_disabled,
+            "groq": groq_disabled,
+        },
+    }
+
+
+@app.get("/api/health/deep")
+async def deep_health_check() -> Dict[str, Any]:
+    """Optional deep health check: makes 1 minimal Gemini call to verify key and model connectivity."""
+    enabled = os.environ.get("ENABLE_DEEP_HEALTH", "false").lower() in ("true", "1", "yes")
+    if not enabled:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Deep health check is disabled. Set ENABLE_DEEP_HEALTH=true to enable.",
+        )
+    from backend.llm import call_llm
+    import time
+    t0 = time.time()
+    try:
+        resp = await asyncio.to_thread(call_llm, "ping", "Reply with pong", 0.0)
+        dur_ms = round((time.time() - t0) * 1000.0, 1)
+        return {
+            "status": "ok",
+            "gemini": "connected",
+            "latency_ms": dur_ms,
+            "model": os.environ.get("LLM_MODEL", "gemini-2.5-flash"),
+        }
+    except Exception as exc:
+        err_msg = str(exc)
+        key = os.environ.get("LLM_API_KEY", "").strip()
+        if key and key in err_msg:
+            err_msg = err_msg.replace(key, "[REDACTED]")
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Deep health verification failed: {err_msg}",
+        )
 
 
 logger = logging.getLogger("inkmentor.api")
@@ -239,11 +315,7 @@ async def retrieve_endpoint(request: RetrieveRequest) -> RetrieveResponse:
 
 @app.post("/api/tts")
 async def tts_endpoint(request: TTSRequest, req: Request):
-    client_ip = "127.0.0.1"
-    if req.headers.get("x-forwarded-for"):
-        client_ip = req.headers["x-forwarded-for"].split(",")[0].strip()
-    elif req.client and req.client.host:
-        client_ip = req.client.host
+    client_ip = get_client_ip(req)
     try:
         wav_bytes = await asyncio.to_thread(
             generate_tts_wav,
@@ -324,6 +396,22 @@ async def tts_status_endpoint() -> TTSStatusResponse:
         voice=voice if configured else None,
         rate_per_min=rate,
     )
+
+
+@app.get("/{file_name:path}")
+async def serve_static_fallback(file_name: str):
+    """Local development static asset fallback route (CDN handles this in Vercel production)."""
+    if file_name.startswith("api/"):
+        raise HTTPException(status_code=404, detail="Not found")
+    target = os.path.abspath(os.path.join(PUBLIC_DIR, file_name))
+    if not os.path.isfile(target):
+        root_target = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", file_name))
+        if os.path.isfile(root_target):
+            target = root_target
+    if os.path.isfile(target):
+        media_type = "application/json" if file_name.endswith(".json") else "text/plain"
+        return FileResponse(target, media_type=media_type)
+    raise HTTPException(status_code=404, detail=f"File {file_name} not found")
 
 
 

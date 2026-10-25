@@ -7,12 +7,11 @@ import time
 import wave
 from collections import OrderedDict
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeoutError
+import tempfile
 from typing import Dict, List, Optional, Set, Tuple
 
-from google import genai
-from google.genai import types
-
 logger = logging.getLogger(__name__)
+
 
 # Constants and Defaults
 DEFAULT_TTS_MODEL = "gemini-3.8-flash-tts"
@@ -389,8 +388,11 @@ def get_wav_duration(wav_bytes: bytes) -> float:
     return max(0.0, (len(wav_bytes) - 44) / float(SAMPLE_RATE * CHANNELS * SAMPWIDTH))
 
 
-AUDIO_CACHE_DIR = os.path.join(os.path.dirname(__file__), ".cache", "audio")
-os.makedirs(AUDIO_CACHE_DIR, exist_ok=True)
+AUDIO_CACHE_DIR = os.path.join(tempfile.gettempdir(), "inkmentor_audio_cache")
+try:
+    os.makedirs(AUDIO_CACHE_DIR, exist_ok=True)
+except Exception:
+    pass
 
 
 def get_cache_key(model: str, voice: str, text: str, direction: str = "") -> str:
@@ -544,6 +546,9 @@ def synthesize_speech_gemini(
     if not api_key:
         raise RuntimeError("Missing required environment variable: LLM_API_KEY or TTS_API_KEY")
 
+    from google import genai
+    from google.genai import types
+
     gemini_voice = voice_name if voice_name in ("Puck", "Charon", "Kore", "Fenrir", "Aoede") else DEFAULT_TTS_VOICE
     client = genai.Client(api_key=api_key)
     config = types.GenerateContentConfig(
@@ -616,6 +621,9 @@ def synthesize_speech_chain(
     timeout_groq = float(os.environ.get("TTS_TIMEOUT_GROQ_MS", "4000")) / 1000.0
     total_budget = float(os.environ.get("TTS_TOTAL_BUDGET_MS", "7000")) / 1000.0
 
+    disable_gemini = os.environ.get("TTS_DISABLE_GEMINI", "false").lower() in ("true", "1", "yes")
+    disable_groq = os.environ.get("TTS_DISABLE_GROQ", "false").lower() in ("true", "1", "yes")
+
     chain_start = time.time()
     attempts = 0
     last_reason = "NO_PROVIDERS"
@@ -628,6 +636,16 @@ def synthesize_speech_chain(
             last_reason = "TOTAL_BUDGET_EXCEEDED"
             logger.warning(f"TTS chain total budget ({total_budget:.1f}s) exceeded before trying {prov}")
             break
+
+        if prov == "gemini" and disable_gemini:
+            logger.info("Skipping gemini TTS (TTS_DISABLE_GEMINI=true)")
+            last_reason = "DISABLED_GEMINI"
+            continue
+
+        if prov == "groq" and disable_groq:
+            logger.info("Skipping groq TTS (TTS_DISABLE_GROQ=true)")
+            last_reason = "DISABLED_GROQ"
+            continue
 
         if not circuit_breaker.is_available(prov):
             logger.info(f"Skipping {prov} TTS (circuit breaker open)")

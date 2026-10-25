@@ -126,6 +126,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-off
 .wv i{width:3px;border-radius:2px;background:linear-gradient(#FFB347,#FF5E7E);height:5px;animation:wb .7s ease-in-out infinite alternate}
 .wv i:nth-child(2){animation-delay:.15s}.wv i:nth-child(3){animation-delay:.3s}.wv i:nth-child(4){animation-delay:.1s}.wv i:nth-child(5){animation-delay:.25s}
 @keyframes wb{to{height:20px}}
+@keyframes ai-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+#server-wakeup-toast{position:fixed;left:50%;top:calc(20px + env(safe-area-inset-top,0px));transform:translate(-50%,-20px);opacity:0;padding:8px 18px;border-radius:999px;font-size:13px;font-weight:500;color:#FFA23A;border:1px solid rgba(255,162,58,.35);background:rgba(26,26,36,.92);box-shadow:0 4px 16px rgba(0,0,0,.4);backdrop-filter:blur(8px);display:none;align-items:center;gap:8px;z-index:9999;transition:all .3s ease;pointer-events:none}
+#server-wakeup-toast.show{display:flex;opacity:1;transform:translate(-50%,0)}
 #toast{position:fixed;left:50%;top:calc(18px + env(safe-area-inset-top,0px));transform:translate(-50%,-20px);opacity:0;padding:10px 18px;border-radius:999px;transition:.35s;z-index:30;pointer-events:none;max-width:90%}
 #toast.on{opacity:1;transform:translate(-50%,0)}
 #scrim{display:none}
@@ -208,7 +211,48 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-off
 </main>
 </div>
 <div id="toast" class="glass" role="status"></div>
+<div id="server-wakeup-toast" class="glass" role="status"><span style="display:inline-block;width:12px;height:12px;border:2px solid rgba(255,162,58,.3);border-top-color:#FFA23A;border-radius:50%;animation:ai-spin 1s linear infinite"></span><span>Waking up the server…</span></div>
 <script>
+// --- Serverless Wakeup Health Check ---
+(function initServerWakeupCheck() {
+  var backoffMs = 1000;
+  var maxBackoff = 8000;
+  function getToast() { return document.getElementById('server-wakeup-toast'); }
+  function showNotice() { var el = getToast(); if (el) el.classList.add('show'); }
+  function hideNotice() { var el = getToast(); if (el) el.classList.remove('show'); }
+
+  async function checkHealth() {
+    var timer = setTimeout(showNotice, 3000);
+    try {
+      var res = await fetch((window.API_BASE || '') + '/api/health');
+      clearTimeout(timer);
+      if (res.ok) {
+        hideNotice();
+      } else {
+        showNotice();
+        retry();
+      }
+    } catch (e) {
+      clearTimeout(timer);
+      showNotice();
+      retry();
+    }
+  }
+
+  function retry() {
+    setTimeout(function() {
+      backoffMs = Math.min(backoffMs * 1.5, maxBackoff);
+      checkHealth();
+    }, backoffMs);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', checkHealth);
+  } else {
+    checkHealth();
+  }
+})();
+
 // --- Core Elements & State ---
 var $ = function(s) { return document.querySelector(s); };
 var app = $('#app'), paper = $('#paper');
@@ -260,15 +304,9 @@ window.SPECULATIVE_SOLVE = SPECULATIVE_SOLVE;
 var TTS_PREFETCH_CONCURRENCY = 3;
 window.TTS_PREFETCH_CONCURRENCY = TTS_PREFETCH_CONCURRENCY;
 
-var API_BASE = (function() {
-  if (typeof window === 'undefined' || !window.location) return '';
-  if (window.location.protocol === 'file:') return 'http://127.0.0.1:8000';
-  if (window.location.port !== '8000') {
-    return window.location.protocol + '//' + (window.location.hostname || '127.0.0.1') + ':8000';
-  }
-  return '';
-})();
+var API_BASE = '';
 window.API_BASE = API_BASE;
+
 
 // --- Performance & Stage Latency Tracking (Step 1 Instrumentation) ---
 window.perfMarks = {

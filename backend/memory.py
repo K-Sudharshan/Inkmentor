@@ -13,21 +13,37 @@ SEEDS_PATH = os.path.join(os.path.dirname(__file__), "seed_embeddings.json")
 _SEEDED_PAGES_CACHE: Optional[List[Dict[str, Any]]] = None
 
 
+def _find_seeds_path() -> Optional[str]:
+    candidate_paths = [
+        SEEDS_PATH,
+        os.path.join(os.getcwd(), "backend", "seed_embeddings.json"),
+        os.path.join(os.getcwd(), "seed_embeddings.json"),
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "backend", "seed_embeddings.json"),
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "public", "seed_embeddings.json"),
+    ]
+    for p in candidate_paths:
+        if os.path.isfile(p):
+            return p
+    return None
+
+
 def get_seed_pages() -> List[Dict[str, Any]]:
     """Loads and caches the 7 precomputed seeded page embeddings."""
     global _SEEDED_PAGES_CACHE
     if _SEEDED_PAGES_CACHE is None:
-        if os.path.exists(SEEDS_PATH):
+        target_path = _find_seeds_path()
+        if target_path and os.path.exists(target_path):
             try:
-                with open(SEEDS_PATH, "r", encoding="utf-8") as f:
+                with open(target_path, "r", encoding="utf-8") as f:
                     _SEEDED_PAGES_CACHE = json.load(f)
             except Exception as e:
                 logger.error(f"Failed to read seed_embeddings.json: {e}")
                 _SEEDED_PAGES_CACHE = []
         else:
-            logger.warning(f"seed_embeddings.json not found at {SEEDS_PATH}")
+            logger.warning(f"seed_embeddings.json not found (searched: {SEEDS_PATH})")
             _SEEDED_PAGES_CACHE = []
     return _SEEDED_PAGES_CACHE
+
 
 
 def cosine_similarity(v1: Sequence[float], v2: Sequence[float]) -> float:

@@ -424,8 +424,11 @@ def verify_with_timing(
             timing["total_ms"] = round((time.time() - t0) * 1000.0, 2)
             return False, "verification timed out", None, timing
         except Exception as e:
-            timing["total_ms"] = round((time.time() - t0) * 1000.0, 2)
-            return False, f"Verification failed to run: {e}", None, timing
+            logger.warning(f"Worker pool query failed ({e}); falling back to isolated subprocess")
+            try:
+                pool.stop()
+            except Exception:
+                pass
 
     # Fallback: one-off isolated subprocess
     try:

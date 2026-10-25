@@ -287,6 +287,17 @@ backend\.venv\Scripts\python -m pytest backend
 | **Confirm-to-Stroke Latency** | ~7.8s – 45.7s | **~0.0s – 1.7s** | **Near Instant** (Speculative Solve) |
 | **TTS Step Transitions** | 860 ms pause per step | **0 ms pause** | **Seamless** (Batch Concurrency 3) |
 | **Recognition Image Payload** | 1024px max side | **768px max side** | **~44% smaller payload** |
-| **Pytest Unit Test Suite** | 44/44 passing | **44/44 passing** | **100% contract compliance** |
+| **Pytest Unit Test Suite** | 44/44 passing | **60/60 passing** | **100% contract compliance** |
+
+21. **Vercel Hobby Serverless Deployment Architecture:**
+    Adapted for zero-cost deployment on Vercel's Hobby (Free) tier as a single FastAPI serverless function paired with Edge static file delivery:
+    - **Edge Static Delivery (`public/`):** Frontend `public/index.html`, handwriting fonts (`Caveat-Regular.ttf`), and centerline/glyph databases are served directly from Vercel's global CDN Edge with zero serverless compute cost and 0ms function cold start.
+    - **Single Serverless Function (`api/index.py`):** Routes all `/api/*` requests via `vercel.json` rewrites to a lean FastAPI application.
+    - **Read-Only Hardened Filesystem:** Relocates temporary audio disk caches strictly to `/tmp/inkmentor_audio_cache` via standard `tempfile.gettempdir()`, preventing crashes on read-only container filesystems.
+    - **Lazy Initialization:** SymPy worker pools, seed embeddings, and API clients initialize on-demand with automatic fallback to isolated subprocesses with hard timeouts.
+    - **Proxy Client IP Detection (`TRUST_PROXY_HEADERS=true`):** Respects Vercel's trusted `x-forwarded-for` and `x-real-ip` headers for sliding-window rate limiting.
+    - **Provider Kill Switches (`TTS_DISABLE_GEMINI=true`, `TTS_DISABLE_GROQ=true`):** Bypasses exhausted providers with 0 network calls and 0 cost directly from the dashboard.
+    - **Unobtrusive Serverless Wakeup Notice:** Automatically detects cold-start delays >3s on page load via `/api/health` and displays an amber status pill until warm.
+    - **Local Development:** Run `python -m uvicorn api.index:app --port 8000 --reload` (or `backend.main:app`) to serve both the static frontend and API locally. See [DEPLOY.md](file:///c:/Users/durga/OneDrive/Desktop/inkmentor/DEPLOY.md) for full deployment instructions.
 
 
