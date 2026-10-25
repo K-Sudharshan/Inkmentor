@@ -1,4 +1,4 @@
-from typing import List, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional
 from pydantic import BaseModel, Field
 
 TaskType = Literal["differentiate", "integrate", "solve", "simplify", "factor", "expand"]
@@ -15,7 +15,7 @@ class SolveRequest(BaseModel):
 
 
 class Step(BaseModel):
-    latex: str
+    latex: Optional[str] = None
     write: str
     narration: str
 
@@ -45,6 +45,7 @@ class SolveResponse(BaseModel):
     final_answer_sympy: Optional[str] = None
     cites_pages: List[int] = Field(default_factory=list)
     error: Optional[str] = None
+    timing: Optional[Dict[str, Any]] = None
 
 
 class RecognizeRequest(BaseModel):
@@ -58,6 +59,7 @@ class RecognizeResponse(BaseModel):
     question_text: str
     needs_confirmation: Literal[True] = True
     note: str = ""
+    timing: Optional[Dict[str, Any]] = None
 
 
 class RetrievePageItem(BaseModel):
@@ -83,5 +85,22 @@ class RetrievedPageMatch(BaseModel):
 class RetrieveResponse(BaseModel):
     matches: List[RetrievedPageMatch]
     top_match: Optional[RetrievedPageMatch] = None
+
+
+class TTSRequest(BaseModel):
+    text: str = Field(..., description="Narration text to speak (1 to 300 characters)")
+    voice: Optional[str] = Field(default=None, description="Optional TTS voice override")
+    position: Optional[Literal["first", "middle", "last"]] = Field(
+        default="middle",
+        description="Position of the narration step: first, middle, or last"
+    )
+
+
+class TTSStatusResponse(BaseModel):
+    configured: bool
+    model: Optional[str] = None
+    voice: Optional[str] = None
+    rate_per_min: int = 40
+
 
 

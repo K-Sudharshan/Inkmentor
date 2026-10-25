@@ -269,15 +269,165 @@ def run_verification_logic(task_type: str, variable: str, expression_sympy: str,
         return False, f"Verification computation error: {e}", None
 
 
-def verify(task_type: str, variable: str, expression_sympy: str, final_answer_sympy: str, timeout_seconds: float = 10.0) -> Tuple[bool, Optional[str], Optional[str]]:
-    """Runs verification inside an isolated subprocess with a hard cross-platform timeout."""
+import atexit
+import logging
+import os
+import queue
+import threading
+import time
+from typing import Any, Dict, List, Optional, Set, Tuple
+
+logger = logging.getLogger("inkmentor.verify")
+USE_SYMPY_WORKER_POOL = os.getenv("USE_SYMPY_WORKER_POOL", "true").lower() in ("true", "1", "yes")
+
+
+class SympyWorkerPool:
+    """Persistent, isolated SymPy worker process to avoid repeating Python & SymPy startup."""
+
+    def __init__(self):
+        self._lock = threading.Lock()
+        self._proc: Optional[subprocess.Popen] = None
+        self._queue: queue.Queue = queue.Queue()
+        self._warmed = False
+
+    def _reader(self, proc: subprocess.Popen, q: queue.Queue) -> None:
+        try:
+            for line in proc.stdout:
+                line_str = line.strip()
+                if line_str:
+                    q.put(line_str)
+        except Exception:
+            pass
+
+    def start(self) -> None:
+        self.stop()
+        cmd = [sys.executable, "-m", "backend.verify", "--worker"]
+        self._proc = subprocess.Popen(
+            cmd,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            bufsize=1,
+        )
+        self._queue = queue.Queue()
+        t = threading.Thread(target=self._reader, args=(self._proc, self._queue), daemon=True)
+        t.start()
+        # Wait for READY token from worker
+        try:
+            ready_msg = self._queue.get(timeout=15.0)
+            if ready_msg != "READY":
+                raise RuntimeError(f"Unexpected worker startup message: {ready_msg}")
+            self._warmed = True
+        except queue.Empty:
+            self.stop()
+            raise TimeoutError("SymPy worker failed to become ready within 15 seconds")
+
+    def stop(self) -> None:
+        if self._proc is not None:
+            try:
+                self._proc.kill()
+                self._proc.wait(timeout=1.0)
+            except Exception:
+                pass
+            self._proc = None
+            self._warmed = False
+
+    def query(self, payload: dict, timeout_seconds: float) -> dict:
+        with self._lock:
+            if self._proc is None or self._proc.poll() is not None:
+                self.start()
+
+            # Drain any stale messages from queue
+            while not self._queue.empty():
+                try:
+                    self._queue.get_nowait()
+                except queue.Empty:
+                    break
+
+            t_start = time.time()
+            try:
+                self._proc.stdin.write(json.dumps(payload) + "\n")
+                self._proc.stdin.flush()
+                resp_line = self._queue.get(timeout=timeout_seconds)
+                if (time.time() - t_start) > timeout_seconds:
+                    raise queue.Empty()
+                return json.loads(resp_line)
+            except queue.Empty:
+                self.stop()
+                raise TimeoutError("verification timed out")
+            except Exception as e:
+                self.stop()
+                raise RuntimeError(f"SymPy worker query failed: {e}") from e
+
+
+_global_pool: Optional[SympyWorkerPool] = None
+_pool_lock = threading.Lock()
+
+
+def get_worker_pool() -> SympyWorkerPool:
+    global _global_pool
+    with _pool_lock:
+        if _global_pool is None:
+            _global_pool = SympyWorkerPool()
+        return _global_pool
+
+
+def warm_sympy_worker_pool() -> None:
+    if USE_SYMPY_WORKER_POOL:
+        pool = get_worker_pool()
+        pool.start()
+        logger.info("SymPy worker pool ready (warm)")
+
+
+def shutdown_sympy_worker_pool() -> None:
+    global _global_pool
+    with _pool_lock:
+        if _global_pool is not None:
+            _global_pool.stop()
+            _global_pool = None
+
+
+atexit.register(shutdown_sympy_worker_pool)
+
+
+def verify_with_timing(
+    task_type: str,
+    variable: str,
+    expression_sympy: str,
+    final_answer_sympy: str,
+    timeout_seconds: float = 10.0,
+) -> Tuple[bool, Optional[str], Optional[str], Dict[str, float]]:
+    """Runs verification with execution stage timing in ms.
+    Uses pre-warmed SympyWorkerPool if USE_SYMPY_WORKER_POOL is True,
+    otherwise falls back to isolated one-off subprocess."""
     payload = {
         "task_type": task_type,
         "variable": variable,
         "expression_sympy": expression_sympy,
         "final_answer_sympy": final_answer_sympy,
     }
+    t0 = time.time()
+    timing: Dict[str, float] = {"total_ms": 0.0, "startup_import_ms": 0.0, "calc_ms": 0.0}
 
+    if USE_SYMPY_WORKER_POOL:
+        try:
+            pool = get_worker_pool()
+            output_data = pool.query(payload, timeout_seconds=timeout_seconds)
+            total_ms = round((time.time() - t0) * 1000.0, 2)
+            calc_ms = float(output_data.get("calc_ms", 0.0))
+            timing["total_ms"] = total_ms
+            timing["calc_ms"] = round(calc_ms, 2)
+            timing["startup_import_ms"] = max(0.0, round(total_ms - calc_ms, 2))
+            return output_data["verified"], output_data.get("error"), output_data.get("ground_truth"), timing
+        except TimeoutError:
+            timing["total_ms"] = round((time.time() - t0) * 1000.0, 2)
+            return False, "verification timed out", None, timing
+        except Exception as e:
+            timing["total_ms"] = round((time.time() - t0) * 1000.0, 2)
+            return False, f"Verification failed to run: {e}", None, timing
+
+    # Fallback: one-off isolated subprocess
     try:
         proc = subprocess.run(
             [sys.executable, "-m", "backend.verify"],
@@ -286,31 +436,103 @@ def verify(task_type: str, variable: str, expression_sympy: str, final_answer_sy
             capture_output=True,
             timeout=timeout_seconds,
         )
+        total_ms = round((time.time() - t0) * 1000.0, 2)
+        timing["total_ms"] = total_ms
+
         if proc.returncode != 0:
             err_msg = proc.stderr.strip() or f"Process exited with code {proc.returncode}"
-            return False, f"Verification process error: {err_msg}", None
+            return False, f"Verification process error: {err_msg}", None, timing
 
         output_data = json.loads(proc.stdout)
-        return output_data["verified"], output_data.get("error"), output_data.get("ground_truth")
+        calc_ms = float(output_data.get("calc_ms", 0.0))
+        timing["calc_ms"] = round(calc_ms, 2)
+        timing["startup_import_ms"] = max(0.0, round(total_ms - calc_ms, 2))
+        return output_data["verified"], output_data.get("error"), output_data.get("ground_truth"), timing
 
     except subprocess.TimeoutExpired:
-        return False, "verification timed out", None
+        timing["total_ms"] = round((time.time() - t0) * 1000.0, 2)
+        return False, "verification timed out", None, timing
     except Exception as e:
-        return False, f"Verification failed to run: {e}", None
+        timing["total_ms"] = round((time.time() - t0) * 1000.0, 2)
+        return False, f"Verification failed to run: {e}", None, timing
 
 
-# CLI entry point for isolated subprocess execution
+def verify(
+    task_type: str,
+    variable: str,
+    expression_sympy: str,
+    final_answer_sympy: str,
+    timeout_seconds: float = 10.0,
+) -> Tuple[bool, Optional[str], Optional[str]]:
+    """Runs verification with a hard cross-platform timeout."""
+    verified, err, truth, _ = verify_with_timing(
+        task_type=task_type,
+        variable=variable,
+        expression_sympy=expression_sympy,
+        final_answer_sympy=final_answer_sympy,
+        timeout_seconds=timeout_seconds,
+    )
+    return verified, err, truth
+
+
+# CLI and Worker entry point
 if __name__ == "__main__":
-    try:
-        data = json.loads(sys.stdin.read())
-        verified, error, truth = run_verification_logic(
-            task_type=data["task_type"],
-            variable=data.get("variable", "x"),
-            expression_sympy=data["expression_sympy"],
-            final_answer_sympy=data["final_answer_sympy"],
-        )
-        sys.stdout.write(json.dumps({"verified": verified, "error": error, "ground_truth": truth}))
+    if "--worker" in sys.argv:
+        # Pre-warm complete: SymPy and grammar definitions are already loaded
+        sys.stdout.write("READY\n")
+        sys.stdout.flush()
+
+        for line in sys.stdin:
+            line_content = line.strip()
+            if not line_content:
+                continue
+            t_calc_start = time.time()
+            try:
+                data = json.loads(line_content)
+                verified, error, truth = run_verification_logic(
+                    task_type=data["task_type"],
+                    variable=data.get("variable", "x"),
+                    expression_sympy=data["expression_sympy"],
+                    final_answer_sympy=data["final_answer_sympy"],
+                )
+                t_calc_end = time.time()
+                calc_ms = round((t_calc_end - t_calc_start) * 1000.0, 2)
+                sys.stdout.write(json.dumps({
+                    "verified": verified,
+                    "error": error,
+                    "ground_truth": truth,
+                    "calc_ms": calc_ms,
+                }) + "\n")
+                sys.stdout.flush()
+            except Exception as exc:
+                sys.stdout.write(json.dumps({
+                    "verified": False,
+                    "error": f"Worker execution error: {exc}",
+                    "ground_truth": None,
+                    "calc_ms": 0.0,
+                }) + "\n")
+                sys.stdout.flush()
         sys.exit(0)
-    except Exception as exc:
-        sys.stderr.write(str(exc))
-        sys.exit(1)
+    else:
+        # One-off isolated execution
+        try:
+            data = json.loads(sys.stdin.read())
+            t_calc_start = time.time()
+            verified, error, truth = run_verification_logic(
+                task_type=data["task_type"],
+                variable=data.get("variable", "x"),
+                expression_sympy=data["expression_sympy"],
+                final_answer_sympy=data["final_answer_sympy"],
+            )
+            t_calc_end = time.time()
+            calc_ms = round((t_calc_end - t_calc_start) * 1000.0, 2)
+            sys.stdout.write(json.dumps({
+                "verified": verified,
+                "error": error,
+                "ground_truth": truth,
+                "calc_ms": calc_ms,
+            }))
+            sys.exit(0)
+        except Exception as exc:
+            sys.stderr.write(str(exc))
+            sys.exit(1)

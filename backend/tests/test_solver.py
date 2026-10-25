@@ -423,3 +423,94 @@ def test_14_good_persona_narration_passes():
     assert mock_llm.call_count == 1
     assert len(resp.steps) == 3
 
+
+def test_15_identical_consecutive_write_lines_rejected_and_retried():
+    """Identical consecutive write lines must be rejected by validator and retried."""
+    bad_payload = {
+        "task_type": "factor",
+        "variable": "x",
+        "expression_sympy": "x**2 + 6*x + 6",
+        "steps": [
+            {
+                "latex": "x^2 + 6x + 6",
+                "write": "x^2 + 6x + 6",
+                "narration": "Alright, let's look at this quadratic expression to see how it factors.",
+            },
+            {
+                "latex": "(x + 3)^2 - 3",
+                "write": "(x + 3)^2 - 3",
+                "narration": "Completing the square gives a neat binomial squared minus three.",
+            },
+            {
+                "latex": "(x + 3 - \\sqrt{3})(x + 3 + \\sqrt{3})",
+                "write": "(x + 3 + sqrt(3))(x + 3 - sqrt(3))",
+                "narration": "Treating that constant as a square lets us apply difference of squares.",
+            },
+            {
+                "latex": "(x + 3 + \\sqrt{3})(x + 3 - \\sqrt{3})",
+                "write": "(x + 3 + sqrt(3))(x + 3 - sqrt(3))",  # Duplicate identical write!
+                "narration": "And that is our fully factored form, ready for whatever comes next.",
+            },
+        ],
+        "final_answer_latex": "(x + 3 + \\sqrt{3})(x + 3 - \\sqrt{3})",
+        "final_answer_sympy": "(x + 3 + sqrt(3))*(x + 3 - sqrt(3))",
+        "cites_pages": [],
+    }
+
+    good_payload = {
+        "task_type": "factor",
+        "variable": "x",
+        "expression_sympy": "x**2 + 6*x + 6",
+        "steps": [
+            {
+                "latex": "x^2 + 6x + 6",
+                "write": "x^2 + 6x + 6",
+                "narration": "Alright, let's look at this quadratic expression to see how it factors.",
+            },
+            {
+                "latex": "(x + 3)^2 - 3",
+                "write": "(x + 3)^2 - 3",
+                "narration": "Completing the square gives a neat binomial squared minus three.",
+            },
+            {
+                "latex": "(x + 3 + \\sqrt{3})(x + 3 - \\sqrt{3})",
+                "write": "(x + 3 + sqrt(3))(x + 3 - sqrt(3))",
+                "narration": "And that gives our final factored answer cleanly.",
+            },
+        ],
+        "final_answer_latex": "(x + 3 + \\sqrt{3})(x + 3 - \\sqrt{3})",
+        "final_answer_sympy": "(x + 3 + sqrt(3))*(x + 3 - sqrt(3))",
+        "cites_pages": [],
+    }
+
+    mock_llm = MagicMock(side_effect=[json.dumps(bad_payload), json.dumps(good_payload)])
+    req = SolveRequest(question="Factor x^2 + 6x + 6")
+
+    resp = solve_problem(req, llm_func=mock_llm)
+
+    assert resp.verified is True
+    assert resp.attempts == 2
+    assert mock_llm.call_count == 2
+    # Check that retry feedback mentioned repeating the previous line
+    retry_prompt = mock_llm.call_args_list[1][0][0]
+    assert "must not repeat the previous line" in retry_prompt
+
+
+def test_16_validate_llm_steps_direct_identical_consecutive():
+    """validate_llm_steps directly catches consecutive identical write lines."""
+    from backend.schemas import Step
+    from backend.solver import validate_llm_steps
+
+    step1 = Step(latex="x^2 + 6x + 6", write="x^2 + 6x + 6", narration="Alright, let's start with the given expression.")
+    step2 = Step(latex="(x + 3)^2 - 3", write="(x + 3)^2 - 3", narration="Completing the square gives a binomial squared.")
+    step3_dup = Step(latex="(x + 3)^2 - 3", write="(x + 3)^2 - 3", narration="And that is our completed square expression.")
+    step3_distinct = Step(latex="(x + 3 + \\sqrt{3})(x + 3 - \\sqrt{3})", write="(x + 3 + sqrt(3))(x + 3 - sqrt(3))", narration="And that is our factored expression.")
+
+    err = validate_llm_steps([step1, step2, step3_dup])
+    assert err is not None
+    assert "must not repeat the previous line" in err
+
+    ok = validate_llm_steps([step1, step2, step3_distinct])
+    assert ok is None
+
+

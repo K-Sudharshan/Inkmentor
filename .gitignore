@@ -47,3 +47,5 @@ desktop.ini
 *.log
 scratch/
 browser/
+.cache/
+backend/.cache/

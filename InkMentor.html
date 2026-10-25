@@ -6,7 +6,39 @@
 <title>InkMentor</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Reenie+Beanie&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f2f2f7;--glass:rgba(255,255,255,.66);--gb:rgba(255,255,255,.8);--line:rgba(0,0,0,.07);--tx:#1c1c1e;--tx2:#6e6e73;--ac:#6b4ef0;--sh:0 12px 44px rgba(0,0,0,.10);--g:32px;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@font-face {
+  font-family: 'Caveat';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Caveat-Regular.ttf?v=2') format('truetype'),
+       url('fonts/Caveat-Regular.ttf?v=2') format('truetype');
+}
+@font-face {
+  font-family: 'Caveat';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/Caveat-Regular.ttf?v=2') format('truetype'),
+       url('fonts/Caveat-Regular.ttf?v=2') format('truetype');
+}
+@font-face {
+  font-family: 'Caveat';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/Caveat-Regular.ttf?v=2') format('truetype'),
+       url('fonts/Caveat-Regular.ttf?v=2') format('truetype');
+}
+@font-face {
+  font-family: 'Caveat';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/Caveat-Regular.ttf?v=2') format('truetype'),
+       url('fonts/Caveat-Regular.ttf?v=2') format('truetype');
+}
+:root{--bg:#f2f2f7;--glass:rgba(255,255,255,.66);--gb:rgba(255,255,255,.8);--line:rgba(0,0,0,.07);--tx:#1c1c1e;--tx2:#6e6e73;--ac:#6b4ef0;--sh:0 12px 44px rgba(0,0,0,.10);--g:32px;--ai-font:'Caveat','Reenie Beanie',cursive;--ai-font-size:calc(var(--g)*1.45);--ai-line-height:calc(var(--g)*1.65);--ai-glow:drop-shadow(0 0 3.5px rgba(255,94,126,0.28));--ai-dot-size:8px;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a0a0f;--glass:rgba(32,32,40,.62);--gb:rgba(255,255,255,.09);--line:rgba(255,255,255,.09);--tx:#f5f5f7;--tx2:#9a9aa3;--ac:#a99bff;--sh:0 12px 44px rgba(0,0,0,.55)}}
 :root[data-theme="dark"]{--bg:#0a0a0f;--glass:rgba(32,32,40,.62);--gb:rgba(255,255,255,.09);--line:rgba(255,255,255,.09);--tx:#f5f5f7;--tx2:#9a9aa3;--ac:#a99bff;--sh:0 12px 44px rgba(0,0,0,.55)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -58,21 +90,22 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-off
 #paper{flex:1;position:relative;border-radius:24px;overflow:hidden;background:#fff;background-image:linear-gradient(rgba(0,0,0,.2) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.2) 1px,transparent 1px);background-size:var(--g) var(--g);box-shadow:var(--sh),0 0 0 1px var(--line);color:#0b0b14;touch-action:none}
 #cv{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:crosshair;z-index:1}
 #ov{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;pointer-events:none;z-index:2}
-#notes{position:absolute;inset:0;padding:calc(var(--g)*2) var(--g);display:flex;flex-direction:column;align-items:flex-start;pointer-events:none;font:400 calc(var(--g)*1.9)/calc(var(--g)*2) 'Reenie Beanie',cursive;overflow:hidden;z-index:3}
-.ln{max-width:100%}.sp{height:calc(var(--g)*1.2);flex:none}
+#notes{position:absolute;inset:0;padding:calc(var(--g)*2) var(--g);display:flex;flex-direction:column;align-items:flex-start;pointer-events:none;font:400 var(--ai-font-size)/var(--ai-line-height) var(--ai-font);font-family:var(--ai-font);overflow:hidden;z-index:3}
+.ln{max-width:100%;font-family:var(--ai-font)}.sp{height:calc(var(--g)*1.2);flex:none}
 .ai{margin-left:var(--g);color:#FF5E7E;text-shadow:0 0 18px rgba(255,94,126,.35)}
 .ai-line-container{display:inline-block;position:relative;max-width:100%;vertical-align:middle}
-.ai-reenie-line{display:inline-block;font-family:'Reenie Beanie',cursive;font-size:calc(var(--g)*1.85);line-height:calc(var(--g)*1.95);white-space:nowrap;vertical-align:middle;background:linear-gradient(90deg,#FFA23A 0%,#FF5E7E 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 6px rgba(255,94,126,0.40))}
-.ai-pen-tip-dot{position:absolute;display:none;width:7px;height:7px;border-radius:50%;background:#FFA23A;border:1.5px solid #FF5E7E;box-shadow:0 0 8px #FFA23A, 0 0 14px rgba(255,94,126,0.6);pointer-events:none;z-index:5;transform:translate(-50%,-50%)}
+.ai-reenie-line{display:inline-block;font-family:var(--ai-font) !important;font-size:var(--ai-font-size);line-height:var(--ai-line-height);white-space:nowrap;vertical-align:middle;background:linear-gradient(90deg,#FFA23A 0%,#FF5E7E 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:var(--ai-glow)}
+.ai-pen-tip-dot{position:absolute;display:none;width:var(--ai-dot-size);height:var(--ai-dot-size);border-radius:50%;background:#FFA23A;border:1.5px solid #FF5E7E;box-shadow:0 0 8px #FFA23A, 0 0 14px rgba(255,94,126,0.6);pointer-events:none;z-index:5;transform:translate(-50%,-50%)}
 .math-line-svg{display:block;overflow:visible}
 .math-stroke{fill:none;stroke:url(#ai-ink-grad);stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 5px rgba(255,94,126,0.35))}
 .pen-tip{fill:#FFA23A;stroke:#FF5E7E;stroke-width:1.5;filter:drop-shadow(0 0 6px #FFA23A);pointer-events:none}
 .mk{pointer-events:auto;margin:calc(var(--g)*.5) 0 0 calc(var(--g)*1.5);font:inherit;color:#e8446a;opacity:0;transform:translateX(-8px);transition:.5s;visibility:hidden;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px}
 .mk.show{opacity:1;transform:none;visibility:visible}
-.math-sup{font-size:.60em;vertical-align:.38em;line-height:0;display:inline-block;font-weight:400;margin-right:.14em;-webkit-text-fill-color:transparent}
-.math-svg{display:inline-block;vertical-align:-0.32em;height:1.55em;width:auto;overflow:visible;fill:none;stroke:url(#ai-ink-grad);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;-webkit-text-fill-color:initial;filter:drop-shadow(0 0 6px rgba(255,94,126,0.40))}
+.math-sup{font-size:.58em;vertical-align:.44em;line-height:0;display:inline-block;font-weight:400;margin-right:.16em;-webkit-text-fill-color:transparent}
+.math-svg{display:inline-block;vertical-align:-0.30em;height:1.50em;width:auto;overflow:visible;fill:none;stroke:url(#ai-ink-grad);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;-webkit-text-fill-color:initial;filter:var(--ai-glow)}
 .ai .math-svg{stroke:url(#ai-ink-grad)}
-.math-diff{display:inline-block;margin-left:.22em}
+.math-diff{display:inline-block;margin-left:.24em}
+.math-delim{display:inline-block;font-size:0.94em;vertical-align:0.02em}
 #ring{position:absolute;border:2.5px solid var(--ac);border-radius:18px;opacity:0;transform:scale(1.04);transition:.4s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 24px color-mix(in srgb,var(--ac) 45%,transparent);pointer-events:none;z-index:4}
 #ring.on{opacity:1;transform:none}
 #confirm-panel{position:absolute;bottom:78px;left:50%;transform:translateX(-50%);width:min(460px,calc(100% - 32px));z-index:15;padding:16px;border-radius:20px;display:none;flex-direction:column;gap:10px;box-shadow:var(--sh)}
@@ -137,6 +170,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-off
 <header id="hd">
 <button class="ib" id="menu" aria-label="Toggle sidebar"><svg class="i"><use href="#sbr"/></svg></button>
 <div class="ttl"><b>Calculus</b><span id="pg"></span></div>
+<button id="clear-sol-btn" class="cp-btn cancel" title="Clear AI solution on this page" aria-label="Clear solution" style="display:none;padding:4px 12px;font-size:12px;height:30px;align-items:center;gap:4px;border-radius:999px;white-space:nowrap;margin-right:4px;">
+  <svg class="i" style="width:13px;height:13px;"><use href="#era"/></svg>Clear solution
+</button>
 <div class="tb glass" role="toolbar" aria-label="Drawing tools">
 <button class="ib on" data-t="pen" id="tool-pen" aria-label="Pen"><svg class="i"><use href="#pen"/></svg></button>
 <button class="ib" data-t="era" id="tool-era" aria-label="Eraser"><svg class="i"><use href="#era"/></svg></button>
@@ -206,48 +242,382 @@ var VOICE_PITCH = 1.08;
 window.VOICE_RATE = VOICE_RATE;
 window.VOICE_PITCH = VOICE_PITCH;
 
+// --- TTS Engine Constants ---
+// 'cloud': Server-side Gemini Text-to-Speech (with automatic fallback to browser voice)
+// 'browser': Browser native speechSynthesis
+var TTS_MODE = 'cloud';
+var TTS_PLAYBACK_RATE = 1.05;
+var TTS_MAX_WAIT_MS = 4000;
+window.TTS_MODE = TTS_MODE;
+window.TTS_PLAYBACK_RATE = TTS_PLAYBACK_RATE;
+window.TTS_MAX_WAIT_MS = TTS_MAX_WAIT_MS;
+
+// Optimization Flags & Latency Tuning Constants
+var RECOGNIZE_MAX_SIDE = 768;
+window.RECOGNIZE_MAX_SIDE = RECOGNIZE_MAX_SIDE;
+var SPECULATIVE_SOLVE = true;
+window.SPECULATIVE_SOLVE = SPECULATIVE_SOLVE;
+var TTS_PREFETCH_CONCURRENCY = 3;
+window.TTS_PREFETCH_CONCURRENCY = TTS_PREFETCH_CONCURRENCY;
+
+var API_BASE = (function() {
+  if (typeof window === 'undefined' || !window.location) return '';
+  if (window.location.protocol === 'file:') return 'http://127.0.0.1:8000';
+  if (window.location.port !== '8000') {
+    return window.location.protocol + '//' + (window.location.hostname || '127.0.0.1') + ':8000';
+  }
+  return '';
+})();
+window.API_BASE = API_BASE;
+
+// --- Performance & Stage Latency Tracking (Step 1 Instrumentation) ---
+window.perfMarks = {
+  circle_finished: 0,
+  recognize_sent: 0,
+  recognize_received: 0,
+  confirm_shown: 0,
+  solve_clicked: 0,
+  solve_received: 0,
+  first_step_visible: 0,
+  first_audio_started: 0
+};
+window.lastRunTimings = null;
+window.perfMarksReported = false;
+window.currentTraceId = '';
+window.serverTimings = {};
+
+function parseServerTiming(header) {
+  if (!header) return {};
+  var result = {};
+  var parts = header.split(',');
+  parts.forEach(function(part) {
+    var segs = part.trim().split(';');
+    var name = segs[0].trim();
+    var dur = null;
+    for (var i = 1; i < segs.length; i++) {
+      var kv = segs[i].trim().split('=');
+      if (kv[0] === 'dur' && kv[1]) {
+        dur = parseFloat(kv[1]);
+      }
+    }
+    result[name] = dur !== null ? dur : true;
+  });
+  return result;
+}
+
+function recordPerfMark(name, extra) {
+  var now = performance.now();
+  if (name === 'circle_finished') {
+    if (!window.currentTraceId) {
+      window.currentTraceId = 'trace_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+    }
+    window.perfMarks = {
+      trace_id: window.currentTraceId,
+      circle_finished: now,
+      crop_exported: 0,
+      recognize_sent: 0,
+      recognize_received: 0,
+      confirm_shown: 0,
+      solve_clicked: 0,
+      solve_sent: 0,
+      solve_received: 0,
+      first_step_created: 0,
+      first_stroke_painted: 0,
+      first_audio_started: 0,
+      step_audio: {}
+    };
+    window.serverTimings = {};
+    window.perfMarksReported = false;
+    return;
+  }
+  if (!window.perfMarks) {
+    window.currentTraceId = 'trace_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+    window.perfMarks = {
+      trace_id: window.currentTraceId,
+      step_audio: {}
+    };
+  }
+  if (name.startsWith('step_') && (name.endsWith('_audio_start') || name.endsWith('_audio_end'))) {
+    window.perfMarks[name] = now;
+  } else if (!window.perfMarks[name]) {
+    window.perfMarks[name] = now;
+  }
+  if (extra) {
+    if (!window.perfMarks.extra) window.perfMarks.extra = {};
+    window.perfMarks.extra[name] = extra;
+  }
+  if ((name === 'first_stroke_painted' || name === 'step_0_audio_start' || name === 'first_step_visible') && window.perfMarks && window.perfMarks.solve_received) {
+    reportRunTimings();
+  }
+}
+window.recordPerfMark = recordPerfMark;
+
+function reportRunTimings() {
+  if (window.perfMarksReported) return;
+  var m = window.perfMarks;
+  if (!m || !m.solve_clicked || !m.solve_received || (!m.first_stroke_painted && !m.first_step_visible)) return;
+  window.perfMarksReported = true;
+
+  var baseTime = m.circle_finished || m.solve_clicked;
+  var table = [];
+
+  function addStage(name, startMs, endMs, details) {
+    if (startMs && endMs && endMs >= startMs) {
+      table.push({
+        Stage: name,
+        'Offset (ms)': +(startMs - baseTime).toFixed(1),
+        'Duration (ms)': +(endMs - startMs).toFixed(1),
+        Details: details || ''
+      });
+    }
+  }
+
+  // 1. Circle & Recognition
+  addStage('1. Circle Finished to Crop Exported', m.circle_finished, m.crop_exported);
+  addStage('2. Crop Exported to Recognize Sent', m.crop_exported, m.recognize_sent);
+  var recDetails = '';
+  if (window.serverTimings && window.serverTimings.recognize) {
+    var stRec = window.serverTimings.recognize;
+    recDetails = 'Server: decode=' + (stRec.decode || 0) + 'ms, llm=' + (stRec.llm || 0) + 'ms';
+  }
+  addStage('3. Recognize Network (Sent -> Received)', m.recognize_sent, m.recognize_received, recDetails);
+  addStage('4. Recognize Received to Confirm Shown', m.recognize_received, m.confirm_shown);
+
+  // 2. Solve Request & Symbolic Verification
+  addStage('5. Confirm Shown to Solve Clicked', m.confirm_shown, m.solve_clicked, 'Student review/pause');
+  addStage('6. Solve Clicked to Solve Sent', m.solve_clicked, m.solve_sent);
+  var solveDetails = '';
+  if (window.serverTimings && window.serverTimings.solve) {
+    var stSol = window.serverTimings.solve;
+    solveDetails = 'Server: decode=' + (stSol.decode || 0) + 'ms, llm=' + (stSol.llm || 0) + 'ms, sympy=' + (stSol.sympy || 0) + 'ms';
+  }
+  addStage('7. Solve Network (Sent -> Received)', m.solve_sent, m.solve_received, solveDetails);
+
+  // 3. Preparation & First Render
+  addStage('8. Solve Received to First Step Created', m.solve_received, m.first_step_created);
+  addStage('9. First Step Created to First Stroke Painted', m.first_step_created, m.first_stroke_painted);
+
+  // 4. Audio Start
+  if (m.first_audio_started) {
+    addStage('10. Solve Clicked to First Audio Started', m.solve_clicked, m.first_audio_started);
+  }
+
+  // Summary Key Metrics
+  if (m.solve_clicked && m.first_stroke_painted) {
+    table.push({
+      Stage: '*** TOTAL: Solve Clicked to First Stroke ***',
+      'Offset (ms)': +(m.solve_clicked - baseTime).toFixed(1),
+      'Duration (ms)': +(m.first_stroke_painted - m.solve_clicked).toFixed(1),
+      Details: 'Key student wait metric'
+    });
+  }
+  if (m.circle_finished && m.first_stroke_painted) {
+    table.push({
+      Stage: '*** TOTAL: Circle to First Stroke ***',
+      'Offset (ms)': 0,
+      'Duration (ms)': +(m.first_stroke_painted - m.circle_finished).toFixed(1),
+      Details: 'Complete interactive lifecycle'
+    });
+  }
+
+  try {
+    console.log('%c[InkMentor Waterfall Trace: ' + (m.trace_id || 'unknown') + ']', 'color: #7c3aed; font-weight: bold; font-size: 13px;');
+    console.table(table);
+  } catch (e) {}
+
+  window.lastWaterfall = {
+    trace_id: m.trace_id,
+    marks: Object.assign({}, m),
+    table: table,
+    server: Object.assign({}, window.serverTimings)
+  };
+}
+window.reportRunTimings = reportRunTimings;
+
+
+// --- AI Font Choice Feature Flag (Rule 5) ---
+// 'caveat': self-hosted Caveat Regular font (Rule 3)
+// 'reenie': Reenie Beanie cursive font
+var AI_FONT = 'caveat'; // 'caveat' | 'reenie'
+window.AI_FONT = AI_FONT;
+
 // --- Handwriting & Typography Tuning Constants ---
-var USE_STROKE_FONT = false; // Default: false (Reenie Beanie cursive). Set true for Hershey single-line stroke font.
+var USE_STROKE_FONT = false; // Default: false. Set true for Hershey single-line stroke font.
 window.USE_STROKE_FONT = USE_STROKE_FONT;
 
-var AI_FONT_SIZE = 'calc(var(--g) * 1.85)';    // Main handwriting line font size
-var INTEGRAL_SCALE = 1.55;                     // 1.4 to 1.6 times line font size
-var INTEGRAL_STROKE_WIDTH = 2.4;              // Matched to Reenie Beanie stroke weight
-var INTEGRAL_VERTICAL_ALIGN = '-0.28em';       // Vertically centered on text
-var EXPONENT_SCALE = 0.60;                     // About 60% of font size
-var EXPONENT_SHIFT = '0.38em';                 // Sits around top of base letter
-var EXPONENT_RIGHT_GAP = '0.14em';             // Gap after exponent so it doesn't touch next char
-var INTEGRAL_LEFT_GAP = '0.06em';              // Gap before integral symbol
-var INTEGRAL_RIGHT_GAP = '0.16em';             // Gap after integral symbol
-var DIFFERENTIAL_GAP = '0.22em';               // Gap before 'dx', 'du', 'dt', 'dy'
-var SQRT_SCALE = 1.15;
-var SQRT_STROKE_WIDTH = 2.3;
-var PI_SCALE = 0.95;
-var PI_STROKE_WIDTH = 2.3;
+// --- Writing Animation Feature Flag ---
+// 'pen': centerline-guided stroke drawing (Reenie only, Rule 6)
+// 'reveal': pen-style reveal with glowing pen-tip dot (Caveat & Reenie)
+var WRITE_ANIM = 'reveal';
+window.WRITE_ANIM = WRITE_ANIM;
 
-window.AI_FONT_SIZE = AI_FONT_SIZE;
-window.INTEGRAL_SCALE = INTEGRAL_SCALE;
-window.INTEGRAL_STROKE_WIDTH = INTEGRAL_STROKE_WIDTH;
-window.INTEGRAL_VERTICAL_ALIGN = INTEGRAL_VERTICAL_ALIGN;
-window.EXPONENT_SCALE = EXPONENT_SCALE;
-window.EXPONENT_SHIFT = EXPONENT_SHIFT;
-window.EXPONENT_RIGHT_GAP = EXPONENT_RIGHT_GAP;
-window.INTEGRAL_LEFT_GAP = INTEGRAL_LEFT_GAP;
-window.INTEGRAL_RIGHT_GAP = INTEGRAL_RIGHT_GAP;
-window.DIFFERENTIAL_GAP = DIFFERENTIAL_GAP;
+var CAVEAT_CONFIG = {
+  fontFamily: "'Caveat', 'Reenie Beanie', cursive",
+  fontSize: 'calc(var(--g) * 1.45)',    // 46.4px: x-height ~16px matches half of 32px grid square
+  lineHeight: 'calc(var(--g) * 1.65)',  // 52.8px: clean clearance, no line overlap
+  integralScale: 1.50,                  // 1.5x font size (1.4 - 1.6x line height)
+  integralStrokeWidth: 3.2,             // Matched to Caveat's bolder stem weight
+  integralVerticalAlign: '-0.30em',     // Vertically centered
+  integralLeftGap: '0.08em',
+  integralRightGap: '0.18em',
+  sqrtScale: 1.15,
+  sqrtStrokeWidth: 3.0,
+  piScale: 0.95,
+  piStrokeWidth: 3.0,
+  exponentScale: 0.58,                  // ~60% of font size
+  exponentShift: '0.44em',              // Sits around top of base letter
+  exponentRightGap: '0.16em',           // Small right margin after raised run
+  differentialGap: '0.24em',            // Consistent gap before dx
+  inkGlow: 'drop-shadow(0 0 3.5px rgba(255, 94, 126, 0.28))', // Reduced to eliminate muddiness
+  penTipSize: '8px'
+};
+
+var REENIE_CONFIG = {
+  fontFamily: "'Reenie Beanie', cursive",
+  fontSize: 'calc(var(--g) * 1.85)',
+  lineHeight: 'calc(var(--g) * 1.95)',
+  integralScale: 1.55,
+  integralStrokeWidth: 2.4,
+  integralVerticalAlign: '-0.28em',
+  integralLeftGap: '0.06em',
+  integralRightGap: '0.16em',
+  sqrtScale: 1.15,
+  sqrtStrokeWidth: 2.3,
+  piScale: 0.95,
+  piStrokeWidth: 2.3,
+  exponentScale: 0.60,
+  exponentShift: '0.38em',
+  exponentRightGap: '0.14em',
+  differentialGap: '0.22em',
+  inkGlow: 'drop-shadow(0 0 6px rgba(255, 94, 126, 0.40))',
+  penTipSize: '7px'
+};
+
+function getFontConfig() {
+  return (window.AI_FONT === 'reenie') ? REENIE_CONFIG : CAVEAT_CONFIG;
+}
+
+function applyActiveFontConfig() {
+  var cfg = getFontConfig();
+  window.AI_FONT_FAMILY = cfg.fontFamily;
+  window.AI_FONT_SIZE = cfg.fontSize;
+  window.AI_LINE_HEIGHT = cfg.lineHeight;
+  window.INTEGRAL_SCALE = cfg.integralScale;
+  window.INTEGRAL_STROKE_WIDTH = cfg.integralStrokeWidth;
+  window.INTEGRAL_VERTICAL_ALIGN = cfg.integralVerticalAlign;
+  window.INTEGRAL_LEFT_GAP = cfg.integralLeftGap;
+  window.INTEGRAL_RIGHT_GAP = cfg.integralRightGap;
+  window.SQRT_SCALE = cfg.sqrtScale;
+  window.SQRT_STROKE_WIDTH = cfg.sqrtStrokeWidth;
+  window.PI_SCALE = cfg.piScale;
+  window.PI_STROKE_WIDTH = cfg.piStrokeWidth;
+  window.EXPONENT_SCALE = cfg.exponentScale;
+  window.EXPONENT_SHIFT = cfg.exponentShift;
+  window.EXPONENT_RIGHT_GAP = cfg.exponentRightGap;
+  window.DIFFERENTIAL_GAP = cfg.differentialGap;
+  window.AI_INK_GLOW = cfg.inkGlow;
+  window.PEN_TIP_SIZE = cfg.penTipSize;
+
+  if (document.documentElement && document.documentElement.style) {
+    document.documentElement.style.setProperty('--ai-font', cfg.fontFamily);
+    document.documentElement.style.setProperty('--ai-font-size', cfg.fontSize);
+    document.documentElement.style.setProperty('--ai-line-height', cfg.lineHeight);
+    document.documentElement.style.setProperty('--ai-glow', cfg.inkGlow);
+    document.documentElement.style.setProperty('--ai-dot-size', cfg.penTipSize);
+  }
+}
+applyActiveFontConfig();
+
+var fontLoadedState = false;
+var fontLoadPromise = null;
+
+function ensureFontLoaded() {
+  if (fontLoadedState) return Promise.resolve(true);
+  if (fontLoadPromise) return fontLoadPromise;
+
+  applyActiveFontConfig();
+  var fam = (window.AI_FONT === 'caveat') ? 'Caveat' : 'Reenie Beanie';
+  var testSpec = '46px "' + fam + '"';
+
+  if (!document.fonts || !document.fonts.load) {
+    fontLoadedState = true;
+    return Promise.resolve(false);
+  }
+
+  fontLoadPromise = Promise.all([
+    document.fonts.load(testSpec).catch(function(e) {
+      console.warn('document.fonts.load fallback:', e);
+      return [];
+    }),
+    (document.fonts.ready || Promise.resolve()).catch(function(e) {
+      console.warn('document.fonts.ready fallback:', e);
+      return null;
+    })
+  ]).then(function() {
+    fontLoadedState = true;
+    return true;
+  }).catch(function(err) {
+    console.warn('Font load error fallback:', err);
+    fontLoadedState = true;
+    return false;
+  });
+
+  return fontLoadPromise;
+}
+window.ensureFontLoaded = ensureFontLoaded;
+
+window.setFont = function(fontName) {
+  window.AI_FONT = fontName;
+  fontLoadedState = false;
+  fontLoadPromise = null;
+  applyActiveFontConfig();
+  return ensureFontLoaded().then(function() {
+    if (typeof render === 'function') render();
+    return true;
+  });
+};
 
 // --- Storage Keys ---
 var STROKES_KEY = 'inkmentor_notebook_strokes_v1';
 var PAGES_KEY = 'inkmentor_notebook_pages_v1';
 var AI_OUTPUT_KEY = 'inkmentor_notebook_ai_output_v1';
+var UNDO_KEY = 'inkmentor_notebook_undo_v1';
 
 var pageStrokes = {};
 var redoHistory = {};
 var pageAiOutput = {};
+var clearedPages = {};
+var undoHistory = {};
+
+function loadUndoHistory() {
+  try {
+    var raw = sessionStorage.getItem(UNDO_KEY) || localStorage.getItem(UNDO_KEY);
+    if (raw) undoHistory = JSON.parse(raw) || {};
+  } catch (e) { undoHistory = {}; }
+}
+
+function saveUndoHistory() {
+  try {
+    var data = JSON.stringify(undoHistory);
+    sessionStorage.setItem(UNDO_KEY, data);
+    localStorage.setItem(UNDO_KEY, data);
+  } catch (e) {}
+}
+
+loadUndoHistory();
+
+function pushUndo(action) {
+  undoHistory[cur] = undoHistory[cur] || [];
+  undoHistory[cur].push(action);
+  saveUndoHistory();
+}
 
 function escapeHtml(s) {
   return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
+
+var REENIE_CENTERLINES = {"a":{"char":"a","advance":487.0,"bbox":[0.0,-356.0,515.0,0.0],"strokes":[[[503.0,-208.0],[483.0,-173.0],[463.0,-149.0],[435.0,-122.0],[402.0,-100.0],[371.0,-87.0],[333.0,-80.0],[306.0,-79.0],[275.0,-85.0],[238.0,-104.0],[217.0,-125.0],[200.0,-161.0],[186.0,-172.0],[189.0,-256.0],[175.0,-286.0],[173.0,-303.0],[156.0,-316.0],[139.0,-310.0],[128.0,-299.0],[101.0,-248.0],[84.0,-190.0],[83.0,-130.0],[92.0,-103.0],[102.0,-95.0],[128.0,-105.0],[159.0,-156.0],[186.0,-172.0]]]},"b":{"char":"b","advance":331.0,"bbox":[-55.0,-722.0,331.0,0.0],"strokes":[[[-34.0,-703.0],[-36.0,-686.0],[-25.0,-589.0],[16.0,-409.0],[42.0,-322.0],[79.0,-218.0],[83.0,-212.0],[104.0,-200.0],[110.0,-122.0],[103.0,-86.0]],[[104.0,-200.0],[120.0,-213.0],[143.0,-287.0],[155.0,-309.0],[166.0,-320.0],[186.0,-327.0],[207.0,-322.0],[223.0,-305.0],[238.0,-276.0],[249.0,-234.0],[251.0,-193.0],[246.0,-144.0],[237.0,-110.0],[214.0,-67.0],[194.0,-46.0],[184.0,-44.0],[160.0,-55.0]]]},"c":{"char":"c","advance":368.0,"bbox":[0.0,-359.0,368.0,0.0],"strokes":[[[174.0,-342.0],[147.0,-323.0],[116.0,-290.0],[98.0,-263.0],[76.0,-214.0],[68.0,-184.0],[65.0,-145.0],[69.0,-117.0],[81.0,-95.0],[103.0,-76.0],[129.0,-67.0],[156.0,-66.0],[198.0,-76.0],[233.0,-94.0],[266.0,-119.0],[304.0,-158.0],[317.0,-189.0]]]},"d":{"char":"d","advance":360.0,"bbox":[0.0,-714.0,360.0,0.0],"strokes":[[[178.0,-696.0],[187.0,-667.0],[199.0,-560.0],[250.0,-274.0],[254.0,-230.0],[249.0,-226.0],[214.0,-241.0],[179.0,-280.0],[151.0,-299.0],[128.0,-305.0],[107.0,-303.0],[85.0,-284.0],[73.0,-258.0],[65.0,-210.0],[68.0,-175.0],[81.0,-136.0],[92.0,-121.0],[115.0,-102.0],[151.0,-92.0],[212.0,-99.0],[246.0,-115.0],[268.0,-120.0],[280.0,-132.0],[273.0,-168.0],[249.0,-226.0]]]},"e":{"char":"e","advance":349.0,"bbox":[0.0,-380.0,349.0,0.0],"strokes":[[[138.0,-238.0],[204.0,-278.0],[213.0,-290.0],[219.0,-310.0],[213.0,-332.0],[203.0,-343.0],[190.0,-349.0],[157.0,-355.0],[139.0,-350.0],[127.0,-341.0],[109.0,-321.0],[90.0,-289.0],[71.0,-227.0],[70.0,-163.0],[80.0,-125.0],[91.0,-104.0],[112.0,-79.0],[133.0,-64.0],[162.0,-53.0],[202.0,-53.0],[236.0,-59.0],[258.0,-68.0],[304.0,-99.0]]]},"f":{"char":"f","advance":391.0,"bbox":[0.0,-768.0,391.0,0.0],"strokes":[[[360.0,-703.0],[338.0,-725.0],[299.0,-742.0],[237.0,-748.0],[208.0,-741.0],[174.0,-715.0],[152.0,-684.0],[134.0,-642.0],[122.0,-591.0],[118.0,-557.0],[121.0,-481.0],[151.0,-350.0],[153.0,-346.0],[175.0,-339.0],[188.0,-285.0],[236.0,-192.0],[263.0,-128.0],[262.0,-79.0],[247.0,-48.0]],[[335.0,-351.0],[298.0,-348.0],[194.0,-351.0],[175.0,-339.0],[153.0,-346.0],[142.0,-339.0],[122.0,-337.0],[79.0,-324.0],[48.0,-307.0]]]},"g":{"char":"g","advance":331.0,"bbox":[0.0,-394.0,331.0,251.0],"strokes":[[[185.0,-365.0],[178.0,-371.0],[155.0,-375.0],[134.0,-369.0],[109.0,-347.0],[84.0,-308.0],[69.0,-269.0],[56.0,-203.0],[59.0,-141.0],[71.0,-98.0],[97.0,-62.0],[109.0,-55.0],[133.0,-50.0],[154.0,-57.0],[173.0,-80.0],[196.0,-120.0],[222.0,-135.0],[222.0,-275.0]],[[222.0,-135.0],[235.0,-122.0],[244.0,-83.0],[248.0,-79.0],[248.0,-49.0],[221.0,-39.0],[213.0,-31.0],[151.0,52.0],[137.0,80.0],[128.0,112.0],[126.0,146.0],[131.0,173.0],[142.0,195.0],[158.0,212.0],[180.0,224.0],[200.0,227.0],[228.0,225.0],[247.0,217.0],[265.0,203.0],[277.0,186.0],[285.0,164.0],[289.0,132.0],[286.0,79.0],[263.0,-15.0],[254.0,-42.0],[247.0,-48.0]]]},"h":{"char":"h","advance":384.0,"bbox":[0.0,-687.0,384.0,0.0],"strokes":[[[68.0,-677.0],[73.0,-621.0],[74.0,-537.0],[116.0,-213.0],[130.0,-152.0],[134.0,-146.0],[148.0,-139.0],[151.0,-102.0],[157.0,-85.0]],[[234.0,-297.0],[238.0,-284.0],[234.0,-247.0],[205.0,-230.0],[173.0,-153.0],[148.0,-139.0]],[[233.0,-246.0],[249.0,-235.0],[264.0,-183.0],[276.0,-162.0],[288.0,-151.0],[300.0,-149.0],[328.0,-158.0],[343.0,-176.0]]]},"i":{"char":"i","advance":155.0,"bbox":[0.0,-489.0,155.0,0.0],"strokes":[[[49.0,-274.0],[51.0,-255.0],[72.0,-207.0],[109.0,-95.0]],[[85.0,-461.0],[45.0,-459.0],[31.0,-454.0]]]},"j":{"char":"j","advance":155.0,"bbox":[-86.0,-486.0,164.0,156.0],"strokes":[[[56.0,-248.0],[57.0,-225.0],[96.0,-63.0],[131.0,48.0],[135.0,91.0],[127.0,116.0],[117.0,124.0],[92.0,130.0],[54.0,128.0],[11.0,116.0],[-24.0,95.0],[-47.0,74.0],[-66.0,48.0],[-78.0,18.0]],[[69.0,-457.0],[26.0,-451.0]]]},"k":{"char":"k","advance":398.0,"bbox":[0.0,-515.0,398.0,0.0],"strokes":[[[22.0,-505.0],[24.0,-447.0],[73.0,-237.0],[85.0,-201.0],[115.0,-181.0],[121.0,-132.0],[114.0,-125.0],[112.0,-109.0],[116.0,-78.0],[134.0,-21.0]],[[250.0,-403.0],[238.0,-402.0],[227.0,-395.0],[203.0,-369.0],[177.0,-332.0],[140.0,-254.0],[129.0,-196.0],[115.0,-181.0]],[[120.0,-131.0],[183.0,-104.0],[231.0,-93.0],[289.0,-93.0],[378.0,-105.0]]]},"l":{"char":"l","advance":211.0,"bbox":[0.0,-598.0,211.0,0.0],"strokes":[[[51.0,-582.0],[65.0,-488.0],[76.0,-376.0],[97.0,-242.0],[130.0,-104.0],[156.0,-32.0]]]},"m":{"char":"m","advance":524.0,"bbox":[0.0,-375.0,524.0,0.0],"strokes":[[[59.0,-350.0],[58.0,-288.0],[74.0,-206.0],[102.0,-120.0],[125.0,-105.0],[132.0,-65.0]],[[193.0,-350.0],[192.0,-297.0],[164.0,-276.0],[153.0,-232.0],[141.0,-125.0],[124.0,-107.0]],[[379.0,-300.0],[377.0,-244.0],[343.0,-224.0],[305.0,-122.0],[279.0,-109.0],[263.0,-117.0],[254.0,-133.0],[206.0,-280.0],[202.0,-288.0],[190.0,-293.0]],[[377.0,-244.0],[387.0,-235.0],[401.0,-162.0],[417.0,-120.0],[442.0,-91.0],[464.0,-89.0]]]},"n":{"char":"n","advance":352.0,"bbox":[0.0,-358.0,352.0,0.0],"strokes":[[[74.0,-349.0],[68.0,-330.0],[65.0,-281.0],[70.0,-137.0],[72.0,-129.0],[82.0,-120.0],[77.0,-83.0]],[[170.0,-311.0],[166.0,-257.0],[142.0,-242.0],[107.0,-132.0],[82.0,-119.0]],[[166.0,-257.0],[179.0,-246.0],[189.0,-206.0],[205.0,-170.0],[240.0,-131.0],[259.0,-121.0],[287.0,-114.0],[317.0,-120.0],[326.0,-128.0]]]},"o":{"char":"o","advance":280.0,"bbox":[0.0,-362.0,280.0,0.0],"strokes":[[[129.0,-326.0],[112.0,-318.0],[96.0,-296.0],[87.0,-259.0],[86.0,-212.0],[93.0,-174.0],[105.0,-149.0],[120.0,-136.0],[145.0,-132.0],[164.0,-138.0],[176.0,-151.0],[185.0,-169.0],[195.0,-211.0],[194.0,-254.0],[187.0,-294.0],[179.0,-306.0],[170.0,-314.0],[129.0,-326.0]]]},"p":{"char":"p","advance":377.0,"bbox":[-32.0,-367.0,377.0,213.0],"strokes":[[[139.0,-331.0],[147.0,-338.0],[183.0,-344.0],[238.0,-345.0],[274.0,-340.0],[317.0,-321.0],[327.0,-311.0],[334.0,-284.0],[330.0,-264.0],[321.0,-246.0],[276.0,-197.0],[185.0,-133.0],[152.0,-124.0]],[[-5.0,-239.0],[-9.0,-268.0],[21.0,-293.0],[86.0,-324.0],[139.0,-331.0],[137.0,-249.0],[142.0,-155.0],[145.0,-131.0],[152.0,-125.0],[152.0,-64.0],[185.0,154.0],[185.0,190.0]]]},"q":{"char":"q","advance":295.0,"bbox":[0.0,-338.0,295.0,134.0],"strokes":[[[204.0,-165.0],[166.0,-149.0],[133.0,-114.0],[109.0,-103.0],[84.0,-109.0],[75.0,-117.0],[60.0,-156.0],[58.0,-189.0],[67.0,-224.0],[91.0,-269.0],[114.0,-294.0],[133.0,-304.0],[160.0,-308.0],[179.0,-302.0],[195.0,-288.0],[207.0,-264.0],[214.0,-238.0],[213.0,-212.0],[204.0,-165.0],[212.0,-156.0],[227.0,17.0],[238.0,85.0],[246.0,98.0]]]},"r":{"char":"r","advance":316.0,"bbox":[0.0,-333.0,316.0,0.0],"strokes":[[[94.0,-320.0],[93.0,-291.0],[100.0,-283.0],[118.0,-291.0],[173.0,-304.0],[264.0,-307.0]],[[100.0,-283.0],[92.0,-254.0],[93.0,-223.0],[100.0,-152.0],[113.0,-101.0]]]},"s":{"char":"s","advance":311.0,"bbox":[0.0,-356.0,311.0,0.0],"strokes":[[[235.0,-323.0],[186.0,-335.0],[135.0,-329.0],[111.0,-315.0],[103.0,-303.0],[98.0,-284.0],[102.0,-250.0],[110.0,-234.0],[145.0,-205.0],[226.0,-158.0],[235.0,-134.0],[231.0,-118.0],[220.0,-107.0],[199.0,-97.0],[144.0,-84.0],[97.0,-80.0],[61.0,-90.0]]]},"t":{"char":"t","advance":319.0,"bbox":[-112.0,-582.0,319.0,0.0],"strokes":[[[97.0,-568.0],[96.0,-555.0],[129.0,-383.0],[138.0,-368.0],[141.0,-343.0],[176.0,-212.0],[191.0,-100.0]],[[293.0,-454.0],[215.0,-412.0],[168.0,-391.0],[141.0,-385.0],[134.0,-378.0],[134.0,-372.0],[126.0,-367.0],[95.0,-361.0],[56.0,-342.0],[-85.0,-258.0],[-90.0,-259.0]]]},"u":{"char":"u","advance":369.0,"bbox":[0.0,-335.0,369.0,0.0],"strokes":[[[212.0,-311.0],[215.0,-269.0],[208.0,-176.0],[187.0,-161.0],[165.0,-128.0],[143.0,-119.0],[121.0,-126.0],[102.0,-154.0],[76.0,-226.0],[64.0,-288.0]],[[207.0,-175.0],[226.0,-165.0],[246.0,-143.0],[271.0,-136.0],[301.0,-141.0],[352.0,-165.0]]]},"v":{"char":"v","advance":282.0,"bbox":[0.0,-376.0,282.0,0.0],"strokes":[[[204.0,-349.0],[187.0,-237.0],[180.0,-142.0],[177.0,-129.0],[169.0,-122.0],[134.0,-134.0],[113.0,-157.0],[85.0,-210.0],[59.0,-285.0]]]},"w":{"char":"w","advance":387.0,"bbox":[0.0,-449.0,387.0,0.0],"strokes":[[[334.0,-433.0],[317.0,-427.0],[306.0,-402.0],[303.0,-184.0],[296.0,-149.0],[284.0,-139.0],[252.0,-152.0],[229.0,-191.0],[205.0,-205.0],[187.0,-191.0],[179.0,-160.0],[168.0,-136.0],[155.0,-129.0],[133.0,-138.0],[113.0,-163.0],[89.0,-207.0],[57.0,-291.0]],[[192.0,-303.0],[200.0,-270.0],[205.0,-205.0]]]},"x":{"char":"x","advance":367.0,"bbox":[0.0,-410.0,367.0,0.0],"strokes":[[[63.0,-354.0],[86.0,-292.0],[116.0,-238.0],[145.0,-200.0],[170.0,-189.0],[169.0,-153.0],[202.0,-142.0],[239.0,-114.0],[275.0,-93.0],[294.0,-89.0],[302.0,-91.0]],[[224.0,-397.0],[226.0,-385.0],[179.0,-200.0],[170.0,-191.0],[170.0,-154.0],[162.0,-145.0],[145.0,-80.0],[121.0,-26.0]]]},"y":{"char":"y","advance":282.0,"bbox":[0.0,-498.0,282.0,184.0],"strokes":[[[227.0,-478.0],[228.0,-468.0],[218.0,-436.0],[173.0,-149.0],[169.0,-143.0],[156.0,56.0],[159.0,165.0]],[[32.0,-238.0],[68.0,-204.0],[136.0,-153.0],[169.0,-143.0]]]},"z":{"char":"z","advance":405.0,"bbox":[0.0,-362.0,406.0,0.0],"strokes":[[[46.0,-307.0],[55.0,-303.0],[68.0,-304.0],[181.0,-335.0],[226.0,-338.0],[231.0,-331.0],[218.0,-292.0],[108.0,-153.0],[97.0,-115.0],[102.0,-103.0],[157.0,-112.0],[276.0,-168.0],[370.0,-199.0],[381.0,-198.0]]]},"A":{"char":"A","advance":406.0,"bbox":[0.0,-660.0,406.0,75.0],"strokes":[[[186.0,-643.0],[189.0,-575.0],[167.0,-555.0],[148.0,-433.0],[112.0,-258.0],[104.0,-162.0],[161.0,-167.0],[258.0,-193.0],[263.0,-187.0],[265.0,-160.0],[294.0,-52.0],[334.0,52.0]],[[188.0,-574.0],[203.0,-562.0],[221.0,-371.0],[249.0,-234.0],[252.0,-203.0],[258.0,-193.0]],[[299.0,-216.0],[268.0,-205.0],[257.0,-195.0]],[[105.0,-161.0],[100.0,-156.0],[92.0,-112.0],[76.0,5.0]]]},"B":{"char":"B","advance":565.0,"bbox":[-21.0,-682.0,565.0,22.0],"strokes":[[[78.0,-412.0],[86.0,-405.0],[92.0,-388.0],[92.0,-318.0],[114.0,-298.0],[136.0,-302.0],[145.0,-294.0],[192.0,-302.0],[301.0,-339.0],[375.0,-351.0],[443.0,-344.0],[469.0,-334.0],[489.0,-317.0],[492.0,-294.0],[486.0,-264.0],[475.0,-242.0],[449.0,-208.0],[385.0,-150.0],[331.0,-112.0],[240.0,-57.0],[202.0,-22.0]],[[15.0,-402.0],[2.0,-419.0],[5.0,-429.0],[19.0,-446.0],[91.0,-513.0],[170.0,-572.0],[251.0,-613.0],[333.0,-644.0],[385.0,-657.0],[407.0,-658.0],[427.0,-654.0],[434.0,-641.0],[428.0,-606.0],[395.0,-557.0],[314.0,-475.0],[157.0,-340.0],[146.0,-313.0],[135.0,-302.0],[114.0,-298.0],[101.0,-276.0],[112.0,-173.0],[134.0,-62.0],[162.0,11.0]]]},"C":{"char":"C","advance":522.0,"bbox":[0.0,-479.0,522.0,3.0],"strokes":[[[226.0,-459.0],[202.0,-430.0],[162.0,-369.0],[124.0,-287.0],[87.0,-186.0],[73.0,-127.0],[71.0,-96.0],[75.0,-70.0],[92.0,-45.0],[107.0,-35.0],[130.0,-28.0],[171.0,-26.0],[217.0,-33.0],[275.0,-56.0],[328.0,-88.0],[400.0,-149.0],[443.0,-203.0],[454.0,-223.0],[455.0,-238.0]]]},"D":{"char":"D","advance":448.0,"bbox":[-142.0,-518.0,448.0,80.0],"strokes":[[[85.0,-483.0],[84.0,-448.0],[93.0,-372.0],[107.0,-300.0],[132.0,-203.0],[148.0,-84.0]],[[-85.0,-447.0],[-79.0,-448.0],[-60.0,-467.0],[-33.0,-483.0],[15.0,-493.0],[76.0,-489.0],[87.0,-482.0],[132.0,-477.0],[179.0,-463.0],[266.0,-425.0],[329.0,-383.0],[351.0,-362.0],[368.0,-339.0],[376.0,-316.0],[378.0,-287.0],[373.0,-256.0],[363.0,-229.0],[330.0,-176.0],[264.0,-108.0],[196.0,-57.0],[88.0,1.0],[28.0,26.0],[-34.0,46.0],[-76.0,56.0],[-113.0,58.0],[-122.0,54.0],[-118.0,30.0]]]},"E":{"char":"E","advance":369.0,"bbox":[0.0,-536.0,369.0,5.0],"strokes":[[[321.0,-519.0],[309.0,-520.0],[215.0,-497.0],[172.0,-474.0],[141.0,-444.0],[131.0,-431.0],[125.0,-390.0],[106.0,-351.0],[90.0,-305.0],[82.0,-256.0],[85.0,-246.0],[121.0,-252.0],[319.0,-348.0]],[[85.0,-246.0],[72.0,-232.0],[70.0,-154.0],[75.0,-119.0],[82.0,-98.0],[99.0,-68.0],[133.0,-37.0],[161.0,-25.0],[198.0,-20.0],[231.0,-22.0],[258.0,-30.0],[286.0,-45.0],[308.0,-65.0],[320.0,-91.0],[315.0,-106.0]]]},"F":{"char":"F","advance":336.0,"bbox":[0.0,-573.0,356.0,13.0],"strokes":[[[347.0,-539.0],[304.0,-549.0],[255.0,-536.0],[180.0,-498.0],[102.0,-441.0],[85.0,-433.0],[88.0,-384.0],[109.0,-247.0],[114.0,-242.0],[113.0,-221.0],[66.0,-207.0]],[[319.0,-345.0],[253.0,-312.0],[153.0,-253.0],[114.0,-241.0]],[[112.0,-220.0],[120.0,-212.0],[126.0,-161.0],[145.0,-72.0],[158.0,-30.0],[169.0,-9.0]]]},"G":{"char":"G","advance":470.0,"bbox":[0.0,-653.0,470.0,10.0],"strokes":[[[367.0,-610.0],[359.0,-623.0],[337.0,-629.0],[312.0,-627.0],[293.0,-619.0],[254.0,-585.0],[207.0,-522.0],[146.0,-409.0],[99.0,-301.0],[71.0,-205.0],[67.0,-139.0],[72.0,-111.0],[84.0,-83.0],[116.0,-46.0],[154.0,-26.0],[211.0,-18.0],[259.0,-27.0],[313.0,-56.0],[362.0,-101.0],[403.0,-162.0],[416.0,-204.0],[416.0,-257.0],[402.0,-299.0],[377.0,-326.0],[349.0,-335.0],[308.0,-330.0],[262.0,-297.0],[210.0,-273.0]]]},"H":{"char":"H","advance":382.0,"bbox":[0.0,-579.0,382.0,15.0],"strokes":[[[248.0,-562.0],[245.0,-532.0],[272.0,-274.0],[122.0,-259.0],[115.0,-264.0],[115.0,-517.0],[112.0,-557.0]],[[272.0,-274.0],[285.0,-282.0],[320.0,-285.0],[273.0,-274.0],[277.0,-266.0],[296.0,-83.0],[296.0,-16.0]],[[120.0,-259.0],[113.0,-251.0],[117.0,-234.0],[119.0,-159.0],[131.0,-37.0],[139.0,3.0]]]},"I":{"char":"I","advance":519.0,"bbox":[0.0,-502.0,519.0,7.0],"strokes":[[[336.0,-493.0],[299.0,-487.0],[237.0,-469.0],[228.0,-464.0],[219.0,-452.0],[238.0,-279.0],[277.0,-73.0],[25.0,-13.0]],[[219.0,-451.0],[167.0,-441.0],[105.0,-412.0],[56.0,-384.0]],[[497.0,-143.0],[479.0,-133.0],[424.0,-116.0],[313.0,-86.0],[277.0,-80.0]],[[276.0,-72.0],[283.0,-64.0],[291.0,-19.0]]]},"J":{"char":"J","advance":366.0,"bbox":[-71.0,-598.0,366.0,18.0],"strokes":[[[280.0,-590.0],[140.0,-540.0],[136.0,-535.0],[109.0,-531.0],[30.0,-501.0],[-24.0,-473.0],[-45.0,-458.0],[-51.0,-447.0]],[[136.0,-535.0],[143.0,-528.0],[145.0,-509.0],[174.0,-425.0],[284.0,-138.0],[294.0,-96.0],[295.0,-51.0],[290.0,-35.0],[279.0,-21.0],[252.0,-9.0],[207.0,-5.0],[166.0,-9.0],[139.0,-16.0],[94.0,-39.0],[71.0,-63.0],[68.0,-85.0],[74.0,-118.0]]]},"K":{"char":"K","advance":468.0,"bbox":[0.0,-532.0,468.0,34.0],"strokes":[[[64.0,-514.0],[61.0,-444.0],[63.0,-353.0],[70.0,-288.0],[83.0,-225.0],[99.0,-213.0],[127.0,-213.0],[147.0,-192.0],[173.0,-177.0],[235.0,-157.0],[364.0,-136.0],[410.0,-134.0],[437.0,-137.0]],[[273.0,-478.0],[246.0,-447.0],[162.0,-309.0],[139.0,-261.0],[131.0,-219.0],[126.0,-213.0],[99.0,-213.0],[93.0,-206.0],[99.0,-163.0],[137.0,-55.0],[140.0,13.0]]]},"L":{"char":"L","advance":384.0,"bbox":[0.0,-539.0,384.0,46.0],"strokes":[[[83.0,-522.0],[68.0,-483.0],[58.0,-427.0],[57.0,-304.0],[75.0,-154.0],[92.0,-74.0],[116.0,-5.0],[127.0,6.0],[167.0,-2.0],[259.0,-41.0],[356.0,-76.0]]]},"M":{"char":"M","advance":513.0,"bbox":[0.0,-612.0,528.0,111.0],"strokes":[[[378.0,-586.0],[371.0,-416.0],[372.0,-411.0],[386.0,-399.0],[398.0,-303.0],[424.0,-171.0],[469.0,-3.0],[501.0,78.0],[497.0,95.0]],[[94.0,-461.0],[102.0,-414.0],[133.0,-399.0],[184.0,-315.0],[222.0,-266.0],[245.0,-245.0],[270.0,-237.0],[296.0,-243.0],[313.0,-263.0],[338.0,-327.0],[350.0,-395.0],[372.0,-411.0]],[[103.0,-413.0],[90.0,-401.0],[86.0,-363.0],[88.0,-331.0],[113.0,-206.0],[138.0,-123.0],[147.0,-108.0],[146.0,-99.0]]]},"N":{"char":"N","advance":473.0,"bbox":[-1.0,-678.0,473.0,32.0],"strokes":[[[242.0,-648.0],[275.0,-596.0],[303.0,-540.0],[360.0,-395.0],[421.0,-201.0],[437.0,-132.0],[442.0,-74.0],[435.0,-68.0],[399.0,-80.0],[209.0,-242.0],[143.0,-311.0],[87.0,-380.0],[50.0,-393.0],[43.0,-379.0],[53.0,-325.0],[131.0,-96.0],[170.0,1.0],[168.0,14.0]],[[24.0,-449.0],[50.0,-393.0]]]},"O":{"char":"O","advance":403.0,"bbox":[0.0,-484.0,403.0,0.0],"strokes":[[[149.0,-456.0],[211.0,-453.0],[229.0,-448.0],[250.0,-435.0],[276.0,-407.0],[298.0,-373.0],[317.0,-333.0],[330.0,-294.0],[339.0,-249.0],[340.0,-208.0],[328.0,-138.0],[314.0,-104.0],[298.0,-80.0],[281.0,-63.0],[258.0,-52.0],[232.0,-48.0],[203.0,-51.0],[184.0,-57.0],[159.0,-72.0],[135.0,-95.0],[114.0,-123.0],[93.0,-164.0],[83.0,-193.0],[74.0,-235.0],[73.0,-277.0],[77.0,-329.0],[87.0,-380.0],[101.0,-428.0],[125.0,-449.0],[149.0,-456.0]]]},"P":{"char":"P","advance":356.0,"bbox":[-16.0,-584.0,356.0,51.0],"strokes":[[[80.0,-446.0],[77.0,-413.0],[79.0,-347.0],[90.0,-281.0],[100.0,-246.0],[133.0,-164.0],[149.0,-153.0],[156.0,-117.0],[164.0,-101.0],[229.0,7.0],[234.0,19.0],[229.0,39.0]],[[6.0,-434.0],[2.0,-460.0],[28.0,-488.0],[59.0,-508.0],[129.0,-539.0],[190.0,-556.0],[233.0,-561.0],[260.0,-551.0],[278.0,-527.0],[288.0,-495.0],[289.0,-437.0],[282.0,-385.0],[268.0,-337.0],[248.0,-291.0],[193.0,-199.0],[175.0,-161.0],[148.0,-155.0]]]},"Q":{"char":"Q","advance":488.0,"bbox":[0.0,-584.0,488.0,4.0],"strokes":[[[156.0,-572.0],[134.0,-568.0],[123.0,-538.0],[105.0,-522.0],[92.0,-484.0],[78.0,-421.0],[70.0,-348.0],[69.0,-284.0],[74.0,-231.0],[85.0,-183.0],[105.0,-130.0],[130.0,-86.0],[165.0,-47.0],[196.0,-27.0],[226.0,-20.0],[264.0,-26.0],[279.0,-34.0],[283.0,-43.0],[314.0,-69.0],[343.0,-160.0],[354.0,-249.0],[354.0,-297.0],[349.0,-337.0],[328.0,-402.0],[309.0,-441.0],[280.0,-485.0],[250.0,-517.0],[230.0,-532.0],[201.0,-541.0],[135.0,-534.0],[122.0,-537.0]],[[213.0,-236.0],[217.0,-179.0],[232.0,-135.0],[262.0,-85.0],[296.0,-55.0],[301.0,-56.0],[312.0,-44.0],[347.0,-33.0],[370.0,-31.0],[407.0,-39.0],[427.0,-52.0],[446.0,-73.0],[456.0,-92.0],[453.0,-109.0]]]},"R":{"char":"R","advance":512.0,"bbox":[0.0,-526.0,592.0,69.0],"strokes":[[[129.0,-149.0],[109.0,-163.0],[80.0,-257.0],[54.0,-363.0],[54.0,-401.0],[62.0,-416.0],[103.0,-448.0],[136.0,-465.0],[188.0,-484.0],[262.0,-503.0],[314.0,-509.0],[362.0,-507.0],[401.0,-495.0],[416.0,-480.0],[419.0,-460.0],[415.0,-442.0],[397.0,-414.0],[361.0,-377.0],[232.0,-264.0],[182.0,-212.0],[148.0,-164.0],[129.0,-150.0],[139.0,-91.0],[152.0,-67.0],[174.0,-43.0]],[[210.0,35.0],[181.0,-4.0],[173.0,-42.0],[183.0,-44.0],[313.0,-11.0],[497.0,17.0],[543.0,31.0],[570.0,46.0]]]},"S":{"char":"S","advance":456.0,"bbox":[0.0,-520.0,456.0,12.0],"strokes":[[[333.0,-348.0],[349.0,-397.0],[357.0,-463.0],[357.0,-480.0],[353.0,-489.0],[346.0,-495.0],[334.0,-496.0],[272.0,-483.0],[189.0,-444.0],[125.0,-396.0],[93.0,-363.0],[75.0,-334.0],[70.0,-311.0],[73.0,-289.0],[100.0,-264.0],[132.0,-250.0],[179.0,-237.0],[306.0,-220.0],[347.0,-210.0],[391.0,-188.0],[413.0,-163.0],[417.0,-135.0],[410.0,-97.0],[397.0,-76.0],[358.0,-42.0],[305.0,-19.0],[261.0,-10.0],[204.0,-14.0],[185.0,-24.0],[184.0,-31.0]]]},"T":{"char":"T","advance":427.0,"bbox":[-59.0,-566.0,592.0,52.0],"strokes":[[[579.0,-548.0],[549.0,-549.0],[346.0,-531.0],[211.0,-507.0],[205.0,-503.0],[211.0,-462.0],[266.0,-274.0],[352.0,-43.0],[362.0,3.0],[356.0,34.0]],[[190.0,-538.0],[196.0,-510.0],[205.0,-502.0]],[[203.0,-503.0],[192.0,-499.0],[158.0,-498.0],[0.0,-479.0],[-32.0,-481.0],[-40.0,-489.0]]]},"U":{"char":"U","advance":399.0,"bbox":[0.0,-460.0,440.0,65.0],"strokes":[[[259.0,-434.0],[259.0,-368.0],[284.0,-350.0],[295.0,-295.0],[296.0,-220.0],[279.0,-203.0],[294.0,-81.0],[316.0,-68.0],[370.0,3.0],[410.0,43.0],[422.0,49.0]],[[260.0,-367.0],[252.0,-362.0],[256.0,-256.0],[263.0,-213.0],[279.0,-202.0]],[[73.0,-366.0],[71.0,-282.0],[86.0,-183.0],[108.0,-114.0],[137.0,-63.0],[172.0,-30.0],[191.0,-22.0],[217.0,-19.0],[244.0,-28.0],[261.0,-45.0],[273.0,-65.0],[295.0,-80.0]]]},"V":{"char":"V","advance":334.0,"bbox":[0.0,-572.0,334.0,15.0],"strokes":[[[208.0,-546.0],[247.0,-346.0],[267.0,-196.0],[269.0,-109.0],[257.0,-48.0],[243.0,-38.0],[249.0,-1.0]],[[42.0,-356.0],[41.0,-334.0],[58.0,-277.0],[107.0,-183.0],[152.0,-119.0],[198.0,-64.0],[217.0,-46.0],[243.0,-37.0]]]},"W":{"char":"W","advance":559.0,"bbox":[0.0,-658.0,559.0,0.0],"strokes":[[[313.0,-628.0],[314.0,-621.0],[351.0,-561.0],[371.0,-517.0],[457.0,-291.0],[477.0,-223.0],[490.0,-160.0],[493.0,-107.0],[489.0,-84.0],[484.0,-73.0],[471.0,-61.0],[436.0,-53.0],[388.0,-60.0],[338.0,-82.0],[278.0,-126.0],[227.0,-182.0],[201.0,-194.0],[192.0,-240.0],[186.0,-253.0],[187.0,-265.0]],[[14.0,-398.0],[40.0,-299.0],[65.0,-227.0],[92.0,-167.0],[119.0,-123.0],[130.0,-112.0],[153.0,-104.0],[169.0,-113.0],[178.0,-130.0],[186.0,-178.0],[202.0,-193.0]]]},"X":{"char":"X","advance":412.0,"bbox":[-44.0,-638.0,412.0,0.0],"strokes":[[[189.0,-624.0],[164.0,-482.0],[156.0,-394.0],[155.0,-319.0],[147.0,-306.0],[162.0,-246.0],[167.0,-240.0],[202.0,-229.0],[222.0,-212.0],[340.0,-106.0],[392.0,-49.0]],[[-21.0,-529.0],[-21.0,-517.0],[-8.0,-494.0],[73.0,-370.0],[116.0,-317.0],[147.0,-305.0]],[[165.0,-241.0],[158.0,-234.0],[158.0,-223.0],[161.0,-164.0],[170.0,-95.0],[167.0,-70.0]]]},"Y":{"char":"Y","advance":314.0,"bbox":[-9.0,-692.0,317.0,142.0],"strokes":[[[245.0,-664.0],[246.0,-615.0],[226.0,-477.0],[220.0,-385.0],[216.0,-380.0],[216.0,-251.0],[236.0,-20.0],[263.0,128.0]],[[10.0,-545.0],[11.0,-532.0],[23.0,-516.0],[74.0,-465.0],[176.0,-392.0],[216.0,-378.0],[218.0,-351.0],[258.0,-340.0],[291.0,-326.0],[310.0,-331.0]]]},"Z":{"char":"Z","advance":563.0,"bbox":[0.0,-504.0,563.0,12.0],"strokes":[[[36.0,-476.0],[239.0,-474.0],[271.0,-465.0],[283.0,-455.0],[288.0,-442.0],[282.0,-404.0],[260.0,-363.0],[124.0,-181.0],[81.0,-111.0],[72.0,-85.0],[66.0,-49.0],[69.0,-33.0],[76.0,-26.0],[114.0,-18.0],[160.0,-20.0],[415.0,-75.0],[467.0,-81.0],[542.0,-82.0]]]},"0":{"char":"0","advance":357.0,"bbox":[0.0,-364.0,357.0,0.0],"strokes":[[[159.0,-339.0],[219.0,-337.0],[259.0,-322.0],[278.0,-306.0],[290.0,-290.0],[298.0,-271.0],[302.0,-245.0],[301.0,-209.0],[294.0,-174.0],[281.0,-141.0],[267.0,-119.0],[226.0,-85.0],[204.0,-76.0],[169.0,-70.0],[143.0,-72.0],[126.0,-78.0],[100.0,-99.0],[81.0,-132.0],[72.0,-174.0],[79.0,-238.0],[98.0,-297.0],[105.0,-332.0],[118.0,-337.0],[159.0,-339.0]]]},"1":{"char":"1","advance":289.0,"bbox":[0.0,-386.0,289.0,0.0],"strokes":[[[150.0,-371.0],[153.0,-347.0],[148.0,-321.0],[154.0,-315.0],[168.0,-175.0],[182.0,-95.0],[196.0,-45.0],[201.0,-40.0]],[[149.0,-320.0],[107.0,-304.0],[59.0,-267.0],[51.0,-252.0]]]},"2":{"char":"2","advance":367.0,"bbox":[0.0,-412.0,367.0,0.0],"strokes":[[[73.0,-333.0],[86.0,-333.0],[143.0,-358.0],[215.0,-383.0],[251.0,-388.0],[262.0,-388.0],[267.0,-383.0],[269.0,-372.0],[258.0,-327.0],[138.0,-118.0],[131.0,-104.0],[123.0,-64.0],[128.0,-60.0],[167.0,-71.0],[188.0,-81.0],[229.0,-87.0],[260.0,-83.0],[288.0,-69.0]]]},"3":{"char":"3","advance":367.0,"bbox":[0.0,-381.0,367.0,0.0],"strokes":[[[114.0,-325.0],[146.0,-339.0],[202.0,-355.0],[251.0,-360.0],[268.0,-357.0],[274.0,-352.0],[280.0,-339.0],[269.0,-311.0],[240.0,-290.0],[174.0,-255.0],[162.0,-230.0],[174.0,-214.0],[229.0,-198.0],[260.0,-182.0],[274.0,-162.0],[278.0,-125.0],[269.0,-103.0],[242.0,-77.0],[207.0,-57.0],[166.0,-44.0],[132.0,-42.0],[95.0,-49.0],[78.0,-60.0],[73.0,-80.0]]]},"4":{"char":"4","advance":396.0,"bbox":[0.0,-425.0,396.0,78.0],"strokes":[[[214.0,-410.0],[221.0,-364.0],[217.0,-338.0],[222.0,-322.0],[224.0,-194.0],[228.0,-184.0],[225.0,-116.0],[234.0,17.0],[233.0,59.0]],[[217.0,-338.0],[184.0,-328.0],[146.0,-292.0],[94.0,-238.0],[87.0,-226.0],[83.0,-205.0],[90.0,-191.0],[113.0,-183.0],[158.0,-178.0],[226.0,-179.0],[228.0,-183.0],[288.0,-189.0],[318.0,-198.0]]]},"5":{"char":"5","advance":353.0,"bbox":[0.0,-364.0,401.0,0.0],"strokes":[[[394.0,-354.0],[344.0,-350.0],[267.0,-329.0],[172.0,-291.0],[152.0,-287.0],[114.0,-264.0],[87.0,-235.0],[79.0,-207.0],[82.0,-196.0],[104.0,-188.0],[173.0,-182.0],[208.0,-171.0],[235.0,-154.0],[244.0,-124.0],[239.0,-109.0],[225.0,-97.0],[191.0,-81.0],[168.0,-75.0],[135.0,-81.0],[116.0,-94.0]]]},"6":{"char":"6","advance":304.0,"bbox":[0.0,-440.0,304.0,0.0],"strokes":[[[198.0,-420.0],[178.0,-421.0],[154.0,-400.0],[131.0,-366.0],[109.0,-317.0],[95.0,-270.0],[86.0,-218.0],[83.0,-162.0],[90.0,-154.0],[85.0,-133.0],[85.0,-95.0],[92.0,-72.0],[106.0,-66.0],[126.0,-44.0],[151.0,-39.0],[169.0,-45.0],[184.0,-58.0],[211.0,-100.0],[220.0,-128.0],[221.0,-155.0],[217.0,-176.0],[202.0,-193.0],[186.0,-197.0],[159.0,-193.0],[122.0,-167.0],[90.0,-155.0]]]},"7":{"char":"7","advance":390.0,"bbox":[0.0,-361.0,390.0,0.0],"strokes":[[[35.0,-330.0],[52.0,-322.0],[80.0,-317.0],[163.0,-318.0],[260.0,-326.0],[284.0,-323.0],[276.0,-278.0],[262.0,-250.0],[245.0,-199.0],[227.0,-100.0],[210.0,-39.0]]]},"8":{"char":"8","advance":416.0,"bbox":[0.0,-425.0,416.0,5.0],"strokes":[[[406.0,-368.0],[400.0,-356.0],[381.0,-337.0],[338.0,-303.0],[218.0,-230.0],[185.0,-215.0],[173.0,-203.0],[173.0,-195.0],[163.0,-185.0],[136.0,-172.0],[94.0,-125.0],[85.0,-106.0],[81.0,-78.0],[87.0,-56.0],[101.0,-38.0],[120.0,-26.0],[151.0,-20.0],[179.0,-21.0],[197.0,-29.0],[212.0,-43.0],[218.0,-55.0],[218.0,-96.0],[199.0,-159.0],[184.0,-184.0],[172.0,-194.0],[173.0,-203.0],[163.0,-214.0],[106.0,-315.0],[101.0,-347.0],[111.0,-372.0],[132.0,-389.0],[166.0,-401.0],[209.0,-403.0],[246.0,-398.0],[271.0,-387.0],[282.0,-374.0],[279.0,-353.0],[270.0,-329.0]]]},"9":{"char":"9","advance":400.0,"bbox":[0.0,-425.0,400.0,60.0],"strokes":[[[317.0,-358.0],[321.0,-332.0],[305.0,-300.0],[284.0,-282.0],[290.0,-275.0],[285.0,-234.0],[266.0,-151.0],[253.0,-55.0],[249.0,0.0],[253.0,35.0]],[[285.0,-285.0],[265.0,-305.0],[262.0,-338.0],[247.0,-368.0],[227.0,-388.0],[204.0,-397.0],[158.0,-399.0],[118.0,-385.0],[87.0,-358.0],[77.0,-338.0],[75.0,-325.0],[78.0,-290.0],[88.0,-269.0],[105.0,-255.0],[128.0,-246.0],[156.0,-243.0],[196.0,-248.0],[274.0,-271.0],[285.0,-280.0]]]},"+":{"char":"+","advance":322.0,"bbox":[0.0,-411.0,322.0,0.0],"strokes":[[[120.0,-396.0],[145.0,-235.0],[157.0,-225.0],[164.0,-127.0],[155.0,-78.0]],[[293.0,-253.0],[219.0,-238.0],[162.0,-234.0],[156.0,-228.0],[147.0,-231.0],[93.0,-222.0],[72.0,-226.0]]]},"-":{"char":"-","advance":256.0,"bbox":[0.0,-243.0,256.0,0.0],"strokes":[[[187.0,-224.0],[148.0,-209.0],[90.0,-194.0],[81.0,-194.0],[54.0,-206.0]]]},"*":{"char":"*","advance":341.0,"bbox":[0.0,-462.0,341.0,0.0],"strokes":[[[304.0,-443.0],[229.0,-379.0],[220.0,-355.0],[192.0,-342.0],[174.0,-340.0],[156.0,-322.0],[138.0,-303.0],[93.0,-241.0],[90.0,-233.0],[94.0,-222.0]],[[130.0,-414.0],[129.0,-403.0],[140.0,-373.0],[146.0,-337.0],[156.0,-322.0],[155.0,-320.0],[175.0,-302.0],[186.0,-284.0],[254.0,-238.0]],[[220.0,-355.0],[231.0,-347.0],[289.0,-345.0]],[[47.0,-345.0],[81.0,-333.0],[148.0,-331.0]]]},"/":{"char":"/","advance":307.0,"bbox":[0.0,-488.0,307.0,71.0],"strokes":[[[240.0,-471.0],[208.0,-397.0],[114.0,-117.0],[79.0,-30.0],[39.0,49.0],[37.0,63.0]]]},"=":{"char":"=","advance":388.0,"bbox":[0.0,-300.0,388.0,0.0],"strokes":[[[328.0,-283.0],[186.0,-272.0],[85.0,-252.0]],[[309.0,-186.0],[288.0,-185.0],[95.0,-134.0],[72.0,-133.0],[62.0,-138.0],[60.0,-143.0]]]},"(":{"char":"(","advance":238.0,"bbox":[0.0,-479.0,238.0,0.0],"strokes":[[[197.0,-471.0],[178.0,-466.0],[160.0,-450.0],[124.0,-395.0],[91.0,-317.0],[72.0,-233.0],[71.0,-182.0],[75.0,-148.0],[98.0,-80.0],[111.0,-60.0],[135.0,-40.0],[169.0,-44.0],[173.0,-53.0]]]},")":{"char":")","advance":286.0,"bbox":[0.0,-438.0,286.0,0.0],"strokes":[[[160.0,-419.0],[187.0,-371.0],[204.0,-316.0],[211.0,-247.0],[205.0,-185.0],[179.0,-119.0],[148.0,-75.0],[118.0,-48.0],[100.0,-37.0],[74.0,-27.0],[59.0,-27.0]]]},"[":{"char":"[","advance":369.0,"bbox":[0.0,-512.0,369.0,0.0],"strokes":[[[252.0,-497.0],[201.0,-480.0],[168.0,-475.0],[130.0,-450.0],[125.0,-416.0],[102.0,-348.0],[86.0,-281.0],[73.0,-189.0],[76.0,-78.0],[80.0,-54.0],[90.0,-35.0],[107.0,-32.0],[145.0,-37.0],[183.0,-47.0],[217.0,-62.0]]]},"]":{"char":"]","advance":548.0,"bbox":[0.0,-500.0,548.0,17.0],"strokes":[[[136.0,-425.0],[203.0,-461.0],[253.0,-471.0],[258.0,-467.0],[267.0,-365.0],[282.0,-263.0],[298.0,-168.0],[316.0,-89.0],[318.0,-57.0],[324.0,-48.0],[320.0,-39.0],[292.0,-35.0],[172.0,-2.0]],[[378.0,-70.0],[353.0,-56.0],[324.0,-48.0]],[[321.0,-40.0],[328.0,-32.0],[333.0,4.0]]]},"{":{"char":"{","advance":423.0,"bbox":[0.0,-612.0,423.0,61.0],"strokes":[[[338.0,-571.0],[319.0,-585.0],[282.0,-593.0],[247.0,-593.0],[210.0,-583.0],[176.0,-562.0],[155.0,-540.0],[136.0,-508.0],[127.0,-472.0],[134.0,-431.0],[154.0,-408.0],[184.0,-391.0],[240.0,-371.0],[246.0,-358.0],[239.0,-338.0],[230.0,-329.0],[146.0,-281.0],[134.0,-246.0],[138.0,-241.0],[176.0,-242.0],[230.0,-255.0],[273.0,-259.0],[264.0,-218.0],[149.0,-18.0],[142.0,28.0],[149.0,36.0],[199.0,30.0],[331.0,-20.0]]]},"}":{"char":"}","advance":461.0,"bbox":[0.0,-653.0,461.0,36.0],"strokes":[[[65.0,-523.0],[194.0,-616.0],[231.0,-624.0],[240.0,-619.0],[243.0,-608.0],[238.0,-559.0],[183.0,-354.0],[179.0,-316.0],[182.0,-313.0],[217.0,-321.0],[277.0,-353.0],[318.0,-360.0],[309.0,-322.0],[244.0,-253.0],[234.0,-219.0],[239.0,-212.0],[313.0,-204.0],[343.0,-194.0],[365.0,-177.0],[378.0,-151.0],[381.0,-118.0],[372.0,-73.0],[356.0,-42.0],[330.0,-13.0],[297.0,7.0],[255.0,17.0],[209.0,12.0],[203.0,7.0],[198.0,-7.0]]]},"<":{"char":"<","advance":467.0,"bbox":[0.0,-371.0,467.0,0.0],"strokes":[[[268.0,-355.0],[170.0,-232.0],[96.0,-153.0],[89.0,-130.0],[94.0,-118.0],[119.0,-109.0],[171.0,-101.0],[277.0,-97.0],[399.0,-84.0],[430.0,-86.0]]]},">":{"char":">","advance":462.0,"bbox":[0.0,-421.0,462.0,0.0],"strokes":[[[110.0,-400.0],[267.0,-244.0],[349.0,-170.0],[356.0,-149.0],[345.0,-135.0],[223.0,-111.0],[79.0,-69.0],[69.0,-69.0]],[[356.0,-149.0],[396.0,-143.0]]]},",":{"char":",","advance":178.0,"bbox":[0.0,-122.0,178.0,94.0],"strokes":[[[74.0,-105.0],[91.0,-87.0],[100.0,-69.0],[105.0,-43.0],[102.0,-12.0],[95.0,9.0],[75.0,43.0],[56.0,66.0],[39.0,79.0]]]},".":{"char":".","advance":139.0,"bbox":[0.0,-103.0,139.0,0.0],"strokes":[[[70.0,-71.0],[70.0,-70.0]]]},":":{"char":":","advance":195.0,"bbox":[0.0,-318.0,195.0,0.0],"strokes":[[[92.0,-286.0],[92.0,-285.0]],[[111.0,-136.0],[110.0,-109.0],[99.0,-99.0],[90.0,-97.0]]]},";":{"char":";","advance":197.0,"bbox":[0.0,-300.0,197.0,80.0],"strokes":[[[84.0,-268.0],[84.0,-267.0]],[[117.0,-76.0],[116.0,-56.0],[103.0,-4.0],[85.0,33.0],[61.0,53.0],[28.0,57.0]]]},"'":{"char":"'","advance":183.0,"bbox":[0.0,-571.0,183.0,0.0],"strokes":[[[117.0,-558.0],[89.0,-482.0],[79.0,-443.0],[75.0,-393.0],[80.0,-359.0]]]},"\"":{"char":"\"","advance":233.0,"bbox":[0.0,-463.0,233.0,0.0],"strokes":[[[75.0,-442.0],[72.0,-401.0],[83.0,-328.0],[84.0,-291.0]],[[168.0,-429.0],[186.0,-324.0]]]},"^":{"char":"^","advance":576.0,"bbox":[0.0,-481.0,576.0,0.0],"strokes":[[[242.0,-462.0],[246.0,-428.0],[233.0,-418.0],[191.0,-280.0],[121.0,-96.0]],[[245.0,-427.0],[267.0,-419.0],[339.0,-343.0],[470.0,-241.0]]]},"_":{"char":"_","advance":319.0,"bbox":[-19.0,0.0,339.0,72.0],"strokes":[[[316.0,45.0],[229.0,53.0],[41.0,45.0],[-3.0,49.0]]]},"!":{"char":"!","advance":227.0,"bbox":[0.0,-530.0,227.0,0.0],"strokes":[[[128.0,-512.0],[127.0,-484.0],[96.0,-382.0],[74.0,-281.0],[75.0,-219.0],[92.0,-165.0],[91.0,-156.0]]]},"?":{"char":"?","advance":392.0,"bbox":[0.0,-534.0,392.0,19.0],"strokes":[[[82.0,-495.0],[129.0,-507.0],[168.0,-512.0],[200.0,-513.0],[242.0,-508.0],[278.0,-496.0],[305.0,-479.0],[320.0,-462.0],[327.0,-438.0],[321.0,-410.0],[295.0,-376.0],[171.0,-269.0],[142.0,-237.0],[133.0,-218.0],[130.0,-197.0],[139.0,-157.0]],[[175.0,-25.0],[177.0,-16.0],[187.0,-7.0],[203.0,-4.0]]]},"%":{"char":"%","advance":626.0,"bbox":[0.0,-662.0,626.0,163.0],"strokes":[[[543.0,-636.0],[533.0,-629.0],[449.0,-499.0],[406.0,-447.0],[397.0,-403.0],[253.0,-121.0],[196.0,1.0],[166.0,79.0],[160.0,117.0],[162.0,135.0]],[[406.0,-447.0],[317.0,-427.0],[276.0,-422.0],[248.0,-425.0],[196.0,-441.0],[161.0,-447.0],[150.0,-441.0],[126.0,-412.0],[100.0,-404.0],[82.0,-411.0],[80.0,-421.0],[86.0,-451.0],[95.0,-467.0],[110.0,-481.0],[144.0,-492.0],[154.0,-487.0],[154.0,-461.0],[162.0,-447.0]],[[500.0,-197.0],[530.0,-207.0],[545.0,-203.0],[550.0,-193.0],[542.0,-145.0],[529.0,-115.0],[507.0,-84.0],[490.0,-69.0],[468.0,-62.0],[438.0,-66.0],[429.0,-73.0],[423.0,-91.0],[427.0,-115.0],[443.0,-139.0],[456.0,-148.0]]]},"|":{"char":"|","advance":405.0,"bbox":[0.0,-835.0,405.0,300.0],"strokes":[[[187.0,-818.0],[189.0,-493.0],[209.0,-43.0],[221.0,113.0],[237.0,216.0],[252.0,282.0]]]},"\\":{"char":"\\","advance":307.0,"bbox":[0.0,-488.0,307.0,71.0],"strokes":[[[43.0,-471.0],[80.0,-381.0],[165.0,-127.0],[203.0,-32.0],[242.0,45.0],[246.0,64.0]]]},"~":{"char":"~","advance":562.0,"bbox":[0.0,-321.0,562.0,0.0],"strokes":[[[491.0,-224.0],[482.0,-186.0],[471.0,-167.0],[455.0,-150.0],[438.0,-139.0],[415.0,-132.0],[374.0,-134.0],[346.0,-147.0],[315.0,-172.0],[274.0,-216.0],[221.0,-282.0],[209.0,-294.0],[195.0,-296.0],[172.0,-289.0],[146.0,-271.0],[99.0,-231.0],[61.0,-190.0]]]},"`":{"char":"`","advance":269.0,"bbox":[0.0,-551.0,269.0,0.0],"strokes":[[[66.0,-541.0],[162.0,-430.0],[176.0,-422.0],[198.0,-427.0]]]}," ":{"char":" ","advance":414.0,"bbox":[0.0,0.0,0.0,0.0],"strokes":[]},"\u00b2":{"char":"\u00b2","advance":239.0,"bbox":[0.0,-500.0,239.0,0.0],"strokes":[[[49.0,-438.0],[124.0,-468.0],[155.0,-473.0],[162.0,-473.0],[167.0,-468.0],[160.0,-432.0],[98.0,-324.0],[90.0,-279.0],[68.0,-251.0]],[[90.0,-279.0],[116.0,-285.0],[148.0,-286.0],[168.0,-283.0],[182.0,-276.0]]]},"\u00b3":{"char":"\u00b3","advance":239.0,"bbox":[0.0,-501.0,239.0,0.0],"strokes":[[[71.0,-454.0],[121.0,-474.0],[159.0,-478.0],[170.0,-473.0],[173.0,-467.0],[162.0,-440.0],[120.0,-418.0],[108.0,-395.0],[115.0,-383.0],[161.0,-366.0],[168.0,-358.0],[174.0,-331.0],[171.0,-320.0],[157.0,-304.0],[132.0,-289.0],[114.0,-283.0],[87.0,-280.0],[64.0,-284.0],[53.0,-290.0],[48.0,-309.0]]]},"\u00b7":{"char":"\u00b7","advance":325.0,"bbox":[0.0,-237.0,325.0,0.0],"strokes":[[[162.0,-205.0],[162.0,-204.0]]]},"\u2212":{"char":"\u2212","advance":358.0,"bbox":[0.0,-255.0,358.0,0.0],"strokes":[[[292.0,-238.0],[282.0,-239.0],[196.0,-220.0],[100.0,-212.0],[54.0,-196.0]]]}};
+window.REENIE_CENTERLINES = REENIE_CENTERLINES;
 
 // --- Hershey Single-Line Stroke Font (Source: hersheytext@2.0.0, MIT License) ---
 var HERSHEY_GLYPHS = {"_meta":{"source":"hersheytext@2.0.0","font":"cursive","originalName":"Script 1-stroke (alt)","license":"MIT","origin":"A.V. Hershey single-line stroke font (Public Domain), ported by James T (techninja)","unitsPerEm":10,"baseY":22},"chars":{"0":{"d":"M9,1 L6,2 4,5 3,10 3,13 4,18 6,21 9,22 11,22 14,21 16,18 17,13 17,10 16,5 14,2 11,1 9,1","w":10},"1":{"d":"M6,5 L8,4 11,1 11,22","w":10},"2":{"d":"M4,6 L4,5 5,3 6,2 8,1 12,1 14,2 15,3 16,5 16,7 15,9 13,12 3,22 17,22","w":10},"3":{"d":"M5,1 L16,1 10,9 13,9 15,10 16,11 17,14 17,16 16,19 14,21 11,22 8,22 5,21 4,20 3,18","w":10},"4":{"d":"M13,1 L3,15 18,15 M13,1 L13,22","w":10},"5":{"d":"M15,1 L5,1 4,10 5,9 8,8 11,8 14,9 16,11 17,14 17,16 16,19 14,21 11,22 8,22 5,21 4,20 3,18","w":10},"6":{"d":"M16,4 L15,2 12,1 10,1 7,2 5,5 4,10 4,15 5,19 7,21 10,22 11,22 14,21 16,19 17,16 17,15 16,12 14,10 11,9 10,9 7,10 5,12 4,15","w":10},"7":{"d":"M17,1 L7,22 M3,1 L17,1","w":10},"8":{"d":"M8,1 L5,2 4,4 4,6 5,8 7,9 11,10 14,11 16,13 17,15 17,18 16,20 15,21 12,22 8,22 5,21 4,20 3,18 3,15 4,13 6,11 9,10 13,9 15,8 16,6 16,4 15,2 12,1 8,1","w":10},"9":{"d":"M16,8 L15,11 13,13 10,14 9,14 6,13 4,11 3,8 3,7 4,4 6,2 9,1 10,1 13,2 15,4 16,8 16,13 15,18 13,21 10,22 8,22 5,21 4,19","w":10},"!":{"d":"M5,1 L5,15 M5,20 L4,21 5,22 6,21 5,20","w":5},"\"":{"d":"M4,1 L4,8 M12,1 L12,8","w":8},"#":{"d":"M11,-3 L4,29 M17,-3 L10,29 M4,10 L18,10 M3,16 L17,16","w":11},"$":{"d":"M8,-3 L8,26 M12,-3 L12,26 M17,4 L15,2 12,1 8,1 5,2 3,4 3,6 4,8 5,9 7,10 13,12 15,13 16,14 17,16 17,19 15,21 12,22 8,22 5,21 3,19","w":10},"%":{"d":"M21,1 L3,22 M8,1 L10,3 10,5 9,7 7,8 5,8 3,6 3,4 4,2 6,1 8,1 10,2 13,3 16,3 19,2 21,1 M17,15 L15,16 14,18 14,20 16,22 18,22 20,21 21,19 21,17 19,15 17,15","w":12},"&":{"d":"M23,10 L23,9 22,8 21,8 20,9 19,11 17,16 15,19 13,21 11,22 7,22 5,21 4,20 3,18 3,16 4,14 5,13 12,9 13,8 14,6 14,4 13,2 11,1 9,2 8,4 8,6 9,9 11,12 16,19 18,21 20,22 22,22 23,21 23,20","w":13},"'":{"d":"M2,8 L2,12","w":2},"(":{"d":"M11,-3 L9,-1 7,2 5,6 4,11 4,15 5,20 7,24 9,27 11,29","w":7},")":{"d":"M3,-3 L5,-1 7,2 9,6 10,11 10,15 9,20 7,24 5,27 3,29","w":7},"*":{"d":"M8,7 L8,19 M3,10 L13,16 M13,10 L3,16","w":8},"+":{"d":"M13,4 L13,22 M4,13 L22,13","w":13},",":{"d":"M5,18 L4,19 3,18 4,17 5,18 5,20 3,22","w":4},"-":{"d":"M4,13 L22,13","w":13},".":{"d":"M4,17 L3,18 4,19 5,18 4,17","w":4},"/":{"d":"M20,-3 L2,29","w":11},":":{"d":"M4,10 L3,11 4,12 5,11 4,10 M4,17 L3,18 4,19 5,18 4,17","w":4},";":{"d":"M4,10 L3,11 4,12 5,11 4,10 M5,18 L4,19 3,18 4,17 5,18 5,20 3,22","w":4},"<":{"d":"M20,4 L4,13 20,22","w":12},"=":{"d":"M4,10 L22,10 M4,16 L22,16","w":13},">":{"d":"M4,4 L20,13 4,22","w":12},"?":{"d":"M3,6 L3,5 4,3 5,2 7,1 11,1 13,2 14,3 15,5 15,7 14,9 13,10 9,12 9,15 M9,20 L8,21 9,22 10,21 9,20","w":9},"@":{"d":"M18,9 L17,7 15,6 12,6 10,7 9,8 8,11 8,14 9,16 11,17 14,17 16,16 17,14 M12,6 L10,8 9,11 9,14 10,16 11,17 M18,6 L17,14 17,16 19,17 21,17 23,15 24,12 24,10 23,7 22,5 20,3 18,2 15,1 12,1 9,2 7,3 5,5 4,7 3,10 3,13 4,16 5,18 7,20 9,21 12,22 15,22 18,21 20,20 21,19 M19,6 L18,14 18,16 19,17","w":14},"A":{"d":"M0,22 L2,21 5,18 8,14 12,7 15,1 15,22 14,19 12,16 10,14 7,12 5,12 4,13 4,15 5,17 7,19 10,21 13,22 18,22","w":9},"B":{"d":"M13,3 L14,4 14,7 13,11 12,14 11,16 9,19 7,21 5,22 4,22 3,21 3,18 4,13 5,10 6,8 8,5 10,3 12,2 15,1 18,1 20,2 21,4 21,6 20,8 19,9 17,10 14,11 M13,11 L14,11 17,12 18,13 19,15 19,18 18,20 17,21 15,22 12,22 10,21 9,19","w":11},"C":{"d":"M12,7 L12,8 13,9 15,9 17,8 18,6 18,4 17,2 15,1 12,1 9,2 7,4 5,7 4,9 3,13 3,17 4,20 5,21 7,22 9,22 12,21 14,19 15,17","w":10},"D":{"d":"M13,1 L11,2 10,4 9,8 8,14 7,17 6,19 4,21 2,22 0,22 -1,21 -1,19 0,18 2,18 4,19 6,21 9,22 12,22 15,21 17,19 19,15 20,10 20,6 19,3 18,2 16,1 13,1 11,3 11,5 12,8 14,11 16,13 19,15 21,16","w":12},"E":{"d":"M14,5 L14,6 15,7 17,7 18,6 18,4 17,2 14,1 10,1 7,2 6,4 6,7 7,9 8,10 11,11 8,11 5,12 4,13 3,15 3,18 4,20 5,21 8,22 11,22 14,21 16,19 17,17","w":10},"F":{"d":"M10,7 L8,7 6,6 5,4 6,2 9,1 12,1 16,2 19,2 21,1 M16,2 L14,9 12,15 10,19 8,21 6,22 4,22 2,21 1,19 1,17 2,16 4,16 6,17 M9,11 L18,11","w":10},"G":{"d":"M0,22 L2,21 6,17 9,12 10,9 11,5 11,2 10,1 9,1 8,2 7,4 7,7 8,9 10,10 14,10 17,9 18,8 19,6 19,12 18,17 17,19 15,21 12,22 8,22 5,21 3,19 2,17 2,15","w":12},"H":{"d":"M7,8 L5,7 4,5 4,4 5,2 7,1 8,1 10,2 11,4 11,6 10,10 8,16 6,20 4,22 2,22 1,21 1,19 M7,13 L16,10 18,9 21,7 23,5 24,3 24,2 23,1 22,1 20,3 18,7 16,13 15,18 15,21 16,22 17,22 19,21 20,20 22,17","w":12},"I":{"d":"M14,17 L12,15 10,12 9,10 8,7 8,4 9,2 10,1 12,1 13,2 14,4 14,7 13,12 11,17 10,19 8,21 6,22 4,22 2,21 1,19 1,17 2,16 4,16 6,17","w":8},"J":{"d":"M10,25 L8,22 6,17 5,11 5,5 6,2 8,1 10,1 11,2 12,5 12,8 11,13 8,22 6,28 5,31 4,33 2,34 1,33 1,31 2,28 4,25 6,23 9,21 13,19","w":7},"K":{"d":"M7,8 L5,7 4,5 4,4 5,2 7,1 8,1 10,2 11,4 11,6 10,10 8,16 6,20 4,22 2,22 1,21 1,19 M24,4 L24,2 23,1 22,1 20,2 18,4 16,7 14,9 12,10 10,10 M12,10 L13,12 13,19 14,21 15,22 16,22 18,21 19,20 21,17","w":12},"L":{"d":"M4,13 L6,13 10,12 13,10 15,8 16,6 16,3 15,1 13,1 12,2 11,4 10,9 9,14 8,17 7,19 5,21 3,22 1,22 0,21 0,19 1,18 3,18 5,19 8,21 11,22 13,22 16,21 18,19","w":10},"M":{"d":"M5,8 L3,7 2,5 2,4 3,2 5,1 6,1 8,2 9,4 9,6 8,11 7,15 5,22 M7,15 L10,7 12,3 13,2 15,1 16,1 18,2 19,4 19,6 18,11 17,15 15,22 M17,15 L20,7 22,3 23,2 25,1 26,1 28,2 29,4 29,6 28,11 26,18 26,21 27,22 28,22 30,21 31,20 33,17","w":15},"N":{"d":"M5,8 L3,7 2,5 2,4 3,2 5,1 6,1 8,2 9,4 9,6 8,11 7,15 5,22 M7,15 L10,7 12,3 13,2 15,1 17,1 19,2 20,4 20,6 19,11 17,18 17,21 18,22 19,22 21,21 22,20 24,17","w":11},"O":{"d":"M12,1 L9,2 7,4 5,7 4,9 3,13 3,17 4,20 5,21 7,22 9,22 12,21 14,19 16,16 17,14 18,10 18,6 17,3 16,2 14,1 12,1 10,3 10,6 11,9 13,12 15,14 18,16 20,17","w":11},"P":{"d":"M13,3 L14,4 14,7 13,11 12,14 11,16 9,19 7,21 5,22 4,22 3,21 3,18 4,13 5,10 6,8 8,5 10,3 12,2 15,1 20,1 22,2 23,3 24,5 24,8 23,10 22,11 20,12 17,12 15,11 14,10","w":13},"Q":{"d":"M13,7 L12,9 11,10 9,11 7,11 6,9 6,7 7,4 9,2 12,1 15,1 17,2 18,4 18,8 17,11 15,14 11,18 8,20 6,21 3,22 1,22 0,21 0,19 1,18 3,18 5,19 8,21 11,22 14,22 17,21 19,19","w":12},"R":{"d":"M13,3 L14,4 14,7 13,11 12,14 11,16 9,19 7,21 5,22 4,22 3,21 3,18 4,13 5,10 6,8 8,5 10,3 12,2 15,1 19,1 21,2 22,3 23,5 23,8 22,10 21,11 19,12 16,12 13,11 14,12 15,14 15,19 16,21 18,22 20,21 21,20 23,17","w":13},"S":{"d":"M0,22 L2,21 4,19 7,15 9,12 11,8 12,5 12,2 11,1 10,1 9,2 8,4 8,6 9,8 11,10 14,12 16,14 17,16 17,18 16,20 15,21 12,22 8,22 5,21 3,19 2,17 2,15","w":10},"T":{"d":"M10,7 L8,7 6,6 5,4 6,2 9,1 12,1 16,2 19,2 21,1 M16,2 L14,9 12,15 10,19 8,21 6,22 4,22 2,21 1,19 1,17 2,16 4,16 6,17","w":9},"U":{"d":"M5,8 L3,7 2,5 2,4 3,2 5,1 6,1 8,2 9,4 9,6 8,10 7,13 6,17 6,19 7,21 9,22 11,22 13,21 14,20 16,16 19,8 21,1 M19,8 L18,12 17,18 17,21 18,22 19,22 21,21 22,20 24,17","w":11},"V":{"d":"M5,8 L3,7 2,5 2,4 3,2 5,1 6,1 8,2 9,4 9,6 8,10 7,13 6,17 6,20 7,22 9,22 11,21 14,18 16,15 18,11 19,8 20,4 20,2 19,1 18,1 17,2 16,4 16,6 17,9 19,11 21,12","w":11},"W":{"d":"M5,8 L3,7 2,5 2,4 3,2 5,1 6,1 8,2 9,4 9,7 8,22 M18,1 L8,22 M18,1 L16,22 M30,1 L28,2 25,5 22,9 19,15 16,22","w":13},"X":{"d":"M8,7 L6,7 5,6 5,4 6,2 8,1 10,1 12,2 13,4 13,7 11,16 11,19 12,21 14,22 16,22 18,21 19,19 19,17 18,16 16,16 M23,4 L23,2 22,1 20,1 18,2 16,4 14,7 10,16 8,19 6,21 4,22 2,22 1,21 1,19","w":12},"Y":{"d":"M5,8 L3,7 2,5 2,4 3,2 5,1 6,1 8,2 9,4 9,6 8,10 7,13 6,17 6,19 7,21 8,22 10,22 12,21 14,19 16,16 17,14 19,8 M21,1 L19,8 16,18 14,24 12,29 10,33 8,34 7,33 7,31 8,28 10,25 13,22 16,20 21,17","w":11},"Z":{"d":"M13,7 L12,9 11,10 9,11 7,11 6,9 6,7 7,4 9,2 12,1 15,1 17,2 18,4 18,8 17,11 15,15 12,18 8,21 6,22 3,22 2,21 2,19 3,18 6,18 8,19 9,20 10,22 10,25 9,28 8,30 6,33 4,34 3,33 3,31 4,28 6,25 9,22 12,20 18,17","w":11},"[":{"d":"M4,-3 L4,29 M5,-3 L5,29 M4,-3 L11,-3 M4,29 L11,29","w":7},"\\":{"d":"M0,1 L14,25","w":7},"]":{"d":"M9,-3 L9,29 M10,-3 L10,29 M3,-3 L10,-3 M3,29 L10,29","w":7},"^":{"d":"M8,-1 L0,13 M8,-1 L16,13","w":8},"_":{"d":"M0,29 L20,29","w":9},"`":{"d":"M5,6 L3,8 3,10 4,11 5,10 4,9 3,10","w":4},"a":{"d":"M9,16 L8,14 6,13 4,13 2,14 1,15 0,17 0,19 1,21 3,22 5,22 7,21 8,19 10,13 9,18 9,21 10,22 11,22 13,21 14,20 16,17","w":10},"b":{"d":"M0,17 L2,14 5,9 6,7 7,4 7,2 6,1 4,2 3,4 2,8 1,15 1,21 2,22 3,22 5,21 7,19 8,16 8,13 9,17 10,18 12,18 14,17","w":9},"c":{"d":"M7,15 L7,14 6,13 4,13 2,14 1,15 0,17 0,19 1,21 3,22 6,22 9,20 11,17","w":6},"d":{"d":"M9,16 L8,14 6,13 4,13 2,14 1,15 0,17 0,19 1,21 3,22 5,22 7,21 8,19 14,1 M10,13 L9,18 9,21 10,22 11,22 13,21 14,20 16,17","w":10},"e":{"d":"M1,20 L3,19 4,18 5,16 5,14 4,13 3,13 1,14 0,16 0,19 1,21 3,22 5,22 7,21 8,20 10,17","w":6},"f":{"d":"M0,17 L4,12 6,9 7,7 8,4 8,2 7,1 5,2 4,4 2,12 -1,21 -4,28 -5,31 -5,33 -4,34 -2,33 -1,30 0,21 1,22 3,22 5,21 6,20 8,17","w":5},"g":{"d":"M9,16 L8,14 6,13 4,13 2,14 1,15 0,17 0,19 1,21 3,22 5,22 7,21 8,20 M10,13 L8,20 4,31 3,33 1,34 0,33 0,31 1,28 4,25 7,23 9,22 12,20 15,17","w":9},"h":{"d":"M0,17 L2,14 5,9 6,7 7,4 7,2 6,1 4,2 3,4 2,8 1,14 0,22 M0,22 L1,19 2,17 4,14 6,13 8,13 9,14 9,16 8,19 8,21 9,22 10,22 12,21 13,20 15,17","w":10},"i":{"d":"M3,8 L3,9 4,9 4,8 3,8 M0,17 L2,13 0,19 0,21 1,22 2,22 4,21 5,20 7,17","w":5},"j":{"d":"M3,8 L3,9 4,9 4,8 3,8 M0,17 L2,13 -4,31 -5,33 -7,34 -8,33 -8,31 -7,28 -4,25 -1,23 1,22 4,20 7,17","w":5},"k":{"d":"M0,17 L2,14 5,9 6,7 7,4 7,2 6,1 4,2 3,4 2,8 1,14 0,22 M0,22 L1,19 2,17 4,14 6,13 8,13 9,14 9,16 7,17 4,17 M4,17 L6,18 7,21 8,22 9,22 11,21 12,20 14,17","w":9},"l":{"d":"M0,17 L2,14 5,9 6,7 7,4 7,2 6,1 4,2 3,4 2,8 1,15 1,21 2,22 3,22 5,21 6,20 8,17","w":5},"m":{"d":"M0,17 L2,14 4,13 5,14 5,15 4,19 3,22 M4,19 L5,17 7,14 9,13 11,13 12,14 12,15 11,19 10,22 M11,19 L12,17 14,14 16,13 18,13 19,14 19,16 18,19 18,21 19,22 20,22 22,21 23,20 25,17","w":12},"n":{"d":"M0,17 L2,14 4,13 5,14 5,15 4,19 3,22 M4,19 L5,17 7,14 9,13 11,13 12,14 12,16 11,19 11,21 12,22 13,22 15,21 16,20 18,17","w":10},"o":{"d":"M6,13 L4,13 2,14 1,15 0,17 0,19 1,21 3,22 5,22 7,21 8,20 9,18 9,16 8,14 6,13 5,14 5,16 6,18 8,19 11,19 13,18 14,17","w":8},"p":{"d":"M0,17 L2,14 3,12 2,16 -4,34 M2,16 L3,14 5,13 7,13 9,14 10,16 10,18 9,20 8,21 6,22 M2,21 L4,22 7,22 10,21 12,20 15,17","w":8},"q":{"d":"M9,16 L8,14 6,13 4,13 2,14 1,15 0,17 0,19 1,21 3,22 5,22 7,21 M10,13 L9,16 7,21 4,28 3,31 3,33 4,34 6,33 7,30 7,23 9,22 12,20 15,17","w":9},"r":{"d":"M0,17 L2,14 3,12 3,14 6,14 7,15 7,17 6,20 6,21 7,22 8,22 10,21 11,20 13,17","w":8},"s":{"d":"M0,17 L2,14 3,12 3,14 5,17 6,19 6,21 4,22 M0,21 L2,22 6,22 8,21 9,20 11,17","w":7},"t":{"d":"M0,17 L2,14 4,10 M7,1 L1,19 1,21 2,22 4,22 6,21 7,20 9,17 M1,9 L8,9","w":6},"u":{"d":"M0,17 L2,13 0,19 0,21 1,22 3,22 5,21 7,19 9,16 M10,13 L8,19 8,21 9,22 10,22 12,21 13,20 15,17","w":9},"v":{"d":"M0,17 L2,13 1,18 1,21 2,22 3,22 6,21 8,19 9,16 9,13 M9,13 L10,17 11,18 13,18 15,17","w":9},"w":{"d":"M3,13 L1,15 0,18 0,20 1,22 3,22 5,21 7,19 M9,13 L7,19 7,21 8,22 10,22 12,21 14,19 15,16 15,13 M15,13 L16,17 17,18 19,18 21,17","w":12},"x":{"d":"M0,17 L2,14 4,13 6,13 7,14 7,21 8,22 11,22 14,20 16,17 M13,14 L12,13 10,13 9,14 5,21 4,22 2,22 1,21","w":8},"y":{"d":"M0,17 L2,13 0,19 0,21 1,22 3,22 5,21 7,19 9,16 M10,13 L4,31 3,33 1,34 0,33 0,31 1,28 4,25 7,23 9,22 12,20 15,17","w":9},"z":{"d":"M0,17 L2,14 4,13 6,13 8,15 8,17 7,19 5,21 2,22 4,23 5,25 5,28 4,31 3,33 1,34 0,33 0,31 1,28 4,25 7,23 11,20 14,17","w":8},"{":{"d":"M9,-3 L7,-2 6,-1 5,1 5,3 6,5 7,6 8,8 8,10 6,12 M7,-2 L6,0 6,2 7,4 8,5 9,7 9,9 8,11 4,13 8,15 9,17 9,19 8,21 7,22 6,24 6,26 7,28 M6,14 L8,16 8,18 7,20 6,21 5,23 5,25 6,27 7,28 9,29","w":7},"|":{"d":"M4,-3 L4,29","w":4},"}":{"d":"M5,-3 L7,-2 8,-1 9,1 9,3 8,5 7,6 6,8 6,10 8,12 M7,-2 L8,0 8,2 7,4 6,5 5,7 5,9 6,11 10,13 6,15 5,17 5,19 6,21 7,22 8,24 8,26 7,28 M8,14 L6,16 6,18 7,20 8,21 9,23 9,25 8,27 7,28 5,29","w":7},"~":{"d":"M3,16 L3,14 4,11 6,10 8,10 10,11 14,14 16,15 18,15 20,14 21,12 M3,14 L4,12 6,11 8,11 10,12 14,15 16,16 18,16 20,15 21,12 21,10","w":12},"":{"d":"M0,1 L0,22 1,22 1,1 2,1 2,22 3,22 3,1 4,1 4,22 5,22 5,1 6,1 6,22 7,22 7,1 8,1 8,22 9,22 9,1 10,1 10,22 11,22 11,1 12,1 12,22 13,22 13,1 14,1 14,22 15,22 15,1 16,1 16,22","w":8}," ":{"d":"","w":10}}};
@@ -287,6 +657,9 @@ function splitPathIntoStrokes(d) {
   var raw = d.trim().split(/(?=M)/);
   return raw.map(function(s) { return s.trim(); }).filter(Boolean);
 }
+
+var REENIE_CENTERLINES = {"a":{"char":"a","advance":487.0,"bbox":[0.0,-356.0,515.0,0.0],"strokes":[[[503.0,-208.0],[483.0,-173.0],[463.0,-149.0],[435.0,-122.0],[402.0,-100.0],[371.0,-87.0],[333.0,-80.0],[306.0,-79.0],[275.0,-85.0],[238.0,-104.0],[217.0,-125.0],[200.0,-161.0],[186.0,-172.0],[189.0,-256.0],[175.0,-286.0],[173.0,-303.0],[156.0,-316.0],[139.0,-310.0],[128.0,-299.0],[101.0,-248.0],[84.0,-190.0],[83.0,-130.0],[92.0,-103.0],[102.0,-95.0],[128.0,-105.0],[159.0,-156.0],[186.0,-172.0]]]},"b":{"char":"b","advance":331.0,"bbox":[-55.0,-722.0,331.0,0.0],"strokes":[[[-34.0,-703.0],[-36.0,-686.0],[-25.0,-589.0],[16.0,-409.0],[42.0,-322.0],[79.0,-218.0],[83.0,-212.0],[104.0,-200.0],[110.0,-122.0],[103.0,-86.0]],[[104.0,-200.0],[120.0,-213.0],[143.0,-287.0],[155.0,-309.0],[166.0,-320.0],[186.0,-327.0],[207.0,-322.0],[223.0,-305.0],[238.0,-276.0],[249.0,-234.0],[251.0,-193.0],[246.0,-144.0],[237.0,-110.0],[214.0,-67.0],[194.0,-46.0],[184.0,-44.0],[160.0,-55.0]]]},"c":{"char":"c","advance":368.0,"bbox":[0.0,-359.0,368.0,0.0],"strokes":[[[174.0,-342.0],[147.0,-323.0],[116.0,-290.0],[98.0,-263.0],[76.0,-214.0],[68.0,-184.0],[65.0,-145.0],[69.0,-117.0],[81.0,-95.0],[103.0,-76.0],[129.0,-67.0],[156.0,-66.0],[198.0,-76.0],[233.0,-94.0],[266.0,-119.0],[304.0,-158.0],[317.0,-189.0]]]},"d":{"char":"d","advance":360.0,"bbox":[0.0,-714.0,360.0,0.0],"strokes":[[[178.0,-696.0],[187.0,-667.0],[199.0,-560.0],[250.0,-274.0],[254.0,-230.0],[249.0,-226.0],[214.0,-241.0],[179.0,-280.0],[151.0,-299.0],[128.0,-305.0],[107.0,-303.0],[85.0,-284.0],[73.0,-258.0],[65.0,-210.0],[68.0,-175.0],[81.0,-136.0],[92.0,-121.0],[115.0,-102.0],[151.0,-92.0],[212.0,-99.0],[246.0,-115.0],[268.0,-120.0],[280.0,-132.0],[273.0,-168.0],[249.0,-226.0]]]},"e":{"char":"e","advance":349.0,"bbox":[0.0,-380.0,349.0,0.0],"strokes":[[[138.0,-238.0],[204.0,-278.0],[213.0,-290.0],[219.0,-310.0],[213.0,-332.0],[203.0,-343.0],[190.0,-349.0],[157.0,-355.0],[139.0,-350.0],[127.0,-341.0],[109.0,-321.0],[90.0,-289.0],[71.0,-227.0],[70.0,-163.0],[80.0,-125.0],[91.0,-104.0],[112.0,-79.0],[133.0,-64.0],[162.0,-53.0],[202.0,-53.0],[236.0,-59.0],[258.0,-68.0],[304.0,-99.0]]]},"f":{"char":"f","advance":391.0,"bbox":[0.0,-768.0,391.0,0.0],"strokes":[[[360.0,-703.0],[338.0,-725.0],[299.0,-742.0],[237.0,-748.0],[208.0,-741.0],[174.0,-715.0],[152.0,-684.0],[134.0,-642.0],[122.0,-591.0],[118.0,-557.0],[121.0,-481.0],[151.0,-350.0],[153.0,-346.0],[175.0,-339.0],[188.0,-285.0],[236.0,-192.0],[263.0,-128.0],[262.0,-79.0],[247.0,-48.0]],[[335.0,-351.0],[298.0,-348.0],[194.0,-351.0],[175.0,-339.0],[153.0,-346.0],[142.0,-339.0],[122.0,-337.0],[79.0,-324.0],[48.0,-307.0]]]},"g":{"char":"g","advance":331.0,"bbox":[0.0,-394.0,331.0,251.0],"strokes":[[[185.0,-365.0],[178.0,-371.0],[155.0,-375.0],[134.0,-369.0],[109.0,-347.0],[84.0,-308.0],[69.0,-269.0],[56.0,-203.0],[59.0,-141.0],[71.0,-98.0],[97.0,-62.0],[109.0,-55.0],[133.0,-50.0],[154.0,-57.0],[173.0,-80.0],[196.0,-120.0],[222.0,-135.0],[222.0,-275.0]],[[222.0,-135.0],[235.0,-122.0],[244.0,-83.0],[248.0,-79.0],[248.0,-49.0],[221.0,-39.0],[213.0,-31.0],[151.0,52.0],[137.0,80.0],[128.0,112.0],[126.0,146.0],[131.0,173.0],[142.0,195.0],[158.0,212.0],[180.0,224.0],[200.0,227.0],[228.0,225.0],[247.0,217.0],[265.0,203.0],[277.0,186.0],[285.0,164.0],[289.0,132.0],[286.0,79.0],[263.0,-15.0],[254.0,-42.0],[247.0,-48.0]]]},"h":{"char":"h","advance":384.0,"bbox":[0.0,-687.0,384.0,0.0],"strokes":[[[68.0,-677.0],[73.0,-621.0],[74.0,-537.0],[116.0,-213.0],[130.0,-152.0],[134.0,-146.0],[148.0,-139.0],[151.0,-102.0],[157.0,-85.0]],[[234.0,-297.0],[238.0,-284.0],[234.0,-247.0],[205.0,-230.0],[173.0,-153.0],[148.0,-139.0]],[[233.0,-246.0],[249.0,-235.0],[264.0,-183.0],[276.0,-162.0],[288.0,-151.0],[300.0,-149.0],[328.0,-158.0],[343.0,-176.0]]]},"i":{"char":"i","advance":155.0,"bbox":[0.0,-489.0,155.0,0.0],"strokes":[[[49.0,-274.0],[51.0,-255.0],[72.0,-207.0],[109.0,-95.0]],[[85.0,-461.0],[45.0,-459.0],[31.0,-454.0]]]},"j":{"char":"j","advance":155.0,"bbox":[-86.0,-486.0,164.0,156.0],"strokes":[[[56.0,-248.0],[57.0,-225.0],[96.0,-63.0],[131.0,48.0],[135.0,91.0],[127.0,116.0],[117.0,124.0],[92.0,130.0],[54.0,128.0],[11.0,116.0],[-24.0,95.0],[-47.0,74.0],[-66.0,48.0],[-78.0,18.0]],[[69.0,-457.0],[26.0,-451.0]]]},"k":{"char":"k","advance":398.0,"bbox":[0.0,-515.0,398.0,0.0],"strokes":[[[22.0,-505.0],[24.0,-447.0],[73.0,-237.0],[85.0,-201.0],[115.0,-181.0],[121.0,-132.0],[114.0,-125.0],[112.0,-109.0],[116.0,-78.0],[134.0,-21.0]],[[250.0,-403.0],[238.0,-402.0],[227.0,-395.0],[203.0,-369.0],[177.0,-332.0],[140.0,-254.0],[129.0,-196.0],[115.0,-181.0]],[[120.0,-131.0],[183.0,-104.0],[231.0,-93.0],[289.0,-93.0],[378.0,-105.0]]]},"l":{"char":"l","advance":211.0,"bbox":[0.0,-598.0,211.0,0.0],"strokes":[[[51.0,-582.0],[65.0,-488.0],[76.0,-376.0],[97.0,-242.0],[130.0,-104.0],[156.0,-32.0]]]},"m":{"char":"m","advance":524.0,"bbox":[0.0,-375.0,524.0,0.0],"strokes":[[[59.0,-350.0],[58.0,-288.0],[74.0,-206.0],[102.0,-120.0],[125.0,-105.0],[132.0,-65.0]],[[193.0,-350.0],[192.0,-297.0],[164.0,-276.0],[153.0,-232.0],[141.0,-125.0],[124.0,-107.0]],[[379.0,-300.0],[377.0,-244.0],[343.0,-224.0],[305.0,-122.0],[279.0,-109.0],[263.0,-117.0],[254.0,-133.0],[206.0,-280.0],[202.0,-288.0],[190.0,-293.0]],[[377.0,-244.0],[387.0,-235.0],[401.0,-162.0],[417.0,-120.0],[442.0,-91.0],[464.0,-89.0]]]},"n":{"char":"n","advance":352.0,"bbox":[0.0,-358.0,352.0,0.0],"strokes":[[[74.0,-349.0],[68.0,-330.0],[65.0,-281.0],[70.0,-137.0],[72.0,-129.0],[82.0,-120.0],[77.0,-83.0]],[[170.0,-311.0],[166.0,-257.0],[142.0,-242.0],[107.0,-132.0],[82.0,-119.0]],[[166.0,-257.0],[179.0,-246.0],[189.0,-206.0],[205.0,-170.0],[240.0,-131.0],[259.0,-121.0],[287.0,-114.0],[317.0,-120.0],[326.0,-128.0]]]},"o":{"char":"o","advance":280.0,"bbox":[0.0,-362.0,280.0,0.0],"strokes":[[[129.0,-326.0],[112.0,-318.0],[96.0,-296.0],[87.0,-259.0],[86.0,-212.0],[93.0,-174.0],[105.0,-149.0],[120.0,-136.0],[145.0,-132.0],[164.0,-138.0],[176.0,-151.0],[185.0,-169.0],[195.0,-211.0],[194.0,-254.0],[187.0,-294.0],[179.0,-306.0],[170.0,-314.0],[129.0,-326.0]]]},"p":{"char":"p","advance":377.0,"bbox":[-32.0,-367.0,377.0,213.0],"strokes":[[[139.0,-331.0],[147.0,-338.0],[183.0,-344.0],[238.0,-345.0],[274.0,-340.0],[317.0,-321.0],[327.0,-311.0],[334.0,-284.0],[330.0,-264.0],[321.0,-246.0],[276.0,-197.0],[185.0,-133.0],[152.0,-124.0]],[[-5.0,-239.0],[-9.0,-268.0],[21.0,-293.0],[86.0,-324.0],[139.0,-331.0],[137.0,-249.0],[142.0,-155.0],[145.0,-131.0],[152.0,-125.0],[152.0,-64.0],[185.0,154.0],[185.0,190.0]]]},"q":{"char":"q","advance":295.0,"bbox":[0.0,-338.0,295.0,134.0],"strokes":[[[204.0,-165.0],[166.0,-149.0],[133.0,-114.0],[109.0,-103.0],[84.0,-109.0],[75.0,-117.0],[60.0,-156.0],[58.0,-189.0],[67.0,-224.0],[91.0,-269.0],[114.0,-294.0],[133.0,-304.0],[160.0,-308.0],[179.0,-302.0],[195.0,-288.0],[207.0,-264.0],[214.0,-238.0],[213.0,-212.0],[204.0,-165.0],[212.0,-156.0],[227.0,17.0],[238.0,85.0],[246.0,98.0]]]},"r":{"char":"r","advance":316.0,"bbox":[0.0,-333.0,316.0,0.0],"strokes":[[[94.0,-320.0],[93.0,-291.0],[100.0,-283.0],[118.0,-291.0],[173.0,-304.0],[264.0,-307.0]],[[100.0,-283.0],[92.0,-254.0],[93.0,-223.0],[100.0,-152.0],[113.0,-101.0]]]},"s":{"char":"s","advance":311.0,"bbox":[0.0,-356.0,311.0,0.0],"strokes":[[[235.0,-323.0],[186.0,-335.0],[135.0,-329.0],[111.0,-315.0],[103.0,-303.0],[98.0,-284.0],[102.0,-250.0],[110.0,-234.0],[145.0,-205.0],[226.0,-158.0],[235.0,-134.0],[231.0,-118.0],[220.0,-107.0],[199.0,-97.0],[144.0,-84.0],[97.0,-80.0],[61.0,-90.0]]]},"t":{"char":"t","advance":319.0,"bbox":[-112.0,-582.0,319.0,0.0],"strokes":[[[97.0,-568.0],[96.0,-555.0],[129.0,-383.0],[138.0,-368.0],[141.0,-343.0],[176.0,-212.0],[191.0,-100.0]],[[293.0,-454.0],[215.0,-412.0],[168.0,-391.0],[141.0,-385.0],[134.0,-378.0],[134.0,-372.0],[126.0,-367.0],[95.0,-361.0],[56.0,-342.0],[-85.0,-258.0],[-90.0,-259.0]]]},"u":{"char":"u","advance":369.0,"bbox":[0.0,-335.0,369.0,0.0],"strokes":[[[212.0,-311.0],[215.0,-269.0],[208.0,-176.0],[187.0,-161.0],[165.0,-128.0],[143.0,-119.0],[121.0,-126.0],[102.0,-154.0],[76.0,-226.0],[64.0,-288.0]],[[207.0,-175.0],[226.0,-165.0],[246.0,-143.0],[271.0,-136.0],[301.0,-141.0],[352.0,-165.0]]]},"v":{"char":"v","advance":282.0,"bbox":[0.0,-376.0,282.0,0.0],"strokes":[[[204.0,-349.0],[187.0,-237.0],[180.0,-142.0],[177.0,-129.0],[169.0,-122.0],[134.0,-134.0],[113.0,-157.0],[85.0,-210.0],[59.0,-285.0]]]},"w":{"char":"w","advance":387.0,"bbox":[0.0,-449.0,387.0,0.0],"strokes":[[[334.0,-433.0],[317.0,-427.0],[306.0,-402.0],[303.0,-184.0],[296.0,-149.0],[284.0,-139.0],[252.0,-152.0],[229.0,-191.0],[205.0,-205.0],[187.0,-191.0],[179.0,-160.0],[168.0,-136.0],[155.0,-129.0],[133.0,-138.0],[113.0,-163.0],[89.0,-207.0],[57.0,-291.0]],[[192.0,-303.0],[200.0,-270.0],[205.0,-205.0]]]},"x":{"char":"x","advance":367.0,"bbox":[0.0,-410.0,367.0,0.0],"strokes":[[[63.0,-354.0],[86.0,-292.0],[116.0,-238.0],[145.0,-200.0],[170.0,-189.0],[169.0,-153.0],[202.0,-142.0],[239.0,-114.0],[275.0,-93.0],[294.0,-89.0],[302.0,-91.0]],[[224.0,-397.0],[226.0,-385.0],[179.0,-200.0],[170.0,-191.0],[170.0,-154.0],[162.0,-145.0],[145.0,-80.0],[121.0,-26.0]]]},"y":{"char":"y","advance":282.0,"bbox":[0.0,-498.0,282.0,184.0],"strokes":[[[227.0,-478.0],[228.0,-468.0],[218.0,-436.0],[173.0,-149.0],[169.0,-143.0],[156.0,56.0],[159.0,165.0]],[[32.0,-238.0],[68.0,-204.0],[136.0,-153.0],[169.0,-143.0]]]},"z":{"char":"z","advance":405.0,"bbox":[0.0,-362.0,406.0,0.0],"strokes":[[[46.0,-307.0],[55.0,-303.0],[68.0,-304.0],[181.0,-335.0],[226.0,-338.0],[231.0,-331.0],[218.0,-292.0],[108.0,-153.0],[97.0,-115.0],[102.0,-103.0],[157.0,-112.0],[276.0,-168.0],[370.0,-199.0],[381.0,-198.0]]]},"A":{"char":"A","advance":406.0,"bbox":[0.0,-660.0,406.0,75.0],"strokes":[[[186.0,-643.0],[189.0,-575.0],[167.0,-555.0],[148.0,-433.0],[112.0,-258.0],[104.0,-162.0],[161.0,-167.0],[258.0,-193.0],[263.0,-187.0],[265.0,-160.0],[294.0,-52.0],[334.0,52.0]],[[188.0,-574.0],[203.0,-562.0],[221.0,-371.0],[249.0,-234.0],[252.0,-203.0],[258.0,-193.0]],[[299.0,-216.0],[268.0,-205.0],[257.0,-195.0]],[[105.0,-161.0],[100.0,-156.0],[92.0,-112.0],[76.0,5.0]]]},"B":{"char":"B","advance":565.0,"bbox":[-21.0,-682.0,565.0,22.0],"strokes":[[[78.0,-412.0],[86.0,-405.0],[92.0,-388.0],[92.0,-318.0],[114.0,-298.0],[136.0,-302.0],[145.0,-294.0],[192.0,-302.0],[301.0,-339.0],[375.0,-351.0],[443.0,-344.0],[469.0,-334.0],[489.0,-317.0],[492.0,-294.0],[486.0,-264.0],[475.0,-242.0],[449.0,-208.0],[385.0,-150.0],[331.0,-112.0],[240.0,-57.0],[202.0,-22.0]],[[15.0,-402.0],[2.0,-419.0],[5.0,-429.0],[19.0,-446.0],[91.0,-513.0],[170.0,-572.0],[251.0,-613.0],[333.0,-644.0],[385.0,-657.0],[407.0,-658.0],[427.0,-654.0],[434.0,-641.0],[428.0,-606.0],[395.0,-557.0],[314.0,-475.0],[157.0,-340.0],[146.0,-313.0],[135.0,-302.0],[114.0,-298.0],[101.0,-276.0],[112.0,-173.0],[134.0,-62.0],[162.0,11.0]]]},"C":{"char":"C","advance":522.0,"bbox":[0.0,-479.0,522.0,3.0],"strokes":[[[226.0,-459.0],[202.0,-430.0],[162.0,-369.0],[124.0,-287.0],[87.0,-186.0],[73.0,-127.0],[71.0,-96.0],[75.0,-70.0],[92.0,-45.0],[107.0,-35.0],[130.0,-28.0],[171.0,-26.0],[217.0,-33.0],[275.0,-56.0],[328.0,-88.0],[400.0,-149.0],[443.0,-203.0],[454.0,-223.0],[455.0,-238.0]]]},"D":{"char":"D","advance":448.0,"bbox":[-142.0,-518.0,448.0,80.0],"strokes":[[[85.0,-483.0],[84.0,-448.0],[93.0,-372.0],[107.0,-300.0],[132.0,-203.0],[148.0,-84.0]],[[-85.0,-447.0],[-79.0,-448.0],[-60.0,-467.0],[-33.0,-483.0],[15.0,-493.0],[76.0,-489.0],[87.0,-482.0],[132.0,-477.0],[179.0,-463.0],[266.0,-425.0],[329.0,-383.0],[351.0,-362.0],[368.0,-339.0],[376.0,-316.0],[378.0,-287.0],[373.0,-256.0],[363.0,-229.0],[330.0,-176.0],[264.0,-108.0],[196.0,-57.0],[88.0,1.0],[28.0,26.0],[-34.0,46.0],[-76.0,56.0],[-113.0,58.0],[-122.0,54.0],[-118.0,30.0]]]},"E":{"char":"E","advance":369.0,"bbox":[0.0,-536.0,369.0,5.0],"strokes":[[[321.0,-519.0],[309.0,-520.0],[215.0,-497.0],[172.0,-474.0],[141.0,-444.0],[131.0,-431.0],[125.0,-390.0],[106.0,-351.0],[90.0,-305.0],[82.0,-256.0],[85.0,-246.0],[121.0,-252.0],[319.0,-348.0]],[[85.0,-246.0],[72.0,-232.0],[70.0,-154.0],[75.0,-119.0],[82.0,-98.0],[99.0,-68.0],[133.0,-37.0],[161.0,-25.0],[198.0,-20.0],[231.0,-22.0],[258.0,-30.0],[286.0,-45.0],[308.0,-65.0],[320.0,-91.0],[315.0,-106.0]]]},"F":{"char":"F","advance":336.0,"bbox":[0.0,-573.0,356.0,13.0],"strokes":[[[347.0,-539.0],[304.0,-549.0],[255.0,-536.0],[180.0,-498.0],[102.0,-441.0],[85.0,-433.0],[88.0,-384.0],[109.0,-247.0],[114.0,-242.0],[113.0,-221.0],[66.0,-207.0]],[[319.0,-345.0],[253.0,-312.0],[153.0,-253.0],[114.0,-241.0]],[[112.0,-220.0],[120.0,-212.0],[126.0,-161.0],[145.0,-72.0],[158.0,-30.0],[169.0,-9.0]]]},"G":{"char":"G","advance":470.0,"bbox":[0.0,-653.0,470.0,10.0],"strokes":[[[367.0,-610.0],[359.0,-623.0],[337.0,-629.0],[312.0,-627.0],[293.0,-619.0],[254.0,-585.0],[207.0,-522.0],[146.0,-409.0],[99.0,-301.0],[71.0,-205.0],[67.0,-139.0],[72.0,-111.0],[84.0,-83.0],[116.0,-46.0],[154.0,-26.0],[211.0,-18.0],[259.0,-27.0],[313.0,-56.0],[362.0,-101.0],[403.0,-162.0],[416.0,-204.0],[416.0,-257.0],[402.0,-299.0],[377.0,-326.0],[349.0,-335.0],[308.0,-330.0],[262.0,-297.0],[210.0,-273.0]]]},"H":{"char":"H","advance":382.0,"bbox":[0.0,-579.0,382.0,15.0],"strokes":[[[248.0,-562.0],[245.0,-532.0],[272.0,-274.0],[122.0,-259.0],[115.0,-264.0],[115.0,-517.0],[112.0,-557.0]],[[272.0,-274.0],[285.0,-282.0],[320.0,-285.0],[273.0,-274.0],[277.0,-266.0],[296.0,-83.0],[296.0,-16.0]],[[120.0,-259.0],[113.0,-251.0],[117.0,-234.0],[119.0,-159.0],[131.0,-37.0],[139.0,3.0]]]},"I":{"char":"I","advance":519.0,"bbox":[0.0,-502.0,519.0,7.0],"strokes":[[[336.0,-493.0],[299.0,-487.0],[237.0,-469.0],[228.0,-464.0],[219.0,-452.0],[238.0,-279.0],[277.0,-73.0],[25.0,-13.0]],[[219.0,-451.0],[167.0,-441.0],[105.0,-412.0],[56.0,-384.0]],[[497.0,-143.0],[479.0,-133.0],[424.0,-116.0],[313.0,-86.0],[277.0,-80.0]],[[276.0,-72.0],[283.0,-64.0],[291.0,-19.0]]]},"J":{"char":"J","advance":366.0,"bbox":[-71.0,-598.0,366.0,18.0],"strokes":[[[280.0,-590.0],[140.0,-540.0],[136.0,-535.0],[109.0,-531.0],[30.0,-501.0],[-24.0,-473.0],[-45.0,-458.0],[-51.0,-447.0]],[[136.0,-535.0],[143.0,-528.0],[145.0,-509.0],[174.0,-425.0],[284.0,-138.0],[294.0,-96.0],[295.0,-51.0],[290.0,-35.0],[279.0,-21.0],[252.0,-9.0],[207.0,-5.0],[166.0,-9.0],[139.0,-16.0],[94.0,-39.0],[71.0,-63.0],[68.0,-85.0],[74.0,-118.0]]]},"K":{"char":"K","advance":468.0,"bbox":[0.0,-532.0,468.0,34.0],"strokes":[[[64.0,-514.0],[61.0,-444.0],[63.0,-353.0],[70.0,-288.0],[83.0,-225.0],[99.0,-213.0],[127.0,-213.0],[147.0,-192.0],[173.0,-177.0],[235.0,-157.0],[364.0,-136.0],[410.0,-134.0],[437.0,-137.0]],[[273.0,-478.0],[246.0,-447.0],[162.0,-309.0],[139.0,-261.0],[131.0,-219.0],[126.0,-213.0],[99.0,-213.0],[93.0,-206.0],[99.0,-163.0],[137.0,-55.0],[140.0,13.0]]]},"L":{"char":"L","advance":384.0,"bbox":[0.0,-539.0,384.0,46.0],"strokes":[[[83.0,-522.0],[68.0,-483.0],[58.0,-427.0],[57.0,-304.0],[75.0,-154.0],[92.0,-74.0],[116.0,-5.0],[127.0,6.0],[167.0,-2.0],[259.0,-41.0],[356.0,-76.0]]]},"M":{"char":"M","advance":513.0,"bbox":[0.0,-612.0,528.0,111.0],"strokes":[[[378.0,-586.0],[371.0,-416.0],[372.0,-411.0],[386.0,-399.0],[398.0,-303.0],[424.0,-171.0],[469.0,-3.0],[501.0,78.0],[497.0,95.0]],[[94.0,-461.0],[102.0,-414.0],[133.0,-399.0],[184.0,-315.0],[222.0,-266.0],[245.0,-245.0],[270.0,-237.0],[296.0,-243.0],[313.0,-263.0],[338.0,-327.0],[350.0,-395.0],[372.0,-411.0]],[[103.0,-413.0],[90.0,-401.0],[86.0,-363.0],[88.0,-331.0],[113.0,-206.0],[138.0,-123.0],[147.0,-108.0],[146.0,-99.0]]]},"N":{"char":"N","advance":473.0,"bbox":[-1.0,-678.0,473.0,32.0],"strokes":[[[242.0,-648.0],[275.0,-596.0],[303.0,-540.0],[360.0,-395.0],[421.0,-201.0],[437.0,-132.0],[442.0,-74.0],[435.0,-68.0],[399.0,-80.0],[209.0,-242.0],[143.0,-311.0],[87.0,-380.0],[50.0,-393.0],[43.0,-379.0],[53.0,-325.0],[131.0,-96.0],[170.0,1.0],[168.0,14.0]],[[24.0,-449.0],[50.0,-393.0]]]},"O":{"char":"O","advance":403.0,"bbox":[0.0,-484.0,403.0,0.0],"strokes":[[[149.0,-456.0],[211.0,-453.0],[229.0,-448.0],[250.0,-435.0],[276.0,-407.0],[298.0,-373.0],[317.0,-333.0],[330.0,-294.0],[339.0,-249.0],[340.0,-208.0],[328.0,-138.0],[314.0,-104.0],[298.0,-80.0],[281.0,-63.0],[258.0,-52.0],[232.0,-48.0],[203.0,-51.0],[184.0,-57.0],[159.0,-72.0],[135.0,-95.0],[114.0,-123.0],[93.0,-164.0],[83.0,-193.0],[74.0,-235.0],[73.0,-277.0],[77.0,-329.0],[87.0,-380.0],[101.0,-428.0],[125.0,-449.0],[149.0,-456.0]]]},"P":{"char":"P","advance":356.0,"bbox":[-16.0,-584.0,356.0,51.0],"strokes":[[[80.0,-446.0],[77.0,-413.0],[79.0,-347.0],[90.0,-281.0],[100.0,-246.0],[133.0,-164.0],[149.0,-153.0],[156.0,-117.0],[164.0,-101.0],[229.0,7.0],[234.0,19.0],[229.0,39.0]],[[6.0,-434.0],[2.0,-460.0],[28.0,-488.0],[59.0,-508.0],[129.0,-539.0],[190.0,-556.0],[233.0,-561.0],[260.0,-551.0],[278.0,-527.0],[288.0,-495.0],[289.0,-437.0],[282.0,-385.0],[268.0,-337.0],[248.0,-291.0],[193.0,-199.0],[175.0,-161.0],[148.0,-155.0]]]},"Q":{"char":"Q","advance":488.0,"bbox":[0.0,-584.0,488.0,4.0],"strokes":[[[156.0,-572.0],[134.0,-568.0],[123.0,-538.0],[105.0,-522.0],[92.0,-484.0],[78.0,-421.0],[70.0,-348.0],[69.0,-284.0],[74.0,-231.0],[85.0,-183.0],[105.0,-130.0],[130.0,-86.0],[165.0,-47.0],[196.0,-27.0],[226.0,-20.0],[264.0,-26.0],[279.0,-34.0],[283.0,-43.0],[314.0,-69.0],[343.0,-160.0],[354.0,-249.0],[354.0,-297.0],[349.0,-337.0],[328.0,-402.0],[309.0,-441.0],[280.0,-485.0],[250.0,-517.0],[230.0,-532.0],[201.0,-541.0],[135.0,-534.0],[122.0,-537.0]],[[213.0,-236.0],[217.0,-179.0],[232.0,-135.0],[262.0,-85.0],[296.0,-55.0],[301.0,-56.0],[312.0,-44.0],[347.0,-33.0],[370.0,-31.0],[407.0,-39.0],[427.0,-52.0],[446.0,-73.0],[456.0,-92.0],[453.0,-109.0]]]},"R":{"char":"R","advance":512.0,"bbox":[0.0,-526.0,592.0,69.0],"strokes":[[[129.0,-149.0],[109.0,-163.0],[80.0,-257.0],[54.0,-363.0],[54.0,-401.0],[62.0,-416.0],[103.0,-448.0],[136.0,-465.0],[188.0,-484.0],[262.0,-503.0],[314.0,-509.0],[362.0,-507.0],[401.0,-495.0],[416.0,-480.0],[419.0,-460.0],[415.0,-442.0],[397.0,-414.0],[361.0,-377.0],[232.0,-264.0],[182.0,-212.0],[148.0,-164.0],[129.0,-150.0],[139.0,-91.0],[152.0,-67.0],[174.0,-43.0]],[[210.0,35.0],[181.0,-4.0],[173.0,-42.0],[183.0,-44.0],[313.0,-11.0],[497.0,17.0],[543.0,31.0],[570.0,46.0]]]},"S":{"char":"S","advance":456.0,"bbox":[0.0,-520.0,456.0,12.0],"strokes":[[[333.0,-348.0],[349.0,-397.0],[357.0,-463.0],[357.0,-480.0],[353.0,-489.0],[346.0,-495.0],[334.0,-496.0],[272.0,-483.0],[189.0,-444.0],[125.0,-396.0],[93.0,-363.0],[75.0,-334.0],[70.0,-311.0],[73.0,-289.0],[100.0,-264.0],[132.0,-250.0],[179.0,-237.0],[306.0,-220.0],[347.0,-210.0],[391.0,-188.0],[413.0,-163.0],[417.0,-135.0],[410.0,-97.0],[397.0,-76.0],[358.0,-42.0],[305.0,-19.0],[261.0,-10.0],[204.0,-14.0],[185.0,-24.0],[184.0,-31.0]]]},"T":{"char":"T","advance":427.0,"bbox":[-59.0,-566.0,592.0,52.0],"strokes":[[[579.0,-548.0],[549.0,-549.0],[346.0,-531.0],[211.0,-507.0],[205.0,-503.0],[211.0,-462.0],[266.0,-274.0],[352.0,-43.0],[362.0,3.0],[356.0,34.0]],[[190.0,-538.0],[196.0,-510.0],[205.0,-502.0]],[[203.0,-503.0],[192.0,-499.0],[158.0,-498.0],[0.0,-479.0],[-32.0,-481.0],[-40.0,-489.0]]]},"U":{"char":"U","advance":399.0,"bbox":[0.0,-460.0,440.0,65.0],"strokes":[[[259.0,-434.0],[259.0,-368.0],[284.0,-350.0],[295.0,-295.0],[296.0,-220.0],[279.0,-203.0],[294.0,-81.0],[316.0,-68.0],[370.0,3.0],[410.0,43.0],[422.0,49.0]],[[260.0,-367.0],[252.0,-362.0],[256.0,-256.0],[263.0,-213.0],[279.0,-202.0]],[[73.0,-366.0],[71.0,-282.0],[86.0,-183.0],[108.0,-114.0],[137.0,-63.0],[172.0,-30.0],[191.0,-22.0],[217.0,-19.0],[244.0,-28.0],[261.0,-45.0],[273.0,-65.0],[295.0,-80.0]]]},"V":{"char":"V","advance":334.0,"bbox":[0.0,-572.0,334.0,15.0],"strokes":[[[208.0,-546.0],[247.0,-346.0],[267.0,-196.0],[269.0,-109.0],[257.0,-48.0],[243.0,-38.0],[249.0,-1.0]],[[42.0,-356.0],[41.0,-334.0],[58.0,-277.0],[107.0,-183.0],[152.0,-119.0],[198.0,-64.0],[217.0,-46.0],[243.0,-37.0]]]},"W":{"char":"W","advance":559.0,"bbox":[0.0,-658.0,559.0,0.0],"strokes":[[[313.0,-628.0],[314.0,-621.0],[351.0,-561.0],[371.0,-517.0],[457.0,-291.0],[477.0,-223.0],[490.0,-160.0],[493.0,-107.0],[489.0,-84.0],[484.0,-73.0],[471.0,-61.0],[436.0,-53.0],[388.0,-60.0],[338.0,-82.0],[278.0,-126.0],[227.0,-182.0],[201.0,-194.0],[192.0,-240.0],[186.0,-253.0],[187.0,-265.0]],[[14.0,-398.0],[40.0,-299.0],[65.0,-227.0],[92.0,-167.0],[119.0,-123.0],[130.0,-112.0],[153.0,-104.0],[169.0,-113.0],[178.0,-130.0],[186.0,-178.0],[202.0,-193.0]]]},"X":{"char":"X","advance":412.0,"bbox":[-44.0,-638.0,412.0,0.0],"strokes":[[[189.0,-624.0],[164.0,-482.0],[156.0,-394.0],[155.0,-319.0],[147.0,-306.0],[162.0,-246.0],[167.0,-240.0],[202.0,-229.0],[222.0,-212.0],[340.0,-106.0],[392.0,-49.0]],[[-21.0,-529.0],[-21.0,-517.0],[-8.0,-494.0],[73.0,-370.0],[116.0,-317.0],[147.0,-305.0]],[[165.0,-241.0],[158.0,-234.0],[158.0,-223.0],[161.0,-164.0],[170.0,-95.0],[167.0,-70.0]]]},"Y":{"char":"Y","advance":314.0,"bbox":[-9.0,-692.0,317.0,142.0],"strokes":[[[245.0,-664.0],[246.0,-615.0],[226.0,-477.0],[220.0,-385.0],[216.0,-380.0],[216.0,-251.0],[236.0,-20.0],[263.0,128.0]],[[10.0,-545.0],[11.0,-532.0],[23.0,-516.0],[74.0,-465.0],[176.0,-392.0],[216.0,-378.0],[218.0,-351.0],[258.0,-340.0],[291.0,-326.0],[310.0,-331.0]]]},"Z":{"char":"Z","advance":563.0,"bbox":[0.0,-504.0,563.0,12.0],"strokes":[[[36.0,-476.0],[239.0,-474.0],[271.0,-465.0],[283.0,-455.0],[288.0,-442.0],[282.0,-404.0],[260.0,-363.0],[124.0,-181.0],[81.0,-111.0],[72.0,-85.0],[66.0,-49.0],[69.0,-33.0],[76.0,-26.0],[114.0,-18.0],[160.0,-20.0],[415.0,-75.0],[467.0,-81.0],[542.0,-82.0]]]},"0":{"char":"0","advance":357.0,"bbox":[0.0,-364.0,357.0,0.0],"strokes":[[[159.0,-339.0],[219.0,-337.0],[259.0,-322.0],[278.0,-306.0],[290.0,-290.0],[298.0,-271.0],[302.0,-245.0],[301.0,-209.0],[294.0,-174.0],[281.0,-141.0],[267.0,-119.0],[226.0,-85.0],[204.0,-76.0],[169.0,-70.0],[143.0,-72.0],[126.0,-78.0],[100.0,-99.0],[81.0,-132.0],[72.0,-174.0],[79.0,-238.0],[98.0,-297.0],[105.0,-332.0],[118.0,-337.0],[159.0,-339.0]]]},"1":{"char":"1","advance":289.0,"bbox":[0.0,-386.0,289.0,0.0],"strokes":[[[150.0,-371.0],[153.0,-347.0],[148.0,-321.0],[154.0,-315.0],[168.0,-175.0],[182.0,-95.0],[196.0,-45.0],[201.0,-40.0]],[[149.0,-320.0],[107.0,-304.0],[59.0,-267.0],[51.0,-252.0]]]},"2":{"char":"2","advance":367.0,"bbox":[0.0,-412.0,367.0,0.0],"strokes":[[[73.0,-333.0],[86.0,-333.0],[143.0,-358.0],[215.0,-383.0],[251.0,-388.0],[262.0,-388.0],[267.0,-383.0],[269.0,-372.0],[258.0,-327.0],[138.0,-118.0],[131.0,-104.0],[123.0,-64.0],[128.0,-60.0],[167.0,-71.0],[188.0,-81.0],[229.0,-87.0],[260.0,-83.0],[288.0,-69.0]]]},"3":{"char":"3","advance":367.0,"bbox":[0.0,-381.0,367.0,0.0],"strokes":[[[114.0,-325.0],[146.0,-339.0],[202.0,-355.0],[251.0,-360.0],[268.0,-357.0],[274.0,-352.0],[280.0,-339.0],[269.0,-311.0],[240.0,-290.0],[174.0,-255.0],[162.0,-230.0],[174.0,-214.0],[229.0,-198.0],[260.0,-182.0],[274.0,-162.0],[278.0,-125.0],[269.0,-103.0],[242.0,-77.0],[207.0,-57.0],[166.0,-44.0],[132.0,-42.0],[95.0,-49.0],[78.0,-60.0],[73.0,-80.0]]]},"4":{"char":"4","advance":396.0,"bbox":[0.0,-425.0,396.0,78.0],"strokes":[[[214.0,-410.0],[221.0,-364.0],[217.0,-338.0],[222.0,-322.0],[224.0,-194.0],[228.0,-184.0],[225.0,-116.0],[234.0,17.0],[233.0,59.0]],[[217.0,-338.0],[184.0,-328.0],[146.0,-292.0],[94.0,-238.0],[87.0,-226.0],[83.0,-205.0],[90.0,-191.0],[113.0,-183.0],[158.0,-178.0],[226.0,-179.0],[228.0,-183.0],[288.0,-189.0],[318.0,-198.0]]]},"5":{"char":"5","advance":353.0,"bbox":[0.0,-364.0,401.0,0.0],"strokes":[[[394.0,-354.0],[344.0,-350.0],[267.0,-329.0],[172.0,-291.0],[152.0,-287.0],[114.0,-264.0],[87.0,-235.0],[79.0,-207.0],[82.0,-196.0],[104.0,-188.0],[173.0,-182.0],[208.0,-171.0],[235.0,-154.0],[244.0,-124.0],[239.0,-109.0],[225.0,-97.0],[191.0,-81.0],[168.0,-75.0],[135.0,-81.0],[116.0,-94.0]]]},"6":{"char":"6","advance":304.0,"bbox":[0.0,-440.0,304.0,0.0],"strokes":[[[198.0,-420.0],[178.0,-421.0],[154.0,-400.0],[131.0,-366.0],[109.0,-317.0],[95.0,-270.0],[86.0,-218.0],[83.0,-162.0],[90.0,-154.0],[85.0,-133.0],[85.0,-95.0],[92.0,-72.0],[106.0,-66.0],[126.0,-44.0],[151.0,-39.0],[169.0,-45.0],[184.0,-58.0],[211.0,-100.0],[220.0,-128.0],[221.0,-155.0],[217.0,-176.0],[202.0,-193.0],[186.0,-197.0],[159.0,-193.0],[122.0,-167.0],[90.0,-155.0]]]},"7":{"char":"7","advance":390.0,"bbox":[0.0,-361.0,390.0,0.0],"strokes":[[[35.0,-330.0],[52.0,-322.0],[80.0,-317.0],[163.0,-318.0],[260.0,-326.0],[284.0,-323.0],[276.0,-278.0],[262.0,-250.0],[245.0,-199.0],[227.0,-100.0],[210.0,-39.0]]]},"8":{"char":"8","advance":416.0,"bbox":[0.0,-425.0,416.0,5.0],"strokes":[[[406.0,-368.0],[400.0,-356.0],[381.0,-337.0],[338.0,-303.0],[218.0,-230.0],[185.0,-215.0],[173.0,-203.0],[173.0,-195.0],[163.0,-185.0],[136.0,-172.0],[94.0,-125.0],[85.0,-106.0],[81.0,-78.0],[87.0,-56.0],[101.0,-38.0],[120.0,-26.0],[151.0,-20.0],[179.0,-21.0],[197.0,-29.0],[212.0,-43.0],[218.0,-55.0],[218.0,-96.0],[199.0,-159.0],[184.0,-184.0],[172.0,-194.0],[173.0,-203.0],[163.0,-214.0],[106.0,-315.0],[101.0,-347.0],[111.0,-372.0],[132.0,-389.0],[166.0,-401.0],[209.0,-403.0],[246.0,-398.0],[271.0,-387.0],[282.0,-374.0],[279.0,-353.0],[270.0,-329.0]]]},"9":{"char":"9","advance":400.0,"bbox":[0.0,-425.0,400.0,60.0],"strokes":[[[317.0,-358.0],[321.0,-332.0],[305.0,-300.0],[284.0,-282.0],[290.0,-275.0],[285.0,-234.0],[266.0,-151.0],[253.0,-55.0],[249.0,0.0],[253.0,35.0]],[[285.0,-285.0],[265.0,-305.0],[262.0,-338.0],[247.0,-368.0],[227.0,-388.0],[204.0,-397.0],[158.0,-399.0],[118.0,-385.0],[87.0,-358.0],[77.0,-338.0],[75.0,-325.0],[78.0,-290.0],[88.0,-269.0],[105.0,-255.0],[128.0,-246.0],[156.0,-243.0],[196.0,-248.0],[274.0,-271.0],[285.0,-280.0]]]},"+":{"char":"+","advance":322.0,"bbox":[0.0,-411.0,322.0,0.0],"strokes":[[[120.0,-396.0],[145.0,-235.0],[157.0,-225.0],[164.0,-127.0],[155.0,-78.0]],[[293.0,-253.0],[219.0,-238.0],[162.0,-234.0],[156.0,-228.0],[147.0,-231.0],[93.0,-222.0],[72.0,-226.0]]]},"-":{"char":"-","advance":256.0,"bbox":[0.0,-243.0,256.0,0.0],"strokes":[[[187.0,-224.0],[148.0,-209.0],[90.0,-194.0],[81.0,-194.0],[54.0,-206.0]]]},"*":{"char":"*","advance":341.0,"bbox":[0.0,-462.0,341.0,0.0],"strokes":[[[304.0,-443.0],[229.0,-379.0],[220.0,-355.0],[192.0,-342.0],[174.0,-340.0],[156.0,-322.0],[138.0,-303.0],[93.0,-241.0],[90.0,-233.0],[94.0,-222.0]],[[130.0,-414.0],[129.0,-403.0],[140.0,-373.0],[146.0,-337.0],[156.0,-322.0],[155.0,-320.0],[175.0,-302.0],[186.0,-284.0],[254.0,-238.0]],[[220.0,-355.0],[231.0,-347.0],[289.0,-345.0]],[[47.0,-345.0],[81.0,-333.0],[148.0,-331.0]]]},"/":{"char":"/","advance":307.0,"bbox":[0.0,-488.0,307.0,71.0],"strokes":[[[240.0,-471.0],[208.0,-397.0],[114.0,-117.0],[79.0,-30.0],[39.0,49.0],[37.0,63.0]]]},"=":{"char":"=","advance":388.0,"bbox":[0.0,-300.0,388.0,0.0],"strokes":[[[328.0,-283.0],[186.0,-272.0],[85.0,-252.0]],[[309.0,-186.0],[288.0,-185.0],[95.0,-134.0],[72.0,-133.0],[62.0,-138.0],[60.0,-143.0]]]},"(":{"char":"(","advance":238.0,"bbox":[0.0,-479.0,238.0,0.0],"strokes":[[[197.0,-471.0],[178.0,-466.0],[160.0,-450.0],[124.0,-395.0],[91.0,-317.0],[72.0,-233.0],[71.0,-182.0],[75.0,-148.0],[98.0,-80.0],[111.0,-60.0],[135.0,-40.0],[169.0,-44.0],[173.0,-53.0]]]},")":{"char":")","advance":286.0,"bbox":[0.0,-438.0,286.0,0.0],"strokes":[[[160.0,-419.0],[187.0,-371.0],[204.0,-316.0],[211.0,-247.0],[205.0,-185.0],[179.0,-119.0],[148.0,-75.0],[118.0,-48.0],[100.0,-37.0],[74.0,-27.0],[59.0,-27.0]]]},"[":{"char":"[","advance":369.0,"bbox":[0.0,-512.0,369.0,0.0],"strokes":[[[252.0,-497.0],[201.0,-480.0],[168.0,-475.0],[130.0,-450.0],[125.0,-416.0],[102.0,-348.0],[86.0,-281.0],[73.0,-189.0],[76.0,-78.0],[80.0,-54.0],[90.0,-35.0],[107.0,-32.0],[145.0,-37.0],[183.0,-47.0],[217.0,-62.0]]]},"]":{"char":"]","advance":548.0,"bbox":[0.0,-500.0,548.0,17.0],"strokes":[[[136.0,-425.0],[203.0,-461.0],[253.0,-471.0],[258.0,-467.0],[267.0,-365.0],[282.0,-263.0],[298.0,-168.0],[316.0,-89.0],[318.0,-57.0],[324.0,-48.0],[320.0,-39.0],[292.0,-35.0],[172.0,-2.0]],[[378.0,-70.0],[353.0,-56.0],[324.0,-48.0]],[[321.0,-40.0],[328.0,-32.0],[333.0,4.0]]]},"{":{"char":"{","advance":423.0,"bbox":[0.0,-612.0,423.0,61.0],"strokes":[[[338.0,-571.0],[319.0,-585.0],[282.0,-593.0],[247.0,-593.0],[210.0,-583.0],[176.0,-562.0],[155.0,-540.0],[136.0,-508.0],[127.0,-472.0],[134.0,-431.0],[154.0,-408.0],[184.0,-391.0],[240.0,-371.0],[246.0,-358.0],[239.0,-338.0],[230.0,-329.0],[146.0,-281.0],[134.0,-246.0],[138.0,-241.0],[176.0,-242.0],[230.0,-255.0],[273.0,-259.0],[264.0,-218.0],[149.0,-18.0],[142.0,28.0],[149.0,36.0],[199.0,30.0],[331.0,-20.0]]]},"}":{"char":"}","advance":461.0,"bbox":[0.0,-653.0,461.0,36.0],"strokes":[[[65.0,-523.0],[194.0,-616.0],[231.0,-624.0],[240.0,-619.0],[243.0,-608.0],[238.0,-559.0],[183.0,-354.0],[179.0,-316.0],[182.0,-313.0],[217.0,-321.0],[277.0,-353.0],[318.0,-360.0],[309.0,-322.0],[244.0,-253.0],[234.0,-219.0],[239.0,-212.0],[313.0,-204.0],[343.0,-194.0],[365.0,-177.0],[378.0,-151.0],[381.0,-118.0],[372.0,-73.0],[356.0,-42.0],[330.0,-13.0],[297.0,7.0],[255.0,17.0],[209.0,12.0],[203.0,7.0],[198.0,-7.0]]]},"<":{"char":"<","advance":467.0,"bbox":[0.0,-371.0,467.0,0.0],"strokes":[[[268.0,-355.0],[170.0,-232.0],[96.0,-153.0],[89.0,-130.0],[94.0,-118.0],[119.0,-109.0],[171.0,-101.0],[277.0,-97.0],[399.0,-84.0],[430.0,-86.0]]]},">":{"char":">","advance":462.0,"bbox":[0.0,-421.0,462.0,0.0],"strokes":[[[110.0,-400.0],[267.0,-244.0],[349.0,-170.0],[356.0,-149.0],[345.0,-135.0],[223.0,-111.0],[79.0,-69.0],[69.0,-69.0]],[[356.0,-149.0],[396.0,-143.0]]]},",":{"char":",","advance":178.0,"bbox":[0.0,-122.0,178.0,94.0],"strokes":[[[74.0,-105.0],[91.0,-87.0],[100.0,-69.0],[105.0,-43.0],[102.0,-12.0],[95.0,9.0],[75.0,43.0],[56.0,66.0],[39.0,79.0]]]},".":{"char":".","advance":139.0,"bbox":[0.0,-103.0,139.0,0.0],"strokes":[[[70.0,-71.0],[70.0,-70.0]]]},":":{"char":":","advance":195.0,"bbox":[0.0,-318.0,195.0,0.0],"strokes":[[[92.0,-286.0],[92.0,-285.0]],[[111.0,-136.0],[110.0,-109.0],[99.0,-99.0],[90.0,-97.0]]]},";":{"char":";","advance":197.0,"bbox":[0.0,-300.0,197.0,80.0],"strokes":[[[84.0,-268.0],[84.0,-267.0]],[[117.0,-76.0],[116.0,-56.0],[103.0,-4.0],[85.0,33.0],[61.0,53.0],[28.0,57.0]]]},"'":{"char":"'","advance":183.0,"bbox":[0.0,-571.0,183.0,0.0],"strokes":[[[117.0,-558.0],[89.0,-482.0],[79.0,-443.0],[75.0,-393.0],[80.0,-359.0]]]},"\"":{"char":"\"","advance":233.0,"bbox":[0.0,-463.0,233.0,0.0],"strokes":[[[75.0,-442.0],[72.0,-401.0],[83.0,-328.0],[84.0,-291.0]],[[168.0,-429.0],[186.0,-324.0]]]},"^":{"char":"^","advance":576.0,"bbox":[0.0,-481.0,576.0,0.0],"strokes":[[[242.0,-462.0],[246.0,-428.0],[233.0,-418.0],[191.0,-280.0],[121.0,-96.0]],[[245.0,-427.0],[267.0,-419.0],[339.0,-343.0],[470.0,-241.0]]]},"_":{"char":"_","advance":319.0,"bbox":[-19.0,0.0,339.0,72.0],"strokes":[[[316.0,45.0],[229.0,53.0],[41.0,45.0],[-3.0,49.0]]]},"!":{"char":"!","advance":227.0,"bbox":[0.0,-530.0,227.0,0.0],"strokes":[[[128.0,-512.0],[127.0,-484.0],[96.0,-382.0],[74.0,-281.0],[75.0,-219.0],[92.0,-165.0],[91.0,-156.0]]]},"?":{"char":"?","advance":392.0,"bbox":[0.0,-534.0,392.0,19.0],"strokes":[[[82.0,-495.0],[129.0,-507.0],[168.0,-512.0],[200.0,-513.0],[242.0,-508.0],[278.0,-496.0],[305.0,-479.0],[320.0,-462.0],[327.0,-438.0],[321.0,-410.0],[295.0,-376.0],[171.0,-269.0],[142.0,-237.0],[133.0,-218.0],[130.0,-197.0],[139.0,-157.0]],[[175.0,-25.0],[177.0,-16.0],[187.0,-7.0],[203.0,-4.0]]]},"%":{"char":"%","advance":626.0,"bbox":[0.0,-662.0,626.0,163.0],"strokes":[[[543.0,-636.0],[533.0,-629.0],[449.0,-499.0],[406.0,-447.0],[397.0,-403.0],[253.0,-121.0],[196.0,1.0],[166.0,79.0],[160.0,117.0],[162.0,135.0]],[[406.0,-447.0],[317.0,-427.0],[276.0,-422.0],[248.0,-425.0],[196.0,-441.0],[161.0,-447.0],[150.0,-441.0],[126.0,-412.0],[100.0,-404.0],[82.0,-411.0],[80.0,-421.0],[86.0,-451.0],[95.0,-467.0],[110.0,-481.0],[144.0,-492.0],[154.0,-487.0],[154.0,-461.0],[162.0,-447.0]],[[500.0,-197.0],[530.0,-207.0],[545.0,-203.0],[550.0,-193.0],[542.0,-145.0],[529.0,-115.0],[507.0,-84.0],[490.0,-69.0],[468.0,-62.0],[438.0,-66.0],[429.0,-73.0],[423.0,-91.0],[427.0,-115.0],[443.0,-139.0],[456.0,-148.0]]]},"|":{"char":"|","advance":405.0,"bbox":[0.0,-835.0,405.0,300.0],"strokes":[[[187.0,-818.0],[189.0,-493.0],[209.0,-43.0],[221.0,113.0],[237.0,216.0],[252.0,282.0]]]},"\\":{"char":"\\","advance":307.0,"bbox":[0.0,-488.0,307.0,71.0],"strokes":[[[43.0,-471.0],[80.0,-381.0],[165.0,-127.0],[203.0,-32.0],[242.0,45.0],[246.0,64.0]]]},"~":{"char":"~","advance":562.0,"bbox":[0.0,-321.0,562.0,0.0],"strokes":[[[491.0,-224.0],[482.0,-186.0],[471.0,-167.0],[455.0,-150.0],[438.0,-139.0],[415.0,-132.0],[374.0,-134.0],[346.0,-147.0],[315.0,-172.0],[274.0,-216.0],[221.0,-282.0],[209.0,-294.0],[195.0,-296.0],[172.0,-289.0],[146.0,-271.0],[99.0,-231.0],[61.0,-190.0]]]},"`":{"char":"`","advance":269.0,"bbox":[0.0,-551.0,269.0,0.0],"strokes":[[[66.0,-541.0],[162.0,-430.0],[176.0,-422.0],[198.0,-427.0]]]}," ":{"char":" ","advance":414.0,"bbox":[0.0,0.0,0.0,0.0],"strokes":[]},"\u00b2":{"char":"\u00b2","advance":239.0,"bbox":[0.0,-500.0,239.0,0.0],"strokes":[[[49.0,-438.0],[124.0,-468.0],[155.0,-473.0],[162.0,-473.0],[167.0,-468.0],[160.0,-432.0],[98.0,-324.0],[90.0,-279.0],[68.0,-251.0]],[[90.0,-279.0],[116.0,-285.0],[148.0,-286.0],[168.0,-283.0],[182.0,-276.0]]]},"\u00b3":{"char":"\u00b3","advance":239.0,"bbox":[0.0,-501.0,239.0,0.0],"strokes":[[[71.0,-454.0],[121.0,-474.0],[159.0,-478.0],[170.0,-473.0],[173.0,-467.0],[162.0,-440.0],[120.0,-418.0],[108.0,-395.0],[115.0,-383.0],[161.0,-366.0],[168.0,-358.0],[174.0,-331.0],[171.0,-320.0],[157.0,-304.0],[132.0,-289.0],[114.0,-283.0],[87.0,-280.0],[64.0,-284.0],[53.0,-290.0],[48.0,-309.0]]]},"\u00b7":{"char":"\u00b7","advance":325.0,"bbox":[0.0,-237.0,325.0,0.0],"strokes":[[[162.0,-205.0],[162.0,-204.0]]]},"\u2212":{"char":"\u2212","advance":358.0,"bbox":[0.0,-255.0,358.0,0.0],"strokes":[[[292.0,-238.0],[282.0,-239.0],[196.0,-220.0],[100.0,-212.0],[54.0,-196.0]]]}};
+window.REENIE_CENTERLINES = REENIE_CENTERLINES;
 
 // --- Hershey Single-Line Stroke Font Renderer (Preserved for USE_STROKE_FONT = true) ---
 function buildHersheyStrokeLine(rawText) {
@@ -540,19 +913,30 @@ function animateHersheyStrokeLine(lineObj, duration) {
   });
 }
 
-// --- Reenie Beanie Cursive Renderer with Pen-Style Reveal Animation ---
-function buildReenieLine(rawText) {
+// --- Handwriting Line Renderer with Pen-Style Reveal Animation ---
+function buildReenieLine(rawText, opt) {
   var container = document.createElement('div');
   container.className = 'ai-line-container';
 
   var textEl = document.createElement('span');
   textEl.className = 'ai-reenie-line';
-  textEl.style.fontSize = (window.AI_FONT_SIZE || 'calc(var(--g) * 1.85)');
+  textEl.style.fontSize = (window.AI_FONT_SIZE || 'calc(var(--g) * 1.45)');
+  textEl.style.fontFamily = (window.AI_FONT_FAMILY || "'Caveat', 'Reenie Beanie', cursive");
+  textEl.style.lineHeight = (window.AI_LINE_HEIGHT || 'calc(var(--g) * 1.65)');
+  textEl.style.filter = (window.AI_INK_GLOW || 'drop-shadow(0 0 3.5px rgba(255, 94, 126, 0.28))');
+  if (opt && opt.initialHidden) {
+    textEl.style.clipPath = 'inset(-16px 100% -16px 0)';
+  }
   textEl.appendChild(formatMathLine(rawText));
   container.appendChild(textEl);
 
   var penTip = document.createElement('div');
   penTip.className = 'ai-pen-tip-dot';
+  if (window.PEN_TIP_SIZE) {
+    penTip.style.width = window.PEN_TIP_SIZE;
+    penTip.style.height = window.PEN_TIP_SIZE;
+  }
+  penTip.style.display = 'none';
   container.appendChild(penTip);
 
   return {
@@ -611,6 +995,9 @@ function animateReenieLine(lineObj, duration) {
       if (cancelled) return;
       var elapsed = now - startTime;
       var progress = Math.min(1, elapsed / duration);
+      if (progress > 0) {
+        recordPerfMark('first_stroke_painted');
+      }
 
       var rightInset = ((1 - progress) * 100).toFixed(2);
       textEl.style.clipPath = 'inset(-16px ' + rightInset + '% -16px 0)';
@@ -637,17 +1024,397 @@ function animateReenieLine(lineObj, duration) {
   });
 }
 
-// --- Universal Dispatchers ---
-function buildLineSvg(rawText) {
-  if (window.USE_STROKE_FONT) {
-    return buildHersheyStrokeLine(rawText);
+
+// --- Reenie Beanie Centerline-Guided Pen Stroke Renderer (WRITE_ANIM = 'pen') ---
+var reeniePenUid = 0;
+
+function buildReeniePenLine(rawText) {
+  var svgNS = 'http://www.w3.org/2000/svg';
+  var svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('class', 'math-line-svg');
+  svg.setAttribute('height', '58');
+  svg.setAttribute('viewBox', '0 0 960 58');
+  svg.style.width = '100%';
+
+  var maskId = 'ai-pen-mask-' + (++reeniePenUid);
+  var defs = document.createElementNS(svgNS, 'defs');
+  var mask = document.createElementNS(svgNS, 'mask');
+  mask.setAttribute('id', maskId);
+  mask.setAttribute('maskUnits', 'userSpaceOnUse');
+  mask.setAttribute('x', '-50');
+  mask.setAttribute('y', '-50');
+  mask.setAttribute('width', '1200');
+  mask.setAttribute('height', '160');
+
+  // Background rect conceals everything in mask until strokes are drawn
+  var bgRect = document.createElementNS(svgNS, 'rect');
+  bgRect.setAttribute('x', '-50');
+  bgRect.setAttribute('y', '-50');
+  bgRect.setAttribute('width', '1200');
+  bgRect.setAttribute('height', '160');
+  bgRect.setAttribute('fill', 'black');
+  mask.appendChild(bgRect);
+  defs.appendChild(mask);
+  svg.appendChild(defs);
+
+  var contentGroup = document.createElementNS(svgNS, 'g');
+  contentGroup.setAttribute('mask', 'url(#' + maskId + ')');
+  svg.appendChild(contentGroup);
+
+  var penTip = document.createElementNS(svgNS, 'circle');
+  penTip.setAttribute('class', 'pen-tip');
+  penTip.setAttribute('r', '3.5');
+  penTip.style.display = 'none';
+  svg.appendChild(penTip);
+
+  var strokeItems = [];
+  var curX = 14;
+  var BASE_Y = 36;
+  var SCALE = 46 / 1000; // Font size 46 / unitsPerEm 1000
+
+  try {
+    var str = String(rawText || '');
+    // Math tokenization matching formatMathLine
+    var re = /(\^{2,})|(\bint\b\s*)|(sqrt\()|(\bpi\b)|(\^\(([^)]+)\))|(\^(?:(-\d+)|\b(\d+)\b|([a-zA-Z])(?![a-zA-Z0-9])))|(\s+\b(d[xyzut])\b(?!\/))/g;
+    var lastIdx = 0;
+    var match;
+    var tokens = [];
+
+    while ((match = re.exec(str)) !== null) {
+      if (match.index > lastIdx) {
+        tokens.push({ type: 'text', val: str.slice(lastIdx, match.index) });
+      }
+      if (match[1]) {
+        tokens.push({ type: 'text', val: match[1] });
+      } else if (match[2]) {
+        tokens.push({ type: 'int' });
+      } else if (match[3]) {
+        tokens.push({ type: 'sqrt' });
+        tokens.push({ type: 'text', val: '(' });
+      } else if (match[4]) {
+        tokens.push({ type: 'pi' });
+      } else if (match[5]) {
+        tokens.push({ type: 'sup', val: match[6] });
+      } else if (match[7]) {
+        var expVal = match[8] || match[9] || match[10];
+        tokens.push({ type: 'sup', val: expVal });
+      } else if (match[11]) {
+        tokens.push({ type: 'diff', val: match[12] });
+      }
+      lastIdx = re.lastIndex;
+    }
+    if (lastIdx < str.length) {
+      tokens.push({ type: 'text', val: str.slice(lastIdx) });
+    }
+
+    function emitSymbol(symType, dArr, tx, ty, sScale, sWidth, adv) {
+      for (var k = 0; k < dArr.length; k++) {
+        var dStr = dArr[k];
+        var cp = document.createElementNS(svgNS, 'path');
+        cp.setAttribute('class', 'math-stroke');
+        cp.setAttribute('d', dStr);
+        cp.setAttribute('transform', 'translate(' + tx + ',' + ty + ') scale(' + sScale + ')');
+        contentGroup.appendChild(cp);
+
+        var mp = document.createElementNS(svgNS, 'path');
+        mp.setAttribute('d', dStr);
+        mp.setAttribute('transform', 'translate(' + tx + ',' + ty + ') scale(' + sScale + ')');
+        mp.setAttribute('fill', 'none');
+        mp.setAttribute('stroke', 'white');
+        mp.setAttribute('stroke-width', sWidth);
+        mp.setAttribute('stroke-linecap', 'round');
+        mp.setAttribute('stroke-linejoin', 'round');
+        mask.appendChild(mp);
+
+        strokeItems.push({
+          path: mp,
+          isFirstStrokeOfChar: (k === 0),
+          char: symType
+        });
+      }
+      curX += adv;
+    }
+
+    function emitChar(ch, isSup) {
+      if (ch === ' ') {
+        curX += (isSup ? 8 : 14);
+        return;
+      }
+
+      var s = isSup ? (SCALE * 0.60) : SCALE;
+      var ty = isSup ? (BASE_Y - 14) : BASE_Y;
+      var fontSize = isSup ? 28 : 46;
+
+      // In prime symbol ′ (\u2032), map to ' (apostrophe)
+      var lookupCh = (ch === '′' || ch === '\u2032') ? "'" : ch;
+      var glyph = window.REENIE_CENTERLINES && window.REENIE_CENTERLINES[lookupCh];
+
+      var txt = document.createElementNS(svgNS, 'text');
+      txt.setAttribute('x', curX);
+      txt.setAttribute('y', ty);
+      txt.setAttribute('font-family', "'Reenie Beanie', cursive");
+      txt.setAttribute('font-size', fontSize);
+      txt.setAttribute('fill', 'url(#ai-ink-grad)');
+      txt.textContent = ch;
+      contentGroup.appendChild(txt);
+
+      var charAdv = (glyph && glyph.advance) ? (glyph.advance * s) : (isSup ? 12 : 20);
+
+      if (glyph && glyph.strokes && glyph.strokes.length > 0) {
+        var strokeW = isSup ? 4.5 : 6.0;
+        for (var i = 0; i < glyph.strokes.length; i++) {
+          var pts = glyph.strokes[i];
+          if (!pts || pts.length < 2) continue;
+
+          var dParts = ['M', (pts[0][0] * s + curX).toFixed(1), (pts[0][1] * s + ty).toFixed(1)];
+          for (var p = 1; p < pts.length; p++) {
+            dParts.push('L', (pts[p][0] * s + curX).toFixed(1), (pts[p][1] * s + ty).toFixed(1));
+          }
+          var dStr = dParts.join(' ');
+
+          var mp = document.createElementNS(svgNS, 'path');
+          mp.setAttribute('d', dStr);
+          mp.setAttribute('fill', 'none');
+          mp.setAttribute('stroke', 'white');
+          mp.setAttribute('stroke-width', strokeW);
+          mp.setAttribute('stroke-linecap', 'round');
+          mp.setAttribute('stroke-linejoin', 'round');
+          mask.appendChild(mp);
+
+          strokeItems.push({
+            path: mp,
+            isFirstStrokeOfChar: (i === 0),
+            char: ch
+          });
+        }
+      } else {
+        // Fallback per-glyph reveal: short diagonal brush mask across glyph bounds
+        var charW = isSup ? 14 : 22;
+        var charH = isSup ? 26 : 42;
+        var fbPath = document.createElementNS(svgNS, 'path');
+        var x1 = curX - 2;
+        var y1 = ty - charH + 6;
+        var x2 = curX + charW + 4;
+        var y2 = ty + 6;
+        fbPath.setAttribute('d', 'M ' + x1.toFixed(1) + ' ' + y1.toFixed(1) + ' L ' + x2.toFixed(1) + ' ' + y2.toFixed(1));
+        fbPath.setAttribute('fill', 'none');
+        fbPath.setAttribute('stroke', 'white');
+        fbPath.setAttribute('stroke-width', (charW * 1.5).toFixed(1));
+        fbPath.setAttribute('stroke-linecap', 'round');
+        mask.appendChild(fbPath);
+
+        strokeItems.push({
+          path: fbPath,
+          isFirstStrokeOfChar: true,
+          isFallback: true,
+          char: ch
+        });
+      }
+
+      curX += charAdv + (isSup ? 1 : 2);
+    }
+
+    for (var t = 0; t < tokens.length; t++) {
+      var tok = tokens[t];
+      if (tok.type === 'int') {
+        var intD = ['M 12 4 C 10 1.5, 6 2, 5 5 C 4 9, 7 18, 7 24 C 7 32, 4 39, 3 41 C 2 43, 4 43.5, 6 42'];
+        emitSymbol('int', intD, curX, BASE_Y - 32, 1.0, 6.0, 20);
+      } else if (tok.type === 'sqrt') {
+        var sqrtD = ['M 1 20 L 4 23 L 9 7 L 19 7'];
+        emitSymbol('sqrt', sqrtD, curX, BASE_Y - 26, 1.15, 5.5, 24);
+      } else if (tok.type === 'pi') {
+        var piD = [
+          'M 2 10 Q 12 7 22 9',
+          'M 7 9 L 6 27',
+          'M 17 9 C 17 18, 17 25, 20 26'
+        ];
+        emitSymbol('pi', piD, curX, BASE_Y - 26, 1.0, 5.5, 26);
+      } else if (tok.type === 'sup') {
+        for (var c = 0; c < tok.val.length; c++) {
+          emitChar(tok.val[c], true);
+        }
+      } else if (tok.type === 'diff') {
+        curX += 8;
+        for (var d = 0; d < tok.val.length; d++) {
+          emitChar(tok.val[d], false);
+        }
+      } else if (tok.type === 'text') {
+        for (var j = 0; j < tok.val.length; j++) {
+          emitChar(tok.val[j], false);
+        }
+      }
+    }
+  } catch (err) {
+    console.error('buildReeniePenLine error:', err);
+    var fbText = document.createElementNS(svgNS, 'text');
+    fbText.setAttribute('x', '14');
+    fbText.setAttribute('y', '36');
+    fbText.setAttribute('font-family', "'Reenie Beanie', cursive");
+    fbText.setAttribute('font-size', '46');
+    fbText.setAttribute('fill', 'url(#ai-ink-grad)');
+    fbText.textContent = String(rawText || '');
+    contentGroup.appendChild(fbText);
   }
-  return buildReenieLine(rawText);
+
+  return {
+    svg: svg,
+    el: svg,
+    penTip: penTip,
+    strokeItems: strokeItems,
+    isStrokeFont: false,
+    isPenMask: true,
+    rawText: rawText
+  };
+}
+
+function animateReeniePenLine(lineObj, duration) {
+  return new Promise(function(resolve) {
+    if (!lineObj || !lineObj.strokeItems || !lineObj.strokeItems.length) {
+      if (lineObj && lineObj.penTip) lineObj.penTip.style.display = 'none';
+      resolve();
+      return;
+    }
+
+    var items = lineObj.strokeItems;
+    var penTip = lineObj.penTip;
+    var isReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Hard Rule 7: Respect prefers-reduced-motion (show finished line instantly)
+    if (duration <= 0 || isReduced) {
+      for (var i = 0; i < items.length; i++) {
+        items[i].path.style.strokeDashoffset = '0';
+      }
+      if (penTip) penTip.style.display = 'none';
+      resolve();
+      return;
+    }
+
+    var lengths = [];
+    var totalLen = 0;
+    for (var k = 0; k < items.length; k++) {
+      var len = items[k].path.getTotalLength();
+      lengths.push(len);
+      totalLen += len;
+      items[k].path.style.strokeDasharray = len + ' ' + len;
+      items[k].path.style.strokeDashoffset = len;
+    }
+
+    if (totalLen === 0) {
+      if (penTip) penTip.style.display = 'none';
+      resolve();
+      return;
+    }
+
+    // Measure character count for natural pen lift pauses
+    var charCount = 0;
+    for (var c = 0; c < items.length; c++) {
+      if (items[c].isFirstStrokeOfChar) charCount++;
+    }
+    charCount = Math.max(1, charCount);
+
+    var maxPauseBudget = duration * 0.15;
+    var charPauseMs = Math.min(22, maxPauseBudget / charCount);
+    var totalPauseMs = (charCount - 1) * charPauseMs;
+    var drawDurationMs = Math.max(duration - totalPauseMs, duration * 0.7);
+
+    var strokeSchedules = [];
+    var curTime = 0;
+    for (var s = 0; s < items.length; s++) {
+      if (items[s].isFirstStrokeOfChar && s > 0) {
+        curTime += charPauseMs;
+      }
+      var sTime = totalLen > 0 ? (lengths[s] / totalLen) * drawDurationMs : 0;
+      strokeSchedules.push({
+        start: curTime,
+        dur: sTime,
+        len: lengths[s]
+      });
+      curTime += sTime;
+    }
+    var totalAnimDuration = Math.max(duration, curTime);
+
+    if (penTip) penTip.style.display = 'block';
+    var startTime = performance.now();
+    var animFrameId = null;
+    var cancelled = false;
+
+    var controller = {
+      cancel: function() {
+        cancelled = true;
+        if (animFrameId) cancelAnimationFrame(animFrameId);
+        if (penTip) penTip.style.display = 'none';
+        for (var n = 0; n < items.length; n++) {
+          items[n].path.style.strokeDashoffset = '0';
+        }
+        resolve();
+      }
+    };
+    activeLineAnimation = controller;
+
+    function step(now) {
+      if (cancelled) return;
+      var elapsed = now - startTime;
+
+      for (var j = 0; j < items.length; j++) {
+        var sched = strokeSchedules[j];
+        var sLen = sched.len;
+        var pItem = items[j];
+
+        if (elapsed <= sched.start) {
+          pItem.path.style.strokeDashoffset = sLen;
+        } else if (elapsed >= sched.start + sched.dur) {
+          pItem.path.style.strokeDashoffset = '0';
+        } else {
+          var strokeProgress = sched.dur > 0 ? (elapsed - sched.start) / sched.dur : 1;
+          strokeProgress = Math.max(0, Math.min(1, strokeProgress));
+          var currentDist = strokeProgress * sLen;
+          pItem.path.style.strokeDashoffset = (sLen - currentDist);
+
+          if (penTip) {
+            try {
+              var pt = pItem.path.getPointAtLength(currentDist);
+              penTip.setAttribute('cx', pt.x);
+              penTip.setAttribute('cy', pt.y);
+            } catch (e) {}
+          }
+        }
+      }
+
+      if (elapsed < totalAnimDuration) {
+        animFrameId = requestAnimationFrame(step);
+      } else {
+        if (penTip) penTip.style.display = 'none';
+        for (var m = 0; m < items.length; m++) {
+          items[m].path.style.strokeDashoffset = '0';
+        }
+        activeLineAnimation = null;
+        resolve();
+      }
+    }
+
+    animFrameId = requestAnimationFrame(step);
+  });
+}
+
+// --- Universal Dispatchers ---
+function buildLineSvg(rawText, opt) {
+  if (window.USE_STROKE_FONT) {
+    return buildHersheyStrokeLine(rawText, opt);
+  }
+  // Hard Rule 6: Never apply Reenie-derived centerlines to Caveat glyphs.
+  // Centerline-mask writing mode is disabled for Caveat; pen-style reveal is used.
+  if (window.AI_FONT === 'reenie' && window.WRITE_ANIM === 'pen') {
+    return buildReeniePenLine(rawText, opt);
+  }
+  return buildReenieLine(rawText, opt);
 }
 
 function animateLineWriting(lineObj, duration) {
   if (lineObj && lineObj.isStrokeFont) {
     return animateHersheyStrokeLine(lineObj, duration);
+  }
+  if (lineObj && lineObj.isPenMask) {
+    return animateReeniePenLine(lineObj, duration);
   }
   return animateReenieLine(lineObj, duration);
 }
@@ -656,13 +1423,15 @@ window.buildLineSvg = buildLineSvg;
 window.animateLineWriting = animateLineWriting;
 window.buildReenieLine = buildReenieLine;
 window.animateReenieLine = animateReenieLine;
+window.buildReeniePenLine = buildReeniePenLine;
+window.animateReeniePenLine = animateReeniePenLine;
 window.buildHersheyStrokeLine = buildHersheyStrokeLine;
 window.animateHersheyStrokeLine = animateHersheyStrokeLine;
 window.cancelActiveAnimation = cancelActiveAnimation;
 window.HERSHEY_GLYPHS = HERSHEY_GLYPHS;
+window.REENIE_CENTERLINES = REENIE_CENTERLINES;
 
-// --- Math Token Inline SVG Symbol Generator ---
-function createSvgSymbol(type) {
+function createSvgSymbol(type, opt) {
   var svgNS = 'http://www.w3.org/2000/svg';
   var svg = document.createElementNS(svgNS, 'svg');
   var path = document.createElementNS(svgNS, 'path');
@@ -670,25 +1439,30 @@ function createSvgSymbol(type) {
   svg.setAttribute('role', 'img');
   svg.setAttribute('aria-label', type);
 
-  var strokeW = (type === 'int') ? (window.INTEGRAL_STROKE_WIDTH || 2.4) :
-                (type === 'sqrt') ? (window.SQRT_STROKE_WIDTH || 2.3) :
-                (window.PI_STROKE_WIDTH || 2.3);
+  var strokeW = (type === 'int') ? (window.INTEGRAL_STROKE_WIDTH || 3.2) :
+                (type === 'sqrt') ? (window.SQRT_STROKE_WIDTH || 2.8) :
+                (window.PI_STROKE_WIDTH || 3.0);
   path.setAttribute('stroke-width', strokeW);
+  path.setAttribute('stroke-linecap', 'round');
+  path.setAttribute('stroke-linejoin', 'round');
+  path.setAttribute('fill', 'none');
 
   if (type === 'int') {
     svg.setAttribute('viewBox', '0 0 16 44');
-    var intScale = (window.INTEGRAL_SCALE || 1.55);
+    var intScale = (window.INTEGRAL_SCALE || 1.50);
     svg.style.height = intScale + 'em';
-    svg.style.verticalAlign = (window.INTEGRAL_VERTICAL_ALIGN || '-0.28em');
-    svg.style.marginLeft = (window.INTEGRAL_LEFT_GAP || '0.06em');
-    svg.style.marginRight = (window.INTEGRAL_RIGHT_GAP || '0.16em');
+    svg.style.verticalAlign = (window.INTEGRAL_VERTICAL_ALIGN || '-0.30em');
+    svg.style.marginLeft = (window.INTEGRAL_LEFT_GAP || '0.08em');
+    svg.style.marginRight = (window.INTEGRAL_RIGHT_GAP || '0.18em');
     path.setAttribute('d', 'M 12 4 C 10 1.5, 6 2, 5 5 C 4 9, 7 18, 7 24 C 7 32, 4 39, 3 41 C 2 43, 4 43.5, 6 42');
   } else if (type === 'sqrt') {
-    svg.setAttribute('viewBox', '0 0 20 36');
-    var sqrtScale = (window.SQRT_SCALE || 1.15);
+    var barW = (typeof opt === 'number') ? opt : (opt && opt.width ? opt.width : 16);
+    var totalW = Math.max(22, 16 + barW);
+    svg.setAttribute('viewBox', '0 0 ' + totalW + ' 38');
+    var sqrtScale = (window.SQRT_SCALE || 1.25);
     svg.style.height = sqrtScale + 'em';
-    svg.style.verticalAlign = '-0.18em';
-    path.setAttribute('d', 'M 1 20 L 4 23 L 9 7 L 19 7');
+    svg.style.verticalAlign = '-0.24em';
+    path.setAttribute('d', 'M 1 20 L 4 23 L 9 34 L 16 5 L ' + (totalW - 2) + ' 5');
   } else if (type === 'pi') {
     svg.setAttribute('viewBox', '0 0 24 32');
     var piScale = (window.PI_SCALE || 0.95);
@@ -700,6 +1474,30 @@ function createSvgSymbol(type) {
   return svg;
 }
 window.createSvgSymbol = createSvgSymbol;
+
+// Helper to format text chunks and constrain '/', '(', ')' for Caveat
+function formatTextChunk(text) {
+  if (window.AI_FONT !== 'caveat' || !text) {
+    return document.createTextNode(text || '');
+  }
+  if (!/[\/()]/.test(text)) {
+    return document.createTextNode(text);
+  }
+  var subFrag = document.createDocumentFragment();
+  var parts = text.split(/([\/()])/);
+  for (var p = 0; p < parts.length; p++) {
+    var part = parts[p];
+    if (part === '/' || part === '(' || part === ')') {
+      var dSpan = document.createElement('span');
+      dSpan.className = 'math-delim';
+      dSpan.textContent = part;
+      subFrag.appendChild(dSpan);
+    } else if (part.length > 0) {
+      subFrag.appendChild(document.createTextNode(part));
+    }
+  }
+  return subFrag;
+}
 
 // --- Math Token Formatting ---
 function formatMathLine(raw) {
@@ -715,45 +1513,115 @@ function formatMathLine(raw) {
 
     while ((match = re.exec(str)) !== null) {
       if (match.index > lastIdx) {
-        frag.appendChild(document.createTextNode(str.slice(lastIdx, match.index)));
+        frag.appendChild(formatTextChunk(str.slice(lastIdx, match.index)));
       }
       if (match[1]) {
-        frag.appendChild(document.createTextNode(match[1]));
+        frag.appendChild(formatTextChunk(match[1]));
       } else if (match[2]) {
         frag.appendChild(createSvgSymbol('int'));
       } else if (match[3]) {
-        frag.appendChild(createSvgSymbol('sqrt'));
-        frag.appendChild(document.createTextNode('('));
+        // Find matching closing parenthesis for sqrt(...)
+        var openIdx = match.index + 4;
+        var depth = 1;
+        var closeIdx = -1;
+        for (var k = openIdx + 1; k < str.length; k++) {
+          if (str[k] === '(') depth++;
+          else if (str[k] === ')') {
+            depth--;
+            if (depth === 0) { closeIdx = k; break; }
+          }
+        }
+        if (closeIdx !== -1) {
+          var argStr = str.slice(openIdx + 1, closeIdx);
+          re.lastIndex = closeIdx + 1;
+
+          var sqrtWrap = document.createElement('span');
+          sqrtWrap.className = 'math-sqrt-wrap';
+          sqrtWrap.style.display = 'inline-flex';
+          sqrtWrap.style.alignItems = 'flex-start';
+          sqrtWrap.style.position = 'relative';
+          sqrtWrap.style.margin = '0 0.12em 0 0.08em';
+          sqrtWrap.style.verticalAlign = '-0.16em';
+
+          var approxW = 20;
+          try {
+            var mc = document.createElement('canvas');
+            var mx = mc.getContext('2d');
+            mx.font = '46px "Caveat", "Reenie Beanie", cursive';
+            approxW = mx.measureText(argStr).width || (argStr.length * 18);
+          } catch (e) {
+            approxW = argStr.length * 18;
+          }
+
+          var barWidth = Math.max(16, Math.round(approxW * 0.78));
+          var svgRad = createSvgSymbol('sqrt', barWidth);
+          svgRad.style.position = 'absolute';
+          svgRad.style.left = '0';
+          svgRad.style.top = '0';
+          svgRad.style.height = '100%';
+          svgRad.style.width = '100%';
+          svgRad.style.pointerEvents = 'none';
+
+          var argContentEl = document.createElement('span');
+          argContentEl.className = 'math-sqrt-arg';
+          argContentEl.style.display = 'inline-block';
+          argContentEl.style.paddingLeft = '0.50em';
+          argContentEl.style.paddingRight = '0.14em';
+          argContentEl.style.paddingTop = '0.24em';
+          argContentEl.appendChild(formatMathLine(argStr));
+
+          sqrtWrap.appendChild(svgRad);
+          sqrtWrap.appendChild(argContentEl);
+
+          setTimeout(function(wEl, sSvg) {
+            try {
+              var actualW = wEl.getBoundingClientRect().width;
+              if (actualW > 20) {
+                var newTotalW = Math.max(24, Math.round(actualW * 1.05));
+                sSvg.setAttribute('viewBox', '0 0 ' + newTotalW + ' 38');
+                var pEl = sSvg.querySelector('path');
+                if (pEl) {
+                  pEl.setAttribute('d', 'M 1 20 L 4 23 L 9 34 L 16 5 L ' + (newTotalW - 2) + ' 5');
+                }
+              }
+            } catch (e) {}
+          }.bind(null, sqrtWrap, svgRad), 0);
+
+          frag.appendChild(sqrtWrap);
+        } else {
+          frag.appendChild(createSvgSymbol('sqrt'));
+          frag.appendChild(formatTextChunk('('));
+        }
       } else if (match[4]) {
         frag.appendChild(createSvgSymbol('pi'));
       } else if (match[5]) {
         var supEl = document.createElement('span');
         supEl.className = 'math-sup';
-        supEl.style.fontSize = (window.EXPONENT_SCALE || 0.60) + 'em';
-        supEl.style.verticalAlign = (window.EXPONENT_SHIFT || '0.38em');
-        supEl.style.marginRight = (window.EXPONENT_RIGHT_GAP || '0.14em');
+        supEl.style.fontSize = (window.EXPONENT_SCALE || 0.58) + 'em';
+        supEl.style.verticalAlign = (window.EXPONENT_SHIFT || '0.44em');
+        supEl.style.marginRight = (window.EXPONENT_RIGHT_GAP || '0.16em');
         supEl.appendChild(formatMathLine(match[6]));
         frag.appendChild(supEl);
       } else if (match[7]) {
         var expVal = match[8] || match[9] || match[10];
         var sEl = document.createElement('span');
         sEl.className = 'math-sup';
-        sEl.style.fontSize = (window.EXPONENT_SCALE || 0.60) + 'em';
-        sEl.style.verticalAlign = (window.EXPONENT_SHIFT || '0.38em');
-        sEl.style.marginRight = (window.EXPONENT_RIGHT_GAP || '0.14em');
-        sEl.appendChild(document.createTextNode(expVal));
+        sEl.style.fontSize = (window.EXPONENT_SCALE || 0.58) + 'em';
+        sEl.style.verticalAlign = (window.EXPONENT_SHIFT || '0.44em');
+        sEl.style.marginRight = (window.EXPONENT_RIGHT_GAP || '0.16em');
+        sEl.appendChild(formatTextChunk(expVal));
         frag.appendChild(sEl);
       } else if (match[11]) {
         var diffSpan = document.createElement('span');
         diffSpan.className = 'math-diff';
-        diffSpan.style.marginLeft = (window.DIFFERENTIAL_GAP || '0.22em');
+        diffSpan.style.marginLeft = (window.DIFFERENTIAL_GAP || '0.24em');
         diffSpan.textContent = match[12];
         frag.appendChild(diffSpan);
       }
       lastIdx = re.lastIndex;
     }
     if (lastIdx < str.length) {
-      frag.appendChild(document.createTextNode(str.slice(lastIdx)));
+      frag.appendChild(formatTextChunk(str.slice(lastIdx)));
     }
     return frag;
   } catch (e) {
@@ -849,7 +1717,139 @@ function strokeHits(s, px, py, radius) {
   return false;
 }
 
+function eraseAiAt(px, py, radius) {
+  try {
+    var cvRect = cv.getBoundingClientRect();
+    var ai = pageAiOutput[cur];
+
+    // If page 8 has seeded demo without pageAiOutput, initialize it on first interaction
+    if (!ai && cur === 8) {
+      var p = pages[cur - 1];
+      if (p && p.q && !clearedPages[8]) {
+        pageAiOutput[8] = {
+          question: 'Q3. Differentiate y = sin(3x²)',
+          steps: [
+            { write: "Let u = 3x^2,  du/dx = 6x", narration: "Let's use u-substitution for the inside expression." },
+            { write: "y′ = cos(u) · du/dx", narration: "Differentiating with respect to u gives cosine of u times du dx." },
+            { write: "y′ = 6x cos(3x²)", narration: "Substituting back gives six x cosine of three x squared." }
+          ],
+          cited: 1
+        };
+        ai = pageAiOutput[8];
+        savePersistedAiOutput();
+      }
+    }
+
+    if (!ai) return false;
+
+    var changed = false;
+
+    // 1. Check AI solution step lines
+    if (ai.steps && ai.steps.length > 0) {
+      var stepEls = notes.querySelectorAll('.ln.ai[id^="step-"]');
+      for (var i = 0; i < stepEls.length; i++) {
+        var el = stepEls[i];
+        var rect = el.getBoundingClientRect();
+        var x1 = rect.left - cvRect.left - radius;
+        var x2 = rect.right - cvRect.left + radius;
+        var y1 = rect.top - cvRect.top - radius;
+        var y2 = rect.bottom - cvRect.top + radius;
+
+        if (px >= x1 && px <= x2 && py >= y1 && py <= y2) {
+          var idx = parseInt(el.id.replace('step-', ''), 10);
+          if (isNaN(idx)) idx = i;
+          if (idx >= 0 && idx < ai.steps.length) {
+            // If erasing during active solve or narration, stop voice and animation cleanly
+            if (busy) {
+              stopVoiceAndAnimation();
+            } else {
+              cancelActiveAnimation();
+            }
+            var removedStep = ai.steps.splice(idx, 1)[0];
+            var removedCited = null;
+            // Tied margin element (Page 1 callback): removed if step tied to it or all steps removed
+            if (ai.cited && (ai.steps.length === 0 || idx >= ai.steps.length)) {
+              removedCited = ai.cited;
+              ai.cited = null;
+              var mk = $('#mk');
+              if (mk) mk.remove();
+            }
+            savePersistedAiOutput();
+            pushUndo({
+              type: 'ai-erase',
+              step: removedStep,
+              index: idx,
+              cited: removedCited
+            });
+            el.remove();
+            if (ai.steps.length === 0) {
+              var mkRem = $('#mk');
+              if (mkRem) mkRem.remove();
+            }
+            var remainingEls = notes.querySelectorAll('.ln.ai[id^="step-"]');
+            remainingEls.forEach(function(sEl, nIdx) {
+              sEl.id = 'step-' + nIdx;
+            });
+            updateClearSolBtn();
+            changed = true;
+            break;
+          }
+        }
+      }
+    }
+
+    // 2. Check Question Header line
+    var qEl = notes.querySelector('#ai-question') || notes.querySelector('.q-hdr');
+    if (qEl && ai.question) {
+      var qRect = qEl.getBoundingClientRect();
+      var qx1 = qRect.left - cvRect.left - radius;
+      var qx2 = qRect.right - cvRect.left + radius;
+      var qy1 = qRect.top - cvRect.top - radius;
+      var qy2 = qRect.bottom - cvRect.top + radius;
+
+      if (px >= qx1 && px <= qx2 && py >= qy1 && py <= qy2) {
+        var removedQ = ai.question;
+        ai.question = '';
+        savePersistedAiOutput();
+        pushUndo({ type: 'ai-erase-question', question: removedQ });
+        var spEl = qEl.nextElementSibling;
+        if (spEl && spEl.classList.contains('sp')) spEl.remove();
+        qEl.remove();
+        updateClearSolBtn();
+        changed = true;
+      }
+    }
+
+    // 3. Check Page 1 callback margin button (#mk)
+    var mkEl = $('#mk');
+    if (mkEl && ai.cited) {
+      var mRect = mkEl.getBoundingClientRect();
+      var mx1 = mRect.left - cvRect.left - radius;
+      var mx2 = mRect.right - cvRect.left + radius;
+      var my1 = mRect.top - cvRect.top - radius;
+      var my2 = mRect.bottom - cvRect.top + radius;
+
+      if (px >= mx1 && px <= mx2 && py >= my1 && py <= my2) {
+        var prevCited = ai.cited;
+        ai.cited = null;
+        savePersistedAiOutput();
+        pushUndo({ type: 'ai-erase-cited', cited: prevCited });
+        mkEl.remove();
+        changed = true;
+      }
+    }
+
+    return changed;
+  } catch (err) {
+    console.error('eraseAiAt error:', err);
+    return false;
+  }
+}
+
 function eraseAt(px, py) {
+  if (busy || solveInProgressSeqId !== null) {
+    stopVoiceAndAnimation();
+  }
   var list = getStrokes(cur);
   var ERASE_RADIUS = 16;
   var remaining = list.filter(function(s) {
@@ -860,6 +1860,7 @@ function eraseAt(px, py) {
     redoHistory[cur] = [];
     redraw();
   }
+  eraseAiAt(px, py, ERASE_RADIUS);
 }
 
 // --- Stroke Rendering with Smooth Quadratic Curves ---
@@ -957,7 +1958,8 @@ function getPt(e) {
 }
 
 cv.addEventListener('pointerdown', function(e) {
-  if (busy || e.button > 0) return;
+  if (e.button > 0) return;
+  if (busy && tool !== 'era') return;
 
   if (e.pointerType === 'pen') {
     lastPenTime = Date.now();
@@ -1078,6 +2080,7 @@ function endStroke(e) {
     list.push(currentStroke);
     setStrokes(cur, list);
     redoHistory[cur] = [];
+    pushUndo({ type: 'stroke', stroke: currentStroke });
     currentStroke = null;
     redraw();
   }
@@ -1088,6 +2091,9 @@ cv.addEventListener('pointercancel', endStroke);
 
 // --- Toolbar Controls ---
 function setTool(t) {
+  if (t === 'era') {
+    stopVoiceAndAnimation();
+  }
   tool = t;
   document.querySelectorAll('[data-t]').forEach(function(x) {
     x.classList.toggle('on', x.dataset.t === t);
@@ -1111,17 +2117,139 @@ document.querySelectorAll('[data-c]').forEach(function(b) {
   };
 });
 
-// Undo
-$('#undo').onclick = function() {
+// Action-level Undo System
+var UNDO_KEY = 'inkmentor_notebook_undo_v1';
+var undoHistory = {};
+
+function loadUndoHistory() {
+  try {
+    var raw = sessionStorage.getItem(UNDO_KEY) || localStorage.getItem(UNDO_KEY);
+    if (raw) undoHistory = JSON.parse(raw) || {};
+  } catch (e) { undoHistory = {}; }
+}
+
+function saveUndoHistory() {
+  try {
+    var data = JSON.stringify(undoHistory);
+    sessionStorage.setItem(UNDO_KEY, data);
+    localStorage.setItem(UNDO_KEY, data);
+  } catch (e) {}
+}
+
+loadUndoHistory();
+
+function pushUndo(action) {
+  undoHistory[cur] = undoHistory[cur] || [];
+  undoHistory[cur].push(action);
+  saveUndoHistory();
+}
+
+function updateClearSolBtn() {
+  var btn = $('#clear-sol-btn');
+  if (!btn) return;
+  var ai = pageAiOutput[cur];
+  var hasAi = ai && ((ai.steps && ai.steps.length > 0) || !!ai.question);
+  btn.style.display = hasAi ? 'inline-flex' : 'none';
+}
+
+function undoAction() {
   if (busy) return;
+  var pageUndo = undoHistory[cur] || [];
+  if (pageUndo.length > 0) {
+    var entry = pageUndo.pop();
+    saveUndoHistory();
+    if (entry.type === 'ai-erase' || entry.type === 'ai-erase-step') {
+      var ai = pageAiOutput[cur];
+      if (!ai) {
+        ai = { question: '', steps: [] };
+        pageAiOutput[cur] = ai;
+      }
+      if (!ai.steps) ai.steps = [];
+      var insertIdx = Math.min(entry.index, ai.steps.length);
+      ai.steps.splice(insertIdx, 0, entry.step);
+      if (entry.cited) ai.cited = entry.cited;
+      savePersistedAiOutput();
+      render();
+      toast('Restored erased AI step');
+      return;
+    }
+    if (entry.type === 'ai-erase-question') {
+      var ai = pageAiOutput[cur];
+      if (!ai) {
+        ai = { question: '', steps: [] };
+        pageAiOutput[cur] = ai;
+      }
+      ai.question = entry.question;
+      savePersistedAiOutput();
+      render();
+      toast('Restored question');
+      return;
+    }
+    if (entry.type === 'ai-erase-cited') {
+      var ai = pageAiOutput[cur];
+      if (ai) {
+        ai.cited = entry.cited;
+        savePersistedAiOutput();
+        render();
+      }
+      return;
+    }
+    if (entry.type === 'ai-clear-solution') {
+      pageAiOutput[cur] = entry.aiData;
+      delete clearedPages[cur];
+      savePersistedAiOutput();
+      render();
+      toast('Restored AI solution');
+      return;
+    }
+    if (entry.type === 'stroke') {
+      var list = getStrokes(cur);
+      if (list.length > 0) {
+        var popped = list.pop();
+        redoHistory[cur] = redoHistory[cur] || [];
+        redoHistory[cur].push(popped);
+        setStrokes(cur, list);
+        redraw();
+        return;
+      }
+    }
+  }
+
+  // Fallback to popping strokes if undoHistory is empty
   var list = getStrokes(cur);
-  if (list.length === 0) return;
-  var popped = list.pop();
-  redoHistory[cur] = redoHistory[cur] || [];
-  redoHistory[cur].push(popped);
-  setStrokes(cur, list);
-  redraw();
-};
+  if (list.length > 0) {
+    var popped = list.pop();
+    redoHistory[cur] = redoHistory[cur] || [];
+    redoHistory[cur].push(popped);
+    setStrokes(cur, list);
+    redraw();
+  }
+}
+
+$('#undo').onclick = undoAction;
+window.undoAction = undoAction;
+window.pushUndo = pushUndo;
+window.updateClearSolBtn = updateClearSolBtn;
+
+// Clear Solution Button Handler
+var clearSolBtn = $('#clear-sol-btn');
+if (clearSolBtn) {
+  clearSolBtn.onclick = function() {
+    if (busy) return;
+    var ai = pageAiOutput[cur];
+    if (!ai || ((!ai.steps || ai.steps.length === 0) && !ai.question)) return;
+    if (window.confirm('Clear AI solution from Page ' + cur + '?')) {
+      stopVoiceAndAnimation();
+      var prev = pageAiOutput[cur];
+      pushUndo({ type: 'ai-clear-solution', aiData: JSON.parse(JSON.stringify(prev)) });
+      delete pageAiOutput[cur];
+      clearedPages[cur] = true;
+      savePersistedAiOutput();
+      render();
+      toast('AI solution cleared. Click Undo to restore.');
+    }
+  };
+}
 
 function toast(m) {
   var t = $('#toast');
@@ -1145,7 +2273,18 @@ function list() {
   updateMemCount();
 }
 
-function render() {
+function render(opt) {
+  var options = opt || {};
+  // Explicit parameter: default is animate: false (Instant path for stored/reloaded solutions, page switching, undo)
+  var isAnimated = options.animate === true;
+
+  // Hard Rule 3: Solve-in-progress guard keyed by solve sequence id.
+  // While an animated solve is in progress on this page, re-render requests must be ignored
+  // to prevent finished text from painting prematurely or interrupting the active pen animation.
+  if (solveInProgressSeqId && solveInProgressSeqId === activeSolveSeqId && cur === solveInProgressPage) {
+    return;
+  }
+
   stopVoiceAndAnimation();
   hideConfirmPanel();
   ring.classList.remove('on');
@@ -1157,27 +2296,46 @@ function render() {
 
   // Render AI Output if present on this page
   var ai = pageAiOutput[cur];
-  if (ai && ai.steps && ai.steps.length > 0) {
+  if (!ai && cur === 8 && p && p.q && !clearedPages[8]) {
+    pageAiOutput[8] = {
+      question: 'Q3. Differentiate y = sin(3x²)',
+      steps: [
+        { write: 'Let u = 3x^2,  du/dx = 6x', narration: "Let's use u-substitution for the inside expression." },
+        { write: "y' = cos(u) * du/dx", narration: "Differentiating with respect to u gives cosine of u times du dx." },
+        { write: "y' = 6x cos(3x^2)", narration: "Substituting back gives six x cosine of three x squared." }
+      ],
+      cited: 1
+    };
+    ai = pageAiOutput[8];
+  }
+
+  if (ai && ((ai.steps && ai.steps.length > 0) || ai.question)) {
     notes.innerHTML = '';
-    var qDiv = document.createElement('div');
-    qDiv.className = 'ln';
-    qDiv.style.cssText = 'font-weight:600;font-size:calc(var(--g)*1.15);color:var(--tx2);margin-bottom:calc(var(--g)*0.3);';
-    qDiv.textContent = ai.question || '';
-    notes.appendChild(qDiv);
+    if (ai.question) {
+      var qDiv = document.createElement('div');
+      qDiv.className = 'ln q-hdr';
+      qDiv.id = 'ai-question';
+      qDiv.style.cssText = 'font-weight:600;font-size:calc(var(--g)*1.15);color:var(--tx2);margin-bottom:calc(var(--g)*0.3);';
+      qDiv.textContent = ai.question;
+      notes.appendChild(qDiv);
 
-    var spDiv = document.createElement('div');
-    spDiv.className = 'sp';
-    notes.appendChild(spDiv);
+      var spDiv = document.createElement('div');
+      spDiv.className = 'sp';
+      notes.appendChild(spDiv);
+    }
 
-    ai.steps.forEach(function(st, idx) {
-      var stepDiv = document.createElement('div');
-      stepDiv.className = 'ln ai';
-      stepDiv.id = 'step-' + idx;
-      var lineObj = buildLineSvg(st.write);
-      stepDiv.appendChild(lineObj.svg);
-      notes.appendChild(stepDiv);
-      animateLineWriting(lineObj, 0);
-    });
+    if (ai.steps && ai.steps.length > 0) {
+      ai.steps.forEach(function(st, idx) {
+        var stepDiv = document.createElement('div');
+        stepDiv.className = 'ln ai';
+        stepDiv.id = 'step-' + idx;
+        stepDiv.dataset.stepIdx = idx;
+        var lineObj = buildLineSvg(st.write, { initialHidden: false });
+        stepDiv.appendChild(lineObj.svg);
+        notes.appendChild(stepDiv);
+        animateLineWriting(lineObj, 0);
+      });
+    }
 
     if (ai.cited) {
       var mkBtn = document.createElement('button');
@@ -1187,8 +2345,6 @@ function render() {
       mkBtn.textContent = '← your Page ' + ai.cited + ', again';
       notes.appendChild(mkBtn);
     }
-  } else if (cur === 8 && p && p.q) {
-    notes.innerHTML = '<div class="ln" id="qq">Q3. Differentiate y = sin(3x²)</div><div class="sp"></div><div class="ln ai">Let u = 3x²,  du/dx = 6x</div><div class="ln ai">y′ = cos(u) · du/dx</div><div class="ln ai">y′ = 6x cos(3x²)</div><button class="mk" id="mk">← your Page 1, again</button>';
   } else if (p && p.l) {
     notes.innerHTML = p.l.map(function(s, i) {
       return '<div class="ln"' + (i ? '' : ' style="font-size:calc(var(--g)*2.3)"') + '>' + escapeHtml(s) + '</div>';
@@ -1197,6 +2353,7 @@ function render() {
     notes.innerHTML = '';
   }
 
+  updateClearSolBtn();
   $('#chip').classList.remove('on');
   redraw();
   list();
@@ -1208,6 +2365,7 @@ function go(n) {
   render();
   app.classList.remove('open');
 }
+window.go = go;
 
 // Add New Page Control (+ New page)
 $('#add-page').onclick = function() {
@@ -1301,22 +2459,112 @@ function pickBestVoice(targetLangCode) {
 
 var activeSolveSeqId = 0;
 var activeStepTimer = null;
+var solveInProgressSeqId = null;
+var solveInProgressPage = null;
 
-function stopVoiceAndAnimation() {
-  activeSolveSeqId++;
-  if (activeStepTimer) {
-    clearTimeout(activeStepTimer);
-    activeStepTimer = null;
+// Audio element state for Gemini Cloud TTS
+var currentTtsAudio = null;
+var ttsAbortController = null;
+var ttsPrefetchMap = {};
+var audioUnlocked = false;
+
+function unlockAudio() {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+  try {
+    var silent = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA');
+    silent.play().catch(function() {});
+  } catch (e) {}
+}
+window.addEventListener('pointerdown', unlockAudio, { once: true });
+window.addEventListener('keydown', unlockAudio, { once: true });
+
+function showTapToEnableVoiceNotice() {
+  toast('Tap to enable voice');
+  var tapHandler = function() {
+    unlockAudio();
+    window.removeEventListener('pointerdown', tapHandler);
+  };
+  window.addEventListener('pointerdown', tapHandler, { once: true });
+}
+
+async function fetchTtsAudio(text, signal, position) {
+  var clean = cleanNarrationText(text);
+  if (!clean) return null;
+  var bodyObj = { text: clean, position: position || 'middle' };
+  var resp = await fetch((API_BASE || '') + '/api/tts', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(bodyObj),
+    signal: signal
+  });
+  if (!resp.ok) {
+    throw new Error('TTS status ' + resp.status);
   }
-  cancelActiveAnimation();
-  if (typeof window !== 'undefined' && window.speechSynthesis) {
-    try {
-      window.speechSynthesis.cancel();
-    } catch (e) {}
+  var provider = resp.headers.get('x-tts-provider') || 'gemini';
+  var blob = await resp.blob();
+  var url = URL.createObjectURL(blob);
+  var duration = await new Promise(function(resolve) {
+    var tempAudio = new Audio();
+    var timeout = setTimeout(function() {
+      var estSec = Math.max(1, (blob.size - 44) / 48000.0);
+      resolve(estSec);
+    }, 500);
+    tempAudio.onloadedmetadata = function() {
+      clearTimeout(timeout);
+      var d = tempAudio.duration;
+      if (isFinite(d) && d > 0) resolve(d);
+      else resolve(Math.max(1, (blob.size - 44) / 48000.0));
+    };
+    tempAudio.onerror = function() {
+      clearTimeout(timeout);
+      resolve(Math.max(1, (blob.size - 44) / 48000.0));
+    };
+    tempAudio.src = url;
+  });
+  return { blob: blob, url: url, duration: duration, provider: provider };
+}
+
+function getTtsAudioPromise(text, seqId, position) {
+  var clean = cleanNarrationText(text);
+  if (!clean) return Promise.resolve(null);
+  var pos = position || 'middle';
+  var cacheKey = pos + ':' + clean;
+  if (ttsPrefetchMap[cacheKey]) {
+    return ttsPrefetchMap[cacheKey];
   }
-  var chip = $('#chip');
-  if (chip) chip.classList.remove('on');
-  setBusy(false);
+  if (!ttsAbortController || ttsAbortController.signal.aborted) {
+    ttsAbortController = new AbortController();
+  }
+  var signal = ttsAbortController ? ttsAbortController.signal : null;
+  var p = fetchTtsAudio(clean, signal, pos).catch(function(err) {
+    if (signal && signal.aborted) return null;
+    console.warn('[InkMentor TTS] Fallback to browser voice:', err.message);
+    return null;
+  });
+  ttsPrefetchMap[cacheKey] = p;
+  return p;
+}
+
+function prefetchAllTtsSteps(steps, seqId, maxConcurrency) {
+  if (!steps || !steps.length) return;
+  maxConcurrency = maxConcurrency || (window.TTS_PREFETCH_CONCURRENCY || 3);
+  var nextIdx = 0;
+
+  function launchNext() {
+    if (nextIdx >= steps.length || (seqId !== undefined && seqId !== activeSolveSeqId)) return;
+    var idx = nextIdx++;
+    var text = steps[idx].narration;
+    var pos = (idx === 0) ? 'first' : (idx === steps.length - 1 ? 'last' : 'middle');
+    getTtsAudioPromise(text, seqId, pos).finally(function() {
+      launchNext();
+    });
+  }
+
+  var initialCount = Math.min(maxConcurrency, steps.length);
+  for (var c = 0; c < initialCount; c++) {
+    launchNext();
+  }
 }
 
 function interruptibleWait(ms, seqId) {
@@ -1332,33 +2580,101 @@ function interruptibleWait(ms, seqId) {
   });
 }
 
-function speakNarration(text, estimatedDur, seqId) {
-  return new Promise(function(resolve) {
-    var clean = cleanNarrationText(text);
-    var chip = $('#chip');
-    var ct = $('#ct');
-    if (ct) ct.textContent = clean;
-    if (chip) chip.classList.add('on');
+/* === VOICE ARBITER === */
+var VoiceArbiter = (function() {
+  var sharedAudio = new Audio();
+  var currentToken = 0;
+  var arbiterState = 'idle'; // 'idle' | 'loading' | 'playing' | 'ended' | 'failed'
+  var currentProvider = 'none'; // 'gemini' | 'groq' | 'browser' | 'none'
+  var lastDowngradedProvider = null; // per-solve downgrade lock: 'groq' | 'browser'
+  var lastSolveSeq = -1;
+  var safetyTimer = null;
+  var budgetTimer = null;
+  var invariantInterval = null;
 
+  function init() {
+    sharedAudio.onended = function() {
+      arbiterState = 'ended';
+      currentProvider = 'none';
+      var chip = $('#chip');
+      if (chip) chip.classList.remove('on');
+    };
+    sharedAudio.onerror = function() {
+      arbiterState = 'failed';
+      currentProvider = 'none';
+      var chip = $('#chip');
+      if (chip) chip.classList.remove('on');
+    };
+
+    // Invariant check: sharedAudio and speechSynthesis must NEVER both be playing
+    if (typeof window !== 'undefined') {
+      window.DEBUG_VOICE = true;
+      if (invariantInterval) clearInterval(invariantInterval);
+      invariantInterval = setInterval(function() {
+        var audioPlaying = !sharedAudio.paused && !sharedAudio.ended && sharedAudio.currentTime > 0;
+        var speechSpeaking = !!(window.speechSynthesis && window.speechSynthesis.speaking);
+        if (audioPlaying && speechSpeaking) {
+          console.error('[Voice Arbiter INVARIANT VIOLATION] Simultaneous audio playback detected! Stopping browser voice.');
+          try { window.speechSynthesis.cancel(); } catch (e) {}
+        }
+      }, 50);
+    }
+  }
+
+  function stop() {
+    currentToken++;
+    arbiterState = 'idle';
+    currentProvider = 'none';
+    if (safetyTimer) { clearTimeout(safetyTimer); safetyTimer = null; }
+    if (budgetTimer) { clearTimeout(budgetTimer); budgetTimer = null; }
+    try {
+      sharedAudio.pause();
+      sharedAudio.currentTime = 0;
+      sharedAudio.src = '';
+    } catch (e) {}
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      try { window.speechSynthesis.cancel(); } catch (e) {}
+    }
+    var chip = $('#chip');
+    if (chip) chip.classList.remove('on');
+  }
+
+  function resetDowngrade(seqId) {
+    if (seqId !== lastSolveSeq) {
+      lastSolveSeq = seqId;
+      lastDowngradedProvider = null;
+    }
+  }
+
+  function playBrowserUtterance(clean, estimatedDur, myToken, resolve) {
     if (!voice || typeof window === 'undefined' || !window.speechSynthesis) {
-      var t = setTimeout(function() {
-        resolve();
-      }, estimatedDur || 2000);
-      activeStepTimer = t;
+      arbiterState = 'ended';
+      currentProvider = 'none';
+      resolve({ provider: 'none', durationMs: 0, endedNaturally: true });
       return;
     }
 
-    var settled = false;
-    var safetyTimer = null;
+    try {
+      sharedAudio.pause();
+      sharedAudio.currentTime = 0;
+      sharedAudio.src = '';
+    } catch (e) {}
 
-    function settle() {
+    arbiterState = 'playing';
+    currentProvider = 'browser';
+
+    var settled = false;
+    function settle(natural) {
       if (settled) return;
       settled = true;
-      if (safetyTimer) {
-        clearTimeout(safetyTimer);
-        safetyTimer = null;
+      if (safetyTimer) { clearTimeout(safetyTimer); safetyTimer = null; }
+      if (currentToken === myToken) {
+        arbiterState = 'ended';
+        currentProvider = 'none';
+        var chip = $('#chip');
+        if (chip) chip.classList.remove('on');
       }
-      resolve();
+      resolve({ provider: 'browser', durationMs: estimatedDur || 2000, endedNaturally: natural !== false });
     }
 
     try {
@@ -1367,22 +2683,206 @@ function speakNarration(text, estimatedDur, seqId) {
       u.lang = curLang.code;
       u.rate = VOICE_RATE;
       u.pitch = VOICE_PITCH;
-
       var chosenVoice = pickBestVoice(curLang.code);
       if (chosenVoice) u.voice = chosenVoice;
-
-      u.onend = settle;
-      u.onerror = settle;
-
-      var safetyTimeoutMs = (estimatedDur || 2000) + 3000;
-      safetyTimer = setTimeout(settle, safetyTimeoutMs);
-
+      u.onend = function() { settle(true); };
+      u.onerror = function() { settle(false); };
+      safetyTimer = setTimeout(function() { settle(true); }, (estimatedDur || 2000) + 2500);
+      recordPerfMark('first_audio_started');
       window.speechSynthesis.speak(u);
     } catch (err) {
-      settle();
+      settle(false);
     }
+  }
+
+  function speak(text, options) {
+    options = options || {};
+    var solveSeq = options.solveSeq;
+    var position = options.position || 'middle';
+    var estimatedDur = options.estimatedDur || 2000;
+    var preloadedCloudAudio = options.preloadedCloudAudio;
+
+    if (solveSeq !== undefined) {
+      resetDowngrade(solveSeq);
+    }
+
+    stop();
+
+    var myToken = ++currentToken;
+    var clean = cleanNarrationText(text);
+    if (!clean) {
+      return Promise.resolve({ provider: 'none', durationMs: 0, endedNaturally: true });
+    }
+
+    var ct = $('#ct');
+    if (ct) ct.textContent = clean;
+    var chip = $('#chip');
+    if (chip) chip.classList.add('on');
+
+    if (!voice) {
+      return new Promise(function(resolve) {
+        safetyTimer = setTimeout(function() {
+          if (myToken === currentToken) {
+            arbiterState = 'idle';
+            if (chip) chip.classList.remove('on');
+          }
+          resolve({ provider: 'none', durationMs: 0, endedNaturally: true });
+        }, Math.min(estimatedDur, 2000));
+      });
+    }
+
+    return new Promise(function(resolve) {
+      if (TTS_MODE !== 'cloud' || lastDowngradedProvider === 'browser') {
+        playBrowserUtterance(clean, estimatedDur, myToken, resolve);
+        return;
+      }
+
+      arbiterState = 'loading';
+      var budgetMs = (position === 'first') ? (window.FIRST_AUDIO_BUDGET_MS || 3500) : (window.STEP_AUDIO_BUDGET_MS || 2500);
+      var cloudStarted = false;
+
+      budgetTimer = setTimeout(function() {
+        if (!cloudStarted && myToken === currentToken && arbiterState === 'loading') {
+          console.warn('[Voice Arbiter] Audio budget expired (' + budgetMs + 'ms), falling back to browser voice');
+          lastDowngradedProvider = 'browser';
+          playBrowserUtterance(clean, estimatedDur, myToken, resolve);
+        }
+      }, budgetMs);
+
+      var audioPromise = null;
+      if (preloadedCloudAudio && preloadedCloudAudio.url) {
+        audioPromise = Promise.resolve(preloadedCloudAudio);
+      } else {
+        var cacheKey = position + ':' + clean;
+        if (ttsPrefetchMap[cacheKey]) {
+          audioPromise = ttsPrefetchMap[cacheKey];
+        } else {
+          audioPromise = fetchTtsAudio(clean, null, position);
+        }
+      }
+
+      audioPromise.then(function(audioItem) {
+        if (myToken !== currentToken) {
+          return;
+        }
+        if (!audioItem || !audioItem.url) {
+          throw new Error('No audio payload');
+        }
+        if (arbiterState !== 'loading') {
+          return;
+        }
+
+        cloudStarted = true;
+        if (budgetTimer) { clearTimeout(budgetTimer); budgetTimer = null; }
+
+        var prov = audioItem.provider || 'gemini';
+        if (prov === 'groq') {
+          lastDowngradedProvider = 'groq';
+        }
+        currentProvider = prov;
+        arbiterState = 'playing';
+
+        unlockAudio();
+        if (typeof window !== 'undefined' && window.speechSynthesis) {
+          try { window.speechSynthesis.cancel(); } catch (e) {}
+        }
+
+        var rate = TTS_PLAYBACK_RATE || 1.05;
+        sharedAudio.src = audioItem.url;
+        sharedAudio.playbackRate = rate;
+        if ('preservesPitch' in sharedAudio) sharedAudio.preservesPitch = true;
+        else if ('webkitPreservesPitch' in sharedAudio) sharedAudio.webkitPreservesPitch = true;
+
+        var settled = false;
+        function settle(natural) {
+          if (settled) return;
+          settled = true;
+          if (safetyTimer) { clearTimeout(safetyTimer); safetyTimer = null; }
+          if (myToken === currentToken) {
+            arbiterState = 'ended';
+            currentProvider = 'none';
+            if (chip) chip.classList.remove('on');
+          }
+          var durMs = (audioItem.duration || (estimatedDur / 1000)) * 1000;
+          resolve({ provider: prov, durationMs: durMs, endedNaturally: natural !== false });
+        }
+
+        sharedAudio.onended = function() { settle(true); };
+        sharedAudio.onerror = function() {
+          if (!settled && myToken === currentToken) {
+            console.warn('[Voice Arbiter] sharedAudio playback error; falling back to browser voice');
+            lastDowngradedProvider = 'browser';
+            playBrowserUtterance(clean, estimatedDur, myToken, resolve);
+          }
+        };
+
+        var durSec = (audioItem.duration || (estimatedDur / 1000)) / rate;
+        safetyTimer = setTimeout(function() { settle(true); }, Math.round(durSec * 1000) + 2000);
+
+        recordPerfMark('first_audio_started');
+        sharedAudio.play().catch(function(playErr) {
+          if (settled) return;
+          if (playErr && playErr.name === 'NotAllowedError') {
+            showTapToEnableVoiceNotice();
+          }
+          if (myToken === currentToken) {
+            lastDowngradedProvider = 'browser';
+            playBrowserUtterance(clean, estimatedDur, myToken, resolve);
+          }
+        });
+      }).catch(function(err) {
+        if (myToken !== currentToken) return;
+        if (arbiterState === 'loading') {
+          if (budgetTimer) { clearTimeout(budgetTimer); budgetTimer = null; }
+          console.warn('[Voice Arbiter] Cloud fetch failed (' + err.message + '); falling back to browser voice');
+          lastDowngradedProvider = 'browser';
+          playBrowserUtterance(clean, estimatedDur, myToken, resolve);
+        }
+      });
+    });
+  }
+
+  init();
+
+  return {
+    speak: speak,
+    stop: stop,
+    getState: function() { return arbiterState; },
+    getProvider: function() { return currentProvider; },
+    getSharedAudio: function() { return sharedAudio; }
+  };
+})();
+/* === END VOICE ARBITER === */
+
+function stopVoiceAndAnimation() {
+  activeSolveSeqId++;
+  solveInProgressSeqId = null;
+  solveInProgressPage = null;
+  if (activeStepTimer) {
+    clearTimeout(activeStepTimer);
+    activeStepTimer = null;
+  }
+  cancelActiveAnimation();
+  VoiceArbiter.stop();
+  if (ttsAbortController) {
+    try {
+      ttsAbortController.abort();
+    } catch (e) {}
+    ttsAbortController = null;
+  }
+  ttsPrefetchMap = {};
+  setBusy(false);
+}
+
+function speakNarration(text, estimatedDur, seqId, preloadedCloudAudio, position) {
+  return VoiceArbiter.speak(text, {
+    position: position || 'middle',
+    solveSeq: seqId,
+    estimatedDur: estimatedDur,
+    preloadedCloudAudio: preloadedCloudAudio
   });
 }
+
 
 $('#vo').onclick = function(e) {
   if (e.shiftKey) {
@@ -1402,6 +2902,13 @@ $('#vo').onclick = function(e) {
 window.addEventListener('beforeunload', function() {
   stopVoiceAndAnimation();
 });
+
+var micBtn = $('#mic') || document.querySelector('.mic-btn') || document.querySelector('[aria-label*="mic" i]');
+if (micBtn) {
+  micBtn.addEventListener('click', function() {
+    stopVoiceAndAnimation();
+  });
+}
 
 $('#menu').onclick = function() {
   if (innerWidth <= 820) app.classList.toggle('open');
@@ -1433,27 +2940,87 @@ notes.addEventListener('click', function(e) {
 
 function wait(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
 
-function say(t) {
-  var clean = cleanNarrationText(t);
+// --- Stage Tracking & Status Pill Timer (Optimization G) ---
+var stageInterval = null;
+var stageStartTime = 0;
+var currentStageName = '';
+
+function setStatusStage(stageName) {
+  currentStageName = stageName;
+  stageStartTime = performance.now();
+  if (stageInterval) {
+    clearInterval(stageInterval);
+    stageInterval = null;
+  }
   var ct = $('#ct');
-  if (ct) ct.textContent = clean;
   var chip = $('#chip');
+  if (!stageName) {
+    if (chip) chip.classList.remove('on');
+    return;
+  }
+  if (ct) ct.textContent = stageName;
   if (chip) chip.classList.add('on');
 
-  if (voice && typeof window !== 'undefined' && window.speechSynthesis) {
-    try {
-      window.speechSynthesis.cancel();
-      var u = new SpeechSynthesisUtterance(clean);
-      var curLang = VOICE_LANGS[voiceLangIdx] || { code: 'en-US' };
-      u.lang = curLang.code;
-      u.rate = VOICE_RATE;
-      u.pitch = VOICE_PITCH;
-      var chosenVoice = pickBestVoice(curLang.code);
-      if (chosenVoice) u.voice = chosenVoice;
-      window.speechSynthesis.speak(u);
-    } catch (e) {}
-  }
+  stageInterval = setInterval(function() {
+    var elapsedSec = ((performance.now() - stageStartTime) / 1000).toFixed(1);
+    if (elapsedSec >= 3.0 && currentStageName) {
+      if (ct) ct.textContent = currentStageName + ' (' + elapsedSec + 's)';
+    }
+  }, 200);
 }
+
+function clearStatusStage() {
+  setStatusStage(null);
+}
+
+// --- Speculative Solve on Confirm (Optimization F) ---
+var speculativeSolvePromise = null;
+var speculativeAbortController = null;
+var speculativeQuestionText = '';
+
+function startSpeculativeSolve(recognizedText) {
+  if (!window.SPECULATIVE_SOLVE) return;
+  abortSpeculativeSolve();
+  var trimmed = (recognizedText || '').trim();
+  if (!trimmed) return;
+
+  speculativeQuestionText = trimmed;
+  speculativeAbortController = new AbortController();
+
+  speculativeSolvePromise = fetch((API_BASE || '') + '/api/solve', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      question: trimmed,
+      context: []
+    }),
+    signal: speculativeAbortController.signal
+  }).then(async function(resp) {
+    if (!resp.ok) {
+      var errJson = await resp.json().catch(function() { return {}; });
+      throw new Error(errJson.detail || ('Server status ' + resp.status));
+    }
+    return await resp.json();
+  }).catch(function(err) {
+    if (err.name === 'AbortError') return null;
+    throw err;
+  });
+}
+
+function abortSpeculativeSolve() {
+  if (speculativeAbortController) {
+    try { speculativeAbortController.abort(); } catch (e) {}
+    speculativeAbortController = null;
+  }
+  speculativeSolvePromise = null;
+  speculativeQuestionText = '';
+}
+
+function say(t) {
+  clearStatusStage();
+  return VoiceArbiter.speak(t, { position: 'middle', solveSeq: activeSolveSeqId });
+}
+
 
 function setBusy(state) {
   busy = state;
@@ -1461,7 +3028,8 @@ function setBusy(state) {
   $('#hint-btn').disabled = state;
   $('#tool-circle').disabled = state;
   $('#tool-pen').disabled = state;
-  $('#tool-era').disabled = state;
+  // Eraser remains enabled so user can erase AI lines during or after narration
+  $('#tool-era').disabled = false;
   $('#undo').disabled = state;
   $('#add-page').disabled = state;
 }
@@ -1476,6 +3044,7 @@ function showConfirmPanel(questionText, noteText) {
     noteEl.style.display = 'none';
   }
   confirmPanel.style.display = 'flex';
+  recordPerfMark('confirm_shown');
   setTimeout(function() { $('#cp-text').focus(); }, 60);
 }
 
@@ -1484,7 +3053,14 @@ function hideConfirmPanel() {
   $('#cp-note').style.display = 'none';
 }
 
+$('#cp-text').addEventListener('input', function() {
+  if (speculativeQuestionText && this.value.trim() !== speculativeQuestionText) {
+    abortSpeculativeSolve();
+  }
+});
+
 $('#cp-cancel').onclick = function() {
+  abortSpeculativeSolve();
   hideConfirmPanel();
   ring.classList.remove('on');
   currentCircleBox = null;
@@ -1493,6 +3069,7 @@ $('#cp-cancel').onclick = function() {
 };
 
 $('#cp-hint').onclick = function() {
+  abortSpeculativeSolve();
   var q = $('#cp-text').value.trim();
   if (!q) {
     toast('Please enter or correct the question');
@@ -1508,6 +3085,7 @@ $('#cp-solve').onclick = function() {
     toast('Please enter or correct the question');
     return;
   }
+  recordPerfMark('solve_clicked');
   hideConfirmPanel();
   runSolvePipeline(q, currentCircleBox);
 };
@@ -1550,6 +3128,7 @@ function handleCircleGesture(pts) {
     h: Math.min(rPaper.height, h + pad * 2)
   };
   currentCircleBox = box;
+  recordPerfMark('circle_finished');
 
   // Position violet ring around the circled area
   ring.style.cssText = 'left:' + box.x + 'px;top:' + box.y + 'px;width:' + box.w + 'px;height:' + box.h + 'px';
@@ -1600,9 +3179,10 @@ function handleCircleGesture(pts) {
   }
   offCtx.restore();
 
-  // Scale so longest side is at most 1024px
+  // Scale so longest side is at most RECOGNIZE_MAX_SIDE (768px)
   var longest = Math.max(offW, offH);
-  var scale = longest > 1024 ? (1024 / longest) : 1;
+  var maxSide = window.RECOGNIZE_MAX_SIDE || 768;
+  var scale = longest > maxSide ? (maxSide / longest) : 1;
   var finalCv = document.createElement('canvas');
   finalCv.width = Math.round(offW * scale);
   finalCv.height = Math.round(offH * scale);
@@ -1612,6 +3192,7 @@ function handleCircleGesture(pts) {
   finalCtx.drawImage(offCv, 0, 0, finalCv.width, finalCv.height);
 
   var dataUrl = finalCv.toDataURL('image/png');
+  recordPerfMark('crop_exported');
   var b64 = dataUrl.split(',')[1];
 
   sendRecognizeRequest(b64);
@@ -1619,15 +3200,18 @@ function handleCircleGesture(pts) {
 
 async function sendRecognizeRequest(b64) {
   setBusy(true);
-  say('Reading your question…');
+  setStatusStage('Recognizing handwriting…');
 
   var controller = new AbortController();
   var timer = setTimeout(function() { controller.abort(); }, 60000);
 
   try {
-    var response = await fetch('/api/recognize', {
+    recordPerfMark('recognize_sent');
+    var recHeaders = { 'Content-Type': 'application/json' };
+    if (window.currentTraceId) recHeaders['X-Trace-Id'] = window.currentTraceId;
+    var response = await fetch((API_BASE || '') + '/api/recognize', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: recHeaders,
       body: JSON.stringify({
         image_base64: b64,
         media_type: 'image/png'
@@ -1635,6 +3219,12 @@ async function sendRecognizeRequest(b64) {
       signal: controller.signal
     });
     clearTimeout(timer);
+    clearStatusStage();
+
+    var stHeader = response.headers.get('Server-Timing');
+    if (stHeader) {
+      window.serverTimings.recognize = parseServerTiming(stHeader);
+    }
 
     if (!response.ok) {
       var errData = await response.json().catch(function() { return {}; });
@@ -1646,15 +3236,19 @@ async function sendRecognizeRequest(b64) {
     }
 
     var data = await response.json();
+    recordPerfMark('recognize_received');
     if (data.readable === false) {
       say(data.note || 'Could not read handwriting. Type question below.');
       showConfirmPanel('', data.note || 'Handwriting not recognized. Type question manually:');
     } else {
+      var recognizedQ = (data.question_text || data.latex || '').trim();
+      startSpeculativeSolve(recognizedQ);
       say('Question recognized. Confirm or edit to solve.');
-      showConfirmPanel(data.question_text || data.latex || '', data.note || '');
+      showConfirmPanel(recognizedQ, data.note || '');
     }
   } catch (err) {
     clearTimeout(timer);
+    clearStatusStage();
     var isTimeout = err.name === 'AbortError';
     var errMsg = isTimeout ? 'Recognition timed out (60s)' : 'Backend unreachable (' + err.message + ')';
     toast(errMsg);
@@ -1672,6 +3266,9 @@ async function runHintLadder(questionText, box) {
   if (busy) return;
   hideConfirmPanel();
 
+  // Hard Rule 4: Await font loading before text measurements or animations
+  await ensureFontLoaded();
+
   if (!hintCache[questionText]) {
     setBusy(true);
     say('Finding hint…');
@@ -1681,7 +3278,7 @@ async function runHintLadder(questionText, box) {
     var citedTitle = null;
 
     try {
-      var retResp = await fetch('/api/retrieve', {
+      var retResp = await fetch((API_BASE || '') + '/api/retrieve', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: questionText, threshold: 0.65, top_k: 2 })
@@ -1700,7 +3297,7 @@ async function runHintLadder(questionText, box) {
     } catch (e) {}
 
     try {
-      var sResp = await fetch('/api/solve', {
+      var sResp = await fetch((API_BASE || '') + '/api/solve', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question: questionText, context: contextPages })
@@ -1747,12 +3344,15 @@ async function runHintLadder(questionText, box) {
   } else if (hData.level === 2) {
     stopVoiceAndAnimation();
     var hintSeqId = activeSolveSeqId;
+    solveInProgressSeqId = hintSeqId;
+    solveInProgressPage = cur;
     var firstStep = hData.steps[0];
     var cleanFirstStep = cleanNarrationText(firstStep.narration);
     toast('Hint 2/3 (Next step): ' + firstStep.write);
     notes.innerHTML = '';
     var qH = document.createElement('div');
-    qH.className = 'ln';
+    qH.className = 'ln q-hdr';
+    qH.id = 'ai-question';
     qH.style.cssText = 'font-weight:600;font-size:calc(var(--g)*1.15);color:var(--tx2);margin-bottom:calc(var(--g)*0.3);';
     qH.textContent = questionText || '';
     notes.appendChild(qH);
@@ -1764,9 +3364,30 @@ async function runHintLadder(questionText, box) {
     var stepH = document.createElement('div');
     stepH.className = 'ln ai';
     stepH.id = 'step-0';
-    var lineObj = buildLineSvg(firstStep.write);
+    stepH.dataset.stepIdx = 0;
+    var lineObj = buildLineSvg(firstStep.write, { initialHidden: true });
+    if (lineObj && lineObj.textEl) {
+      lineObj.textEl.style.clipPath = 'inset(-16px 100% -16px 0)';
+    }
     stepH.appendChild(lineObj.svg);
     notes.appendChild(stepH);
+
+    var dur = getStepDuration(cleanFirstStep);
+    var cloudAudioItem = null;
+    if (TTS_MODE === 'cloud' && voice) {
+      try {
+        cloudAudioItem = await fetchTtsAudio(cleanFirstStep, null, 'first');
+        if (cloudAudioItem && cloudAudioItem.duration > 0) {
+          var rate = TTS_PLAYBACK_RATE || 1.05;
+          dur = Math.round((cloudAudioItem.duration / rate) * 1000);
+        }
+      } catch (e) {}
+    }
+    var sPromise = speakNarration(cleanFirstStep, dur, hintSeqId, cloudAudioItem);
+    var dPromise = lineObj ? animateLineWriting(lineObj, dur) : Promise.resolve();
+    await Promise.all([sPromise, dPromise]);
+    solveInProgressSeqId = null;
+    solveInProgressPage = null;
 
     if (hData.cited) {
       var mkH = document.createElement('button');
@@ -1776,11 +3397,6 @@ async function runHintLadder(questionText, box) {
       mkH.textContent = '← your Page ' + hData.cited + ', again';
       notes.appendChild(mkH);
     }
-
-    var dur = getStepDuration(cleanFirstStep);
-    var sPromise = speakNarration(cleanFirstStep, dur, hintSeqId);
-    var dPromise = lineObj ? animateLineWriting(lineObj, dur) : Promise.resolve();
-    await Promise.all([sPromise, dPromise]);
   } else {
     toast('Hint 3/3: Full solution');
     hData.level = 0;
@@ -1792,14 +3408,32 @@ async function runHintLadder(questionText, box) {
 async function runSolvePipeline(questionText, box) {
   stopVoiceAndAnimation();
   var currentSolveSeqId = activeSolveSeqId;
+  solveInProgressSeqId = currentSolveSeqId;
+  solveInProgressPage = cur;
   setBusy(true);
-  say('Searching notebook memory…');
+  recordPerfMark('solve_clicked');
+
+  // Clear previous notes and render static problem prompt immediately
+  notes.innerHTML = '';
+  var qEl = document.createElement('div');
+  qEl.className = 'ln q-hdr';
+  qEl.id = 'ai-question';
+  qEl.style.cssText = 'font-weight:600;font-size:calc(var(--g)*1.15);color:var(--tx2);margin-bottom:calc(var(--g)*0.3);';
+  qEl.textContent = questionText || '';
+  notes.appendChild(qEl);
+
+  var spEl = document.createElement('div');
+  spEl.className = 'sp';
+  notes.appendChild(spEl);
+  updateClearSolBtn();
+
+  setStatusStage('Searching notebook memory…');
 
   // Step 1: Memory index retrieval via /api/retrieve
   var contextPages = [];
   var cited = null;
   try {
-    var retResp = await fetch('/api/retrieve', {
+    var retResp = await fetch((API_BASE || '') + '/api/retrieve', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1813,8 +3447,7 @@ async function runSolvePipeline(questionText, box) {
       if (retData.matches && retData.matches.length > 0) {
         var top = retData.top_match || retData.matches[0];
         cited = top.page;
-        say('Found ' + top.title.toLowerCase() + ' on Page ' + top.page);
-        await interruptibleWait(1800, currentSolveSeqId);
+        setStatusStage('Found ' + top.title.toLowerCase() + ' on Page ' + top.page);
         contextPages = retData.matches.map(function(m) {
           return {
             page: m.page,
@@ -1827,113 +3460,200 @@ async function runSolvePipeline(questionText, box) {
     console.warn('Memory retrieval skipped:', retErr);
   }
 
-  if (currentSolveSeqId !== activeSolveSeqId) return;
-
-  if (!cited) {
-    say('Solving question…');
+  if (currentSolveSeqId !== activeSolveSeqId) {
+    solveInProgressSeqId = null;
+    solveInProgressPage = null;
+    return;
   }
 
-  // Step 2: Solve with SymPy verification
+  var data = null;
+
   try {
-    var response = await fetch('/api/solve', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        question: questionText,
-        context: contextPages
-      })
-    });
-
-    if (currentSolveSeqId !== activeSolveSeqId) return;
-
-    if (!response.ok) {
-      var errJson = await response.json().catch(function() { return {}; });
-      throw new Error(errJson.detail || ('Server status ' + response.status));
+    // Optimization F: Consume speculative solve result if available and matched
+    if (window.SPECULATIVE_SOLVE && speculativeSolvePromise && questionText === speculativeQuestionText) {
+      setStatusStage('Verifying with SymPy…');
+      try {
+        data = await speculativeSolvePromise;
+      } catch (specErr) {
+        console.warn('Speculative solve failed or aborted, falling back:', specErr);
+        data = null;
+      }
+      abortSpeculativeSolve();
     }
 
-    var data = await response.json();
+    if (!data) {
+      if (!cited) {
+        setStatusStage('Verifying with SymPy…');
+      }
 
-    if (!data.verified) {
-      var failMsg = data.error || 'SymPy rejected answer';
-      say('Verification check failed: ' + failMsg);
-      toast('SymPy verification failed: ' + failMsg);
-      showConfirmPanel(questionText, 'Verification failed: ' + failMsg + '. Adjust and retry:');
-      await interruptibleWait(3000, currentSolveSeqId);
-      $('#chip').classList.remove('on');
+      // Step 2: Solve with SymPy verification
+      recordPerfMark('solve_sent');
+      var solHeaders = { 'Content-Type': 'application/json' };
+      if (window.currentTraceId) solHeaders['X-Trace-Id'] = window.currentTraceId;
+      var response = await fetch((API_BASE || '') + '/api/solve', {
+        method: 'POST',
+        headers: solHeaders,
+        body: JSON.stringify({
+          question: questionText,
+          context: contextPages
+        })
+      });
+
+      if (currentSolveSeqId !== activeSolveSeqId) {
+        solveInProgressSeqId = null;
+        solveInProgressPage = null;
+        clearStatusStage();
+        return;
+      }
+
+      var stSolHeader = response.headers.get('Server-Timing');
+      if (stSolHeader) {
+        window.serverTimings.solve = parseServerTiming(stSolHeader);
+      }
+
+      if (!response.ok) {
+        var errJson = await response.json().catch(function() { return {}; });
+        throw new Error(errJson.detail || ('Server status ' + response.status));
+      }
+
+      data = await response.json();
+    }
+
+  recordPerfMark('solve_received');
+
+  if (!data.verified) {
+    clearStatusStage();
+    var failMsg = data.error || 'SymPy rejected answer';
+    say('Verification check failed: ' + failMsg);
+    toast('SymPy verification failed: ' + failMsg);
+    showConfirmPanel(questionText, 'Verification failed: ' + failMsg + '. Adjust and retry:');
+    await interruptibleWait(3000, currentSolveSeqId);
+    $('#chip').classList.remove('on');
+    return;
+  }
+
+  // Cited earlier page callback from verified solver response
+  if (data.cites_pages && data.cites_pages.length > 0) {
+    cited = data.cites_pages[0];
+  }
+
+  // Save AI output for the current page
+  pageAiOutput[cur] = {
+    question: questionText,
+    steps: data.steps,
+    cited: cited,
+    box: box
+  };
+  savePersistedAiOutput();
+
+  // Optimization E: Immediately prefetch ALL steps in batch with concurrency 3
+  if (TTS_MODE === 'cloud' && voice && data.steps.length > 0) {
+    setStatusStage("Preparing Ink's voice…");
+    prefetchAllTtsSteps(data.steps, currentSolveSeqId, window.TTS_PREFETCH_CONCURRENCY || 3);
+  }
+
+    // Hard Rule 4: Wait for font before anything font-dependent runs (solution animation, text measurement)
+    await ensureFontLoaded();
+    if (currentSolveSeqId !== activeSolveSeqId) {
+      solveInProgressSeqId = null;
+      solveInProgressPage = null;
       return;
     }
 
-    // Cited earlier page callback from verified solver response
-    if (data.cites_pages && data.cites_pages.length > 0) {
-      cited = data.cites_pages[0];
+    // Ensure prompt header exists and remove any stray steps
+    if (!document.getElementById('ai-question')) {
+      notes.innerHTML = '';
+      var qElSync = document.createElement('div');
+      qElSync.className = 'ln q-hdr';
+      qElSync.id = 'ai-question';
+      qElSync.style.cssText = 'font-weight:600;font-size:calc(var(--g)*1.15);color:var(--tx2);margin-bottom:calc(var(--g)*0.3);';
+      qElSync.textContent = questionText || '';
+      notes.appendChild(qElSync);
+
+      var spElSync = document.createElement('div');
+      spElSync.className = 'sp';
+      notes.appendChild(spElSync);
+      updateClearSolBtn();
+    } else {
+      var straySteps = notes.querySelectorAll('.ln.ai[id^="step-"], #mk');
+      straySteps.forEach(function(el) { el.remove(); });
     }
 
-    // Save AI output for the current page
-    pageAiOutput[cur] = {
-      question: questionText,
-      steps: data.steps,
-      cited: cited,
-      box: box
-    };
-    savePersistedAiOutput();
-
-    // Render real AI steps returned by backend onto the page
-    notes.innerHTML = '';
-    var qEl = document.createElement('div');
-    qEl.className = 'ln';
-    qEl.style.cssText = 'font-weight:600;font-size:calc(var(--g)*1.15);color:var(--tx2);margin-bottom:calc(var(--g)*0.3);';
-    qEl.textContent = questionText || '';
-    notes.appendChild(qEl);
-
-    var spEl = document.createElement('div');
-    spEl.className = 'sp';
-    notes.appendChild(spEl);
-
-    var stepLineObjs = [];
-    data.steps.forEach(function(st, idx) {
-      var stepEl = document.createElement('div');
-      stepEl.className = 'ln ai';
-      stepEl.id = 'step-' + idx;
-      var lineObj = buildLineSvg(st.write);
-      stepEl.appendChild(lineObj.svg);
-      notes.appendChild(stepEl);
-      stepLineObjs.push(lineObj);
-    });
-
-    if (cited) {
-      var mkEl = document.createElement('button');
-      mkEl.className = 'mk';
-      mkEl.id = 'mk';
-      mkEl.dataset.p = cited;
-      mkEl.textContent = '← your Page ' + cited + ', again';
-      notes.appendChild(mkEl);
+    // Optimization: Prefetch all TTS steps concurrently as soon as solve is received
+    if (TTS_MODE === 'cloud' && voice) {
+      prefetchAllTtsSteps(data.steps, currentSolveSeqId);
     }
 
-    // Animate each step with voice narration and real pen-stroke drawing
+    // Animate each step with voice narration and real pen-stroke drawing:
+    // Line i+1 is NEVER created in the DOM until line i finishes writing and its narration ends.
     for (var i = 0; i < data.steps.length; i++) {
-      if (currentSolveSeqId !== activeSolveSeqId) return;
+      if (currentSolveSeqId !== activeSolveSeqId) {
+        solveInProgressSeqId = null;
+        solveInProgressPage = null;
+        return;
+      }
 
       var step = data.steps[i];
       var cleanText = cleanNarrationText(step.narration);
-      var lineObj = stepLineObjs[i];
+      var pos = (i === 0) ? 'first' : (i === data.steps.length - 1 ? 'last' : 'middle');
       var stepDuration = getStepDuration(cleanText);
 
-      var speechPromise = speakNarration(cleanText, stepDuration, currentSolveSeqId);
+      // Create step element and append to notes immediately so first stroke is visible without TTS latency
+      var stepEl = document.createElement('div');
+      stepEl.className = 'ln ai';
+      stepEl.id = 'step-' + i;
+      stepEl.dataset.stepIdx = i;
+
+      var lineObj = buildLineSvg(step.write, { initialHidden: true });
+      if (lineObj && lineObj.textEl) {
+        lineObj.textEl.style.clipPath = 'inset(-16px 100% -16px 0)';
+      }
+      stepEl.appendChild(lineObj.svg);
+      notes.appendChild(stepEl);
+      if (i === 0) {
+        clearStatusStage();
+        recordPerfMark('first_step_created');
+        recordPerfMark('first_step_visible');
+      }
+
+      recordPerfMark('step_' + i + '_audio_start');
+      var speechPromise = speakNarration(cleanText, stepDuration, currentSolveSeqId, null, pos).then(function(res) {
+        recordPerfMark('step_' + i + '_audio_end');
+        return res;
+      });
       var drawPromise = lineObj ? animateLineWriting(lineObj, stepDuration) : Promise.resolve();
 
       await Promise.all([speechPromise, drawPromise]);
 
-      if (currentSolveSeqId !== activeSolveSeqId) return;
+
+      if (currentSolveSeqId !== activeSolveSeqId) {
+        solveInProgressSeqId = null;
+        solveInProgressPage = null;
+        return;
+      }
 
       if (i < data.steps.length - 1) {
         await interruptibleWait(400, currentSolveSeqId);
       }
     }
 
-    if (currentSolveSeqId !== activeSolveSeqId) return;
+    if (currentSolveSeqId !== activeSolveSeqId) {
+      solveInProgressSeqId = null;
+      solveInProgressPage = null;
+      return;
+    }
+
+    // Page 1 callback link appears after all solution steps are written
+    if (cited) {
+      var mkEl = document.createElement('button');
+      mkEl.className = 'mk show';
+      mkEl.id = 'mk';
+      mkEl.dataset.p = cited;
+      mkEl.textContent = '← your Page ' + cited + ', again';
+      notes.appendChild(mkEl);
+    }
+
     say('Verified symbolically with SymPy');
-    var mkBtn = $('#mk');
-    if (mkBtn) mkBtn.classList.add('show');
     await interruptibleWait(2200, currentSolveSeqId);
 
   } catch (err) {
@@ -1945,12 +3665,18 @@ async function runSolvePipeline(questionText, box) {
       await interruptibleWait(2000, currentSolveSeqId);
     }
   } finally {
+    clearStatusStage();
     if (currentSolveSeqId === activeSolveSeqId) {
       $('#chip').classList.remove('on');
       setBusy(false);
+      solveInProgressSeqId = null;
+      solveInProgressPage = null;
     }
   }
 }
+window.runSolvePipeline = runSolvePipeline;
+window.render = render;
+window.go = go;
 
 // Solve Button Click in Header
 $('#solve').onclick = function() {
@@ -2008,9 +3734,7 @@ window.runScriptedDemo = async function() {
 };
 
 if (innerWidth <= 820) app.classList.remove('open');
-render();
-size();
-(document.fonts && document.fonts.ready || Promise.resolve()).then(function() {
+ensureFontLoaded().then(function() {
   render();
   size();
 });

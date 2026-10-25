@@ -4,7 +4,7 @@ import re
 import time
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-from backend.llm import call_llm
+from backend.llm import call_llm, call_llm_with_meta
 from backend.prompts import SYSTEM_PROMPT, build_retry_prompt, build_user_prompt
 from backend.schemas import (
     ContextPage,
@@ -14,10 +14,27 @@ from backend.schemas import (
     SolveResponse,
     Step,
 )
-from backend.verify import verify
+from backend.verify import verify, verify_with_timing
 
 logger = logging.getLogger("inkmentor.solver")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
+
+
+def _invoke_llm(func: Callable[..., Any], system: str, user: str) -> Tuple[str, Dict[str, Any]]:
+    if func is call_llm:
+        return call_llm_with_meta(system, user)
+    t0 = time.time()
+    res = func(system, user)
+    dur = round((time.time() - t0) * 1000.0, 2)
+    meta = {
+        "duration_ms": dur,
+        "input_tokens": None,
+        "output_tokens": None,
+        "thinking_tokens": None,
+        "total_tokens": None,
+    }
+    return str(res), meta
+
 
 WRITE_ALLOWED_PATTERN = re.compile(r"^[A-Za-z0-9\s+\-*\/^=().,]+$")
 NARRATION_FORBIDDEN_PATTERN = re.compile(r"[\^_\$\\\{\}]")
@@ -64,6 +81,10 @@ def validate_llm_steps(steps: List[Step]) -> Optional[str]:
             return f"Step {idx} 'narration' begins with repeated opening word '{first_word}'. Every step's narration must start with a different word."
         seen_first_words.add(first_word)
 
+    for idx in range(1, len(steps)):
+        if steps[idx].write.strip() == steps[idx - 1].write.strip():
+            return f"Step {idx + 1} 'write' must not repeat the previous line ('{steps[idx].write.strip()}')"
+
     return None
 
 
@@ -93,14 +114,25 @@ def solve_problem(
 ) -> SolveResponse:
     """Orchestrates the solve-and-verify workflow with up to 1 retry."""
     req_start_time = time.time()
+    t_decode_start = time.time()
     valid_context_pages = {cp.page for cp in request.context}
+    decode_ms = round((time.time() - t_decode_start) * 1000.0, 2)
     last_problem: Optional[ProblemInterpretation] = None
+
+    llm_total_ms = 0.0
+    sympy_total_ms = 0.0
+    sympy_startup_ms = 0.0
+    sympy_calc_ms = 0.0
+    meta_1: Dict[str, Any] = {}
+    meta_2: Optional[Dict[str, Any]] = None
+    ran_retry = False
 
     # --- ATTEMPT 1 ---
     attempt_1_start = time.time()
     prompt_1 = build_user_prompt(request.question, request.context)
     try:
-        raw_1 = llm_func(SYSTEM_PROMPT, prompt_1)
+        raw_1, meta_1 = _invoke_llm(llm_func, SYSTEM_PROMPT, prompt_1)
+        llm_total_ms += meta_1.get("duration_ms", 0.0)
     except Exception as exc:
         logger.error(f"Attempt 1 LLM call failed: {exc}")
         raise exc
@@ -113,17 +145,32 @@ def solve_problem(
             variable=output_1.variable,
             expression_sympy=output_1.expression_sympy,
         )
-        is_verified_1, verify_err_1, ground_truth_1 = verify(
+        is_verified_1, verify_err_1, ground_truth_1, t_ver_1 = verify_with_timing(
             task_type=output_1.task_type,
             variable=output_1.variable,
             expression_sympy=output_1.expression_sympy,
             final_answer_sympy=output_1.final_answer_sympy,
         )
+        sympy_total_ms += t_ver_1["total_ms"]
+        sympy_startup_ms += t_ver_1["startup_import_ms"]
+        sympy_calc_ms += t_ver_1["calc_ms"]
         att1_duration = time.time() - attempt_1_start
 
         if is_verified_1:
             filtered_cites = [p for p in output_1.cites_pages if p in valid_context_pages]
             logger.info(f"Attempt 1 PASSED in {att1_duration:.2f}s")
+            timing_data = {
+                "decode_ms": decode_ms,
+                "llm_ms": round(llm_total_ms, 2),
+                "input_tokens": meta_1.get("input_tokens"),
+                "output_tokens": meta_1.get("output_tokens"),
+                "thinking_tokens": meta_1.get("thinking_tokens"),
+                "sympy_ms": round(sympy_total_ms, 2),
+                "sympy_startup_ms": round(sympy_startup_ms, 2),
+                "sympy_calc_ms": round(sympy_calc_ms, 2),
+                "retries": 0,
+                "total_ms": round((time.time() - req_start_time) * 1000.0, 2),
+            }
             return SolveResponse(
                 verified=True,
                 attempts=1,
@@ -133,6 +180,7 @@ def solve_problem(
                 final_answer_sympy=output_1.final_answer_sympy,
                 cites_pages=filtered_cites,
                 error=None,
+                timing=timing_data,
             )
         else:
             if ground_truth_1:
@@ -149,6 +197,7 @@ def solve_problem(
         logger.warning(f"Attempt 1 FAILED schema ({parse_err_1}) in {att1_duration:.2f}s. Triggering retry.")
 
     # --- ATTEMPT 2 (RETRY) ---
+    ran_retry = True
     attempt_2_start = time.time()
     prompt_2 = build_retry_prompt(
         original_question=request.question,
@@ -158,13 +207,27 @@ def solve_problem(
     )
 
     try:
-        raw_2 = llm_func(SYSTEM_PROMPT, prompt_2)
+        raw_2, meta_2 = _invoke_llm(llm_func, SYSTEM_PROMPT, prompt_2)
+        llm_total_ms += meta_2.get("duration_ms", 0.0)
     except Exception as exc:
         logger.error(f"Attempt 2 LLM call failed: {exc}")
         raise exc
 
     output_2, parse_err_2 = parse_llm_output(raw_2)
     att2_duration = time.time() - attempt_2_start
+
+    timing_base = {
+        "decode_ms": decode_ms,
+        "llm_ms": round(llm_total_ms, 2),
+        "input_tokens": meta_1.get("input_tokens"),
+        "output_tokens": (meta_1.get("output_tokens") or 0) + (meta_2.get("output_tokens") or 0) if meta_2 else meta_1.get("output_tokens"),
+        "thinking_tokens": meta_1.get("thinking_tokens"),
+        "sympy_ms": round(sympy_total_ms, 2),
+        "sympy_startup_ms": round(sympy_startup_ms, 2),
+        "sympy_calc_ms": round(sympy_calc_ms, 2),
+        "retries": 1,
+        "total_ms": round((time.time() - req_start_time) * 1000.0, 2),
+    }
 
     if not output_2:
         logger.error(f"Attempt 2 FAILED schema: {parse_err_2} in {att2_duration:.2f}s")
@@ -175,6 +238,7 @@ def solve_problem(
             steps=[],
             cites_pages=[],
             error=parse_err_2 or "Invalid JSON after retry",
+            timing=timing_base,
         )
 
     last_problem = ProblemInterpretation(
@@ -183,12 +247,19 @@ def solve_problem(
         expression_sympy=output_2.expression_sympy,
     )
 
-    is_verified_2, verify_err_2, _ = verify(
+    is_verified_2, verify_err_2, _, t_ver_2 = verify_with_timing(
         task_type=output_2.task_type,
         variable=output_2.variable,
         expression_sympy=output_2.expression_sympy,
         final_answer_sympy=output_2.final_answer_sympy,
     )
+    sympy_total_ms += t_ver_2["total_ms"]
+    sympy_startup_ms += t_ver_2["startup_import_ms"]
+    sympy_calc_ms += t_ver_2["calc_ms"]
+    timing_base["sympy_ms"] = round(sympy_total_ms, 2)
+    timing_base["sympy_startup_ms"] = round(sympy_startup_ms, 2)
+    timing_base["sympy_calc_ms"] = round(sympy_calc_ms, 2)
+    timing_base["total_ms"] = round((time.time() - req_start_time) * 1000.0, 2)
 
     if is_verified_2:
         filtered_cites = [p for p in output_2.cites_pages if p in valid_context_pages]
@@ -202,6 +273,7 @@ def solve_problem(
             final_answer_sympy=output_2.final_answer_sympy,
             cites_pages=filtered_cites,
             error=None,
+            timing=timing_base,
         )
     else:
         logger.error(f"Attempt 2 FAILED verification ({verify_err_2}) in {att2_duration:.2f}s")
@@ -212,4 +284,5 @@ def solve_problem(
             steps=[],
             cites_pages=[],
             error=verify_err_2 or "Verification failed after retry",
+            timing=timing_base,
         )

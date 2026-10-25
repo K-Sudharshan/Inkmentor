@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>InkMentor Writing Animation Screencast</title>
+<style>
+body { font-family: -apple-system, sans-serif; background: #111; color: #eee; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+#player-container { background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+#screen { display: block; max-width: 900px; height: auto; }
+#controls { margin-top: 15px; display: flex; align-items: center; gap: 12px; width: 900px; }
+button { padding: 8px 16px; background: #6b4ef0; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+button:hover { background: #573bd8; }
+input[type=range] { flex: 1; }
+#status { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<h2>InkMentor Live Solve Screencast Video</h2>
+<div id="player-container">
+  <img id="screen" src="frames/frame_0000.png">
+</div>
+<div id="controls">
+  <button id="play-btn">Play</button>
+  <input type="range" id="scrubber" min="0" max="165" value="0">
+  <span id="status">Frame 0 / 166</span>
+</div>
+<script>
+var frames = ["frame_0000.png", "frame_0001.png", "frame_0002.png", "frame_0003.png", "frame_0004.png", "frame_0005.png", "frame_0006.png", "frame_0007.png", "frame_0008.png", "frame_0009.png", "frame_0010.png", "frame_0011.png", "frame_0012.png", "frame_0013.png", "frame_0014.png", "frame_0015.png", "frame_0016.png", "frame_0017.png", "frame_0018.png", "frame_0019.png", "frame_0020.png", "frame_0021.png", "frame_0022.png", "frame_0023.png", "frame_0024.png", "frame_0025.png", "frame_0026.png", "frame_0027.png", "frame_0028.png", "frame_0029.png", "frame_0030.png", "frame_0031.png", "frame_0032.png", "frame_0033.png", "frame_0034.png", "frame_0035.png", "frame_0036.png", "frame_0037.png", "frame_0038.png", "frame_0039.png", "frame_0040.png", "frame_0041.png", "frame_0042.png", "frame_0043.png", "frame_0044.png", "frame_0045.png", "frame_0046.png", "frame_0047.png", "frame_0048.png", "frame_0049.png", "frame_0050.png", "frame_0051.png", "frame_0052.png", "frame_0053.png", "frame_0054.png", "frame_0055.png", "frame_0056.png", "frame_0057.png", "frame_0058.png", "frame_0059.png", "frame_0060.png", "frame_0061.png", "frame_0062.png", "frame_0063.png", "frame_0064.png", "frame_0065.png", "frame_0066.png", "frame_0067.png", "frame_0068.png", "frame_0069.png", "frame_0070.png", "frame_0071.png", "frame_0072.png", "frame_0073.png", "frame_0074.png", "frame_0075.png", "frame_0076.png", "frame_0077.png", "frame_0078.png", "frame_0079.png", "frame_0080.png", "frame_0081.png", "frame_0082.png", "frame_0083.png", "frame_0084.png", "frame_0085.png", "frame_0086.png", "frame_0087.png", "frame_0088.png", "frame_0089.png", "frame_0090.png", "frame_0091.png", "frame_0092.png", "frame_0093.png", "frame_0094.png", "frame_0095.png", "frame_0096.png", "frame_0097.png", "frame_0098.png", "frame_0099.png", "frame_0100.png", "frame_0101.png", "frame_0102.png", "frame_0103.png", "frame_0104.png", "frame_0105.png", "frame_0106.png", "frame_0107.png", "frame_0108.png", "frame_0109.png", "frame_0110.png", "frame_0111.png", "frame_0112.png", "frame_0113.png", "frame_0114.png", "frame_0115.png", "frame_0116.png", "frame_0117.png", "frame_0118.png", "frame_0119.png", "frame_0120.png", "frame_0121.png", "frame_0122.png", "frame_0123.png", "frame_0124.png", "frame_0125.png", "frame_0126.png", "frame_0127.png", "frame_0128.png", "frame_0129.png", "frame_0130.png", "frame_0131.png", "frame_0132.png", "frame_0133.png", "frame_0134.png", "frame_0135.png", "frame_0136.png", "frame_0137.png", "frame_0138.png", "frame_0139.png", "frame_0140.png", "frame_0141.png", "frame_0142.png", "frame_0143.png", "frame_0144.png", "frame_0145.png", "frame_0146.png", "frame_0147.png", "frame_0148.png", "frame_0149.png", "frame_0150.png", "frame_0151.png", "frame_0152.png", "frame_0153.png", "frame_0154.png", "frame_0155.png", "frame_0156.png", "frame_0157.png", "frame_0158.png", "frame_0159.png", "frame_0160.png", "frame_0161.png", "frame_0162.png", "frame_0163.png", "frame_0164.png", "frame_0165.png"];
+var idx = 0;
+var playing = false;
+var timer = null;
+var screen = document.getElementById('screen');
+var scrubber = document.getElementById('scrubber');
+var status = document.getElementById('status');
+var playBtn = document.getElementById('play-btn');
+
+function show(i) {
+  idx = Math.max(0, Math.min(frames.length - 1, i));
+  screen.src = 'frames/' + frames[idx];
+  scrubber.value = idx;
+  status.textContent = 'Frame ' + (idx + 1) + ' / ' + frames.length;
+}
+
+function toggle() {
+  if (playing) {
+    playing = false;
+    clearInterval(timer);
+    playBtn.textContent = 'Play';
+  } else {
+    playing = true;
+    playBtn.textContent = 'Pause';
+    timer = setInterval(function() {
+      if (idx >= frames.length - 1) {
+        idx = 0;
+      } else {
+        idx++;
+      }
+      show(idx);
+    }, 100);
+  }
+}
+
+playBtn.onclick = toggle;
+scrubber.oninput = function() {
+  if (playing) toggle();
+  show(parseInt(scrubber.value));
+};
+</script>
+</body>
+</html>

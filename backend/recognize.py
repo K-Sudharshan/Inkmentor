@@ -6,8 +6,129 @@ import re
 import struct
 from typing import Any, Callable, Dict, Optional, Tuple
 
-from backend.llm import call_vision_llm
+from backend.llm import call_vision_llm, call_vision_llm_with_meta
 from backend.schemas import RecognizeRequest, RecognizeResponse
+import time
+
+
+def _invoke_vision(func: Callable[..., Any], image_bytes: bytes, mime_type: str, prompt: str) -> Tuple[str, Dict[str, Any]]:
+    if func is call_vision_llm:
+        return call_vision_llm_with_meta(image_bytes, mime_type=mime_type, prompt=prompt)
+    t0 = time.time()
+    res = func(image_bytes, mime_type, prompt=prompt)
+    dur = round((time.time() - t0) * 1000.0, 2)
+    meta = {
+        "duration_ms": dur,
+        "input_tokens": None,
+        "output_tokens": None,
+        "thinking_tokens": None,
+        "total_tokens": None,
+    }
+    return str(res), meta
+
+
+def recognize_image(
+    request: RecognizeRequest,
+    vision_func: Optional[Callable[..., str]] = None,
+) -> RecognizeResponse:
+    """Processes an image from RecognizeRequest and returns a validated RecognizeResponse.
+
+    Performs up to 1 retry on invalid LLM output (max 2 calls).
+    """
+    req_start_time = time.time()
+    if vision_func is None:
+        vision_func = call_vision_llm
+
+    t_decode_start = time.time()
+    image_bytes = parse_image_data(request.image_base64, request.media_type)
+    decode_ms = round((time.time() - t_decode_start) * 1000.0, 2)
+
+    if request.media_type == "image/png" and len(image_bytes) >= 26 and image_bytes.startswith(PNG_MAGIC):
+        img_w, img_h, bit_depth, col_type = struct.unpack(">IIBB", image_bytes[16:26])
+        has_alpha = col_type in (4, 6) or (b"tRNS" in image_bytes[:1024])
+        logger.info(
+            f"Image stats: width={img_w}, height={img_h}, size_bytes={len(image_bytes)}, "
+            f"bit_depth={bit_depth}, color_type={col_type}, has_alpha={has_alpha}"
+        )
+    else:
+        logger.info(f"Image stats: size_bytes={len(image_bytes)}, media_type={request.media_type}")
+
+    # Attempt 1
+    llm_total_ms = 0.0
+    try:
+        raw_1, meta_1 = _invoke_vision(vision_func, image_bytes, request.media_type, prompt=VISION_SYSTEM_PROMPT)
+        llm_total_ms += meta_1.get("duration_ms", 0.0)
+    except Exception as exc:
+        raise RuntimeError(f"Vision provider failure on attempt 1: {exc}") from exc
+
+    parsed_1, err_1 = parse_llm_json(raw_1)
+    if parsed_1 is not None:
+        logger.info(f"Model raw response note: {parsed_1.get('note', '')}")
+        timing_data = {
+            "decode_ms": decode_ms,
+            "llm_ms": round(llm_total_ms, 2),
+            "input_tokens": meta_1.get("input_tokens"),
+            "output_tokens": meta_1.get("output_tokens"),
+            "thinking_tokens": meta_1.get("thinking_tokens"),
+            "retries": 0,
+            "total_ms": round((time.time() - req_start_time) * 1000.0, 2),
+        }
+        return _build_response(parsed_1, timing=timing_data)
+
+    logger.warning(f"Recognize attempt 1 failed schema validation: {err_1}. Retrying once.")
+
+    # Attempt 2 (Retry)
+    retry_prompt = (
+        f"{VISION_SYSTEM_PROMPT}\n\n"
+        f"--- PREVIOUS OUTPUT ---\n{raw_1}\n\n"
+        f"--- ERROR ---\nYour previous output was invalid: {err_1}. "
+        f"Return ONLY a valid JSON object matching the schema."
+    )
+
+    try:
+        raw_2, meta_2 = _invoke_vision(vision_func, image_bytes, request.media_type, prompt=retry_prompt)
+        llm_total_ms += meta_2.get("duration_ms", 0.0)
+    except Exception as exc:
+        raise RuntimeError(f"Vision provider failure on retry attempt 2: {exc}") from exc
+
+    parsed_2, err_2 = parse_llm_json(raw_2)
+    if parsed_2 is not None:
+        logger.info(f"Model raw response note (retry): {parsed_2.get('note', '')}")
+        timing_data = {
+            "decode_ms": decode_ms,
+            "llm_ms": round(llm_total_ms, 2),
+            "input_tokens": meta_1.get("input_tokens"),
+            "output_tokens": (meta_1.get("output_tokens") or 0) + (meta_2.get("output_tokens") or 0),
+            "thinking_tokens": meta_1.get("thinking_tokens"),
+            "retries": 1,
+            "total_ms": round((time.time() - req_start_time) * 1000.0, 2),
+        }
+        return _build_response(parsed_2, timing=timing_data)
+
+    logger.error(f"Recognize attempt 2 failed schema validation: {err_2}.")
+    raise RuntimeError(f"Vision model output invalid after retry: {err_2}")
+
+
+def _build_response(data: Dict[str, Any], timing: Optional[Dict[str, Any]] = None) -> RecognizeResponse:
+    readable = bool(data["readable"])
+    if not readable:
+        return RecognizeResponse(
+            readable=False,
+            latex="",
+            question_text="",
+            needs_confirmation=True,
+            note=str(data.get("note", "")).strip(),
+            timing=timing,
+        )
+
+    return RecognizeResponse(
+        readable=True,
+        latex=str(data.get("latex", "")).strip(),
+        question_text=str(data.get("question_text", "")).strip(),
+        needs_confirmation=True,
+        note=str(data.get("note", "")).strip(),
+        timing=timing,
+    )
 
 logger = logging.getLogger("inkmentor.recognize")
 logger.setLevel(logging.INFO)

@@ -1,0 +1,1037 @@
+[
+  {
+    "problem": "Differentiate y = sin(3x^2)",
+    "run": 1,
+    "trace_id": "trace_p1_r1_1792914209645",
+    "solve_to_stroke_ms": 6435.1,
+    "circle_to_stroke_ms": 6482.3,
+    "marks": {
+      "trace_id": "trace_p1_r1_1792914209645",
+      "circle_finished": 1207.7000000476837,
+      "crop_exported": 1221.800000011921,
+      "recognize_sent": 0,
+      "recognize_received": 0,
+      "confirm_shown": 1237.800000011921,
+      "solve_clicked": 1254.9000000357628,
+      "solve_sent": 5319.700000047684,
+      "solve_received": 7681.400000035763,
+      "first_step_created": 7689.900000035763,
+      "first_stroke_painted": 0,
+      "first_audio_started": 1266.800000011921,
+      "step_audio": {},
+      "first_step_visible": 7690
+    },
+    "table": [
+      {
+        "Stage": "1. Circle Finished to Crop Exported",
+        "Offset (ms)": 0,
+        "Duration (ms)": 14.1,
+        "Details": ""
+      },
+      {
+        "Stage": "5. Confirm Shown to Solve Clicked",
+        "Offset (ms)": 30.1,
+        "Duration (ms)": 17.1,
+        "Details": "Student review/pause"
+      },
+      {
+        "Stage": "6. Solve Clicked to Solve Sent",
+        "Offset (ms)": 47.2,
+        "Duration (ms)": 4064.8,
+        "Details": ""
+      },
+      {
+        "Stage": "7. Solve Network (Sent -> Received)",
+        "Offset (ms)": 4112,
+        "Duration (ms)": 2361.7,
+        "Details": "Server: decode=0ms, llm=2357.3ms, sympy=1ms"
+      },
+      {
+        "Stage": "8. Solve Received to First Step Created",
+        "Offset (ms)": 6473.7,
+        "Duration (ms)": 8.5,
+        "Details": ""
+      },
+      {
+        "Stage": "10. Solve Clicked to First Audio Started",
+        "Offset (ms)": 47.2,
+        "Duration (ms)": 11.9,
+        "Details": ""
+      }
+    ],
+    "server": {
+      "solve": {
+        "decode": 0,
+        "llm": 2357.3,
+        "sympy": 1,
+        "total": 2358.6
+      }
+    }
+  },
+  {
+    "problem": "Differentiate y = sin(3x^2)",
+    "run": 2,
+    "trace_id": "trace_p1_r2_1792914226087",
+    "solve_to_stroke_ms": 5515.0,
+    "circle_to_stroke_ms": 5555.9,
+    "marks": {
+      "trace_id": "trace_p1_r2_1792914226087",
+      "circle_finished": 8790.600000023842,
+      "crop_exported": 8803.699999988079,
+      "recognize_sent": 0,
+      "recognize_received": 0,
+      "confirm_shown": 8813.600000023842,
+      "solve_clicked": 8831.5,
+      "solve_sent": 12756.399999976158,
+      "solve_received": 14338.399999976158,
+      "first_step_created": 14346.5,
+      "first_stroke_painted": 0,
+      "first_audio_started": 8841.800000011921,
+      "step_audio": {},
+      "first_step_visible": 14346.5
+    },
+    "table": [
+      {
+        "Stage": "1. Circle Finished to Crop Exported",
+        "Offset (ms)": 0,
+        "Duration (ms)": 13.1,
+        "Details": ""
+      },
+      {
+        "Stage": "5. Confirm Shown to Solve Clicked",
+        "Offset (ms)": 23,
+        "Duration (ms)": 17.9,
+        "Details": "Student review/pause"
+      },
+      {
+        "Stage": "6. Solve Clicked to Solve Sent",
+        "Offset (ms)": 40.9,
+        "Duration (ms)": 3924.9,
+        "Details": ""
+      },
+      {
+        "Stage": "7. Solve Network (Sent -> Received)",
+        "Offset (ms)": 3965.8,
+        "Duration (ms)": 1582,
+        "Details": "Server: decode=0ms, llm=1577.9ms, sympy=0.8ms"
+      },
+      {
+        "Stage": "8. Solve Received to First Step Created",
+        "Offset (ms)": 5547.8,
+        "Duration (ms)": 8.1,
+        "Details": ""
+      },
+      {
+        "Stage": "10. Solve Clicked to First Audio Started",
+        "Offset (ms)": 40.9,
+        "Duration (ms)": 10.3,
+        "Details": ""
+      }
+    ],
+    "server": {
+      "solve": {
+        "decode": 0,
+        "llm": 1577.9,
+        "sympy": 0.8,
+        "total": 1578.9
+      }
+    }
+  },
+  {
+    "problem": "Differentiate y = sin(3x^2)",
+    "run": 3,
+    "trace_id": "trace_p1_r3_1792914241826",
+    "solve_to_stroke_ms": 5050.9,
+    "circle_to_stroke_ms": 5092.3,
+    "marks": {
+      "trace_id": "trace_p1_r3_1792914241826",
+      "circle_finished": 9088.800000011921,
+      "crop_exported": 9103,
+      "recognize_sent": 0,
+      "recognize_received": 0,
+      "confirm_shown": 9113.199999988079,
+      "solve_clicked": 9130.199999988079,
+      "solve_sent": 12718.399999976158,
+      "solve_received": 14171.300000011921,
+      "first_step_created": 14181.100000023842,
+      "first_stroke_painted": 0,
+      "first_audio_started": 9137.800000011921,
+      "step_audio": {},
+      "first_step_visible": 14181.100000023842
+    },
+    "table": [
+      {
+        "Stage": "1. Circle Finished to Crop Exported",
+        "Offset (ms)": 0,
+        "Duration (ms)": 14.2,
+        "Details": ""
+      },
+      {
+        "Stage": "5. Confirm Shown to Solve Clicked",
+        "Offset (ms)": 24.4,
+        "Duration (ms)": 17,
+        "Details": "Student review/pause"
+      },
+      {
+        "Stage": "6. Solve Clicked to Solve Sent",
+        "Offset (ms)": 41.4,
+        "Duration (ms)": 3588.2,
+        "Details": ""
+      },
+      {
+        "Stage": "7. Solve Network (Sent -> Received)",
+        "Offset (ms)": 3629.6,
+        "Duration (ms)": 1452.9,
+        "Details": "Server: decode=0ms, llm=1446.6ms, sympy=1.6ms"
+      },
+      {
+        "Stage": "8. Solve Received to First Step Created",
+        "Offset (ms)": 5082.5,
+        "Duration (ms)": 9.8,
+        "Details": ""
+      },
+      {
+        "Stage": "10. Solve Clicked to First Audio Started",
+        "Offset (ms)": 41.4,
+        "Duration (ms)": 7.6,
+        "Details": ""
+      }
+    ],
+    "server": {
+      "solve": {
+        "decode": 0,
+        "llm": 1446.6,
+        "sympy": 1.6,
+        "total": 1448.5
+      }
+    }
+  },
+  {
+    "problem": "Integrate x^2 * exp(x)",
+    "run": 1,
+    "trace_id": "trace_p2_r1_1792914280848",
+    "solve_to_stroke_ms": 10028.4,
+    "circle_to_stroke_ms": 10070.7,
+    "marks": {
+      "trace_id": "trace_p2_r1_1792914280848",
+      "circle_finished": 32882.10000002384,
+      "crop_exported": 32896.90000003576,
+      "recognize_sent": 0,
+      "recognize_received": 0,
+      "confirm_shown": 32907.80000001192,
+      "solve_clicked": 32924.40000003576,
+      "solve_sent": 36989.5,
+      "solve_received": 38942.10000002384,
+      "first_step_created": 42952.80000001192,
+      "first_stroke_painted": 0,
+      "first_audio_started": 32937.10000002384,
+      "step_audio": {},
+      "first_step_visible": 42952.80000001192
+    },
+    "table": [
+      {
+        "Stage": "1. Circle Finished to Crop Exported",
+        "Offset (ms)": 0,
+        "Duration (ms)": 14.8,
+        "Details": ""
+      },
+      {
+        "Stage": "5. Confirm Shown to Solve Clicked",
+        "Offset (ms)": 25.7,
+        "Duration (ms)": 16.6,
+        "Details": "Student review/pause"
+      },
+      {
+        "Stage": "6. Solve Clicked to Solve Sent",
+        "Offset (ms)": 42.3,
+        "Duration (ms)": 4065.1,
+        "Details": ""
+      },
+      {
+        "Stage": "7. Solve Network (Sent -> Received)",
+        "Offset (ms)": 4107.4,
+        "Duration (ms)": 1952.6,
+        "Details": "Server: decode=0ms, llm=1805.3ms, sympy=142.1ms"
+      },
+      {
+        "Stage": "8. Solve Received to First Step Created",
+        "Offset (ms)": 6060,
+        "Duration (ms)": 4010.7,
+        "Details": ""
+      },
+      {
+        "Stage": "10. Solve Clicked to First Audio Started",
+        "Offset (ms)": 42.3,
+        "Duration (ms)": 12.7,
+        "Details": ""
+      }
+    ],
+    "server": {
+      "solve": {
+        "decode": 0,
+        "llm": 1805.3,
+        "sympy": 142.1,
+        "total": 1947.6
+      }
+    }
+  },
+  {
+    "problem": "Integrate x^2 * exp(x)",
+    "run": 2,
+    "trace_id": "trace_p2_r2_1792914306629",
+    "solve_to_stroke_ms": 9485.9,
+    "circle_to_stroke_ms": 9529.6,
+    "marks": {
+      "trace_id": "trace_p2_r2_1792914306629",
+      "circle_finished": 14547.300000011921,
+      "crop_exported": 14559.699999988079,
+      "recognize_sent": 0,
+      "recognize_received": 0,
+      "confirm_shown": 14568.699999988079,
+      "solve_clicked": 14591,
+      "solve_sent": 18626.599999964237,
+      "solve_received": 20073,
+      "first_step_created": 24076.80000001192,
+      "first_stroke_painted": 0,
+      "first_audio_started": 14602.300000011921,
+      "step_audio": {},
+      "first_step_visible": 24076.899999976158
+    },
+    "table": [
+      {
+        "Stage": "1. Circle Finished to Crop Exported",
+        "Offset (ms)": 0,
+        "Duration (ms)": 12.4,
+        "Details": ""
+      },
+      {
+        "Stage": "5. Confirm Shown to Solve Clicked",
+        "Offset (ms)": 21.4,
+        "Duration (ms)": 22.3,
+        "Details": "Student review/pause"
+      },
+      {
+        "Stage": "6. Solve Clicked to Solve Sent",
+        "Offset (ms)": 43.7,
+        "Duration (ms)": 4035.6,
+        "Details": ""
+      },
+      {
+        "Stage": "7. Solve Network (Sent -> Received)",
+        "Offset (ms)": 4079.3,
+        "Duration (ms)": 1446.4,
+        "Details": "Server: decode=0ms, llm=1436.8ms, sympy=5.6ms"
+      },
+      {
+        "Stage": "8. Solve Received to First Step Created",
+        "Offset (ms)": 5525.7,
+        "Duration (ms)": 4003.8,
+        "Details": ""
+      },
+      {
+        "Stage": "10. Solve Clicked to First Audio Started",
+        "Offset (ms)": 43.7,
+        "Duration (ms)": 11.3,
+        "Details": ""
+      }
+    ],
+    "server": {
+      "solve": {
+        "decode": 0,
+        "llm": 1436.8,
+        "sympy": 5.6,
+        "total": 1442.7
+      }
+    }
+  },
+  {
+    "problem": "Integrate x^2 * exp(x)",
+    "run": 3,
+    "trace_id": "trace_p2_r3_1792914330603",
+    "solve_to_stroke_ms": 10068.6,
+    "circle_to_stroke_ms": 10130.0,
+    "marks": {
+      "trace_id": "trace_p2_r3_1792914330603",
+      "circle_finished": 13228.899999976158,
+      "crop_exported": 13243,
+      "recognize_sent": 0,
+      "recognize_received": 0,
+      "confirm_shown": 13267.600000023842,
+      "solve_clicked": 13290.300000011921,
+      "solve_sent": 17393.19999998808,
+      "solve_received": 19350.69999998808,
+      "first_step_created": 23358.899999976158,
+      "first_stroke_painted": 0,
+      "first_audio_started": 13300.699999988079,
+      "step_audio": {},
+      "first_step_visible": 23358.899999976158
+    },
+    "table": [
+      {
+        "Stage": "1. Circle Finished to Crop Exported",
+        "Offset (ms)": 0,
+        "Duration (ms)": 14.1,
+        "Details": ""
+      },
+      {
+        "Stage": "5. Confirm Shown to Solve Clicked",
+        "Offset (ms)": 38.7,
+        "Duration (ms)": 22.7,
+        "Details": "Student review/pause"
+      },
+      {
+        "Stage": "6. Solve Clicked to Solve Sent",
+        "Offset (ms)": 61.4,
+        "Duration (ms)": 4102.9,
+        "Details": ""
+      },
+      {
+        "Stage": "7. Solve Network (Sent -> Received)",
+        "Offset (ms)": 4164.3,
+        "Duration (ms)": 1957.5,
+        "Details": "Server: decode=0ms, llm=1947.1ms, sympy=5.6ms"
+      },
+      {
+        "Stage": "8. Solve Received to First Step Created",
+        "Offset (ms)": 6121.8,
+        "Duration (ms)": 4008.2,
+        "Details": ""
+      },
+      {
+        "Stage": "10. Solve Clicked to First Audio Started",
+        "Offset (ms)": 61.4,
+        "Duration (ms)": 10.4,
+        "Details": ""
+      }
+    ],
+    "server": {
+      "solve": {
+        "decode": 0,
+        "llm": 1947.1,
+        "sympy": 5.6,
+        "total": 1953.2
+      }
+    }
+  },
+  {
+    "problem": "Solve x^2 - 5x + 6 = 0",
+    "run": 1,
+    "trace_id": "trace_p3_r1_1792914353435",
+    "solve_to_stroke_ms": 6438.9,
+    "circle_to_stroke_ms": 6481.5,
+    "marks": {
+      "trace_id": "trace_p3_r1_1792914353435",
+      "circle_finished": 11584.900000035763,
+      "crop_exported": 11598.300000011921,
+      "recognize_sent": 0,
+      "recognize_received": 0,
+      "confirm_shown": 11609.800000011921,
+      "solve_clicked": 11627.5,
+      "solve_sent": 13937.300000011921,
+      "solve_received": 15403.700000047684,
+      "first_step_created": 18066.400000035763,
+      "first_stroke_painted": 0,
+      "first_audio_started": 11638.5,
+      "step_audio": {},
+      "first_step_visible": 18066.400000035763
+    },
+    "table": [
+      {
+        "Stage": "1. Circle Finished to Crop Exported",
+        "Offset (ms)": 0,
+        "Duration (ms)": 13.4,
+        "Details": ""
+      },
+      {
+        "Stage": "5. Confirm Shown to Solve Clicked",
+        "Offset (ms)": 24.9,
+        "Duration (ms)": 17.7,
+        "Details": "Student review/pause"
+      },
+      {
+        "Stage": "6. Solve Clicked to Solve Sent",
+        "Offset (ms)": 42.6,
+        "Duration (ms)": 2309.8,
+        "Details": ""
+      },
+      {
+        "Stage": "7. Solve Network (Sent -> Received)",
+        "Offset (ms)": 2352.4,
+        "Duration (ms)": 1466.4,
+        "Details": "Server: decode=0ms, llm=1448.7ms, sympy=12.4ms"
+      },
+      {
+        "Stage": "8. Solve Received to First Step Created",
+        "Offset (ms)": 3818.8,
+        "Duration (ms)": 2662.7,
+        "Details": ""
+      },
+      {
+        "Stage": "10. Solve Clicked to First Audio Started",
+        "Offset (ms)": 42.6,
+        "Duration (ms)": 11,
+        "Details": ""
+      }
+    ],
+    "server": {
+      "solve": {
+        "decode": 0,
+        "llm": 1448.7,
+        "sympy": 12.4,
+        "total": 1461.4
+      }
+    }
+  },
+  {
+    "problem": "Solve x^2 - 5x + 6 = 0",
+    "run": 2,
+    "trace_id": "trace_p3_r2_1792914368132",
+    "solve_to_stroke_ms": 7468.0,
+    "circle_to_stroke_ms": 7506.2,
+    "marks": {
+      "trace_id": "trace_p3_r2_1792914368132",
+      "circle_finished": 7011.5,
+      "crop_exported": 7025.100000023842,
+      "recognize_sent": 0,
+      "recognize_received": 0,
+      "confirm_shown": 7033.800000011921,
+      "solve_clicked": 7049.700000047684,
+      "solve_sent": 9197.400000035763,
+      "solve_received": 10511.800000011921,
+      "first_step_created": 14517.700000047684,
+      "first_stroke_painted": 0,
+      "first_audio_started": 7057,
+      "step_audio": {},
+      "first_step_visible": 14517.700000047684
+    },
+    "table": [
+      {
+        "Stage": "1. Circle Finished to Crop Exported",
+        "Offset (ms)": 0,
+        "Duration (ms)": 13.6,
+        "Details": ""
+      },
+      {
+        "Stage": "5. Confirm Shown to Solve Clicked",
+        "Offset (ms)": 22.3,
+        "Duration (ms)": 15.9,
+        "Details": "Student review/pause"
+      },
+      {
+        "Stage": "6. Solve Clicked to Solve Sent",
+        "Offset (ms)": 38.2,
+        "Duration (ms)": 2147.7,
+        "Details": ""
+      },
+      {
+        "Stage": "7. Solve Network (Sent -> Received)",
+        "Offset (ms)": 2185.9,
+        "Duration (ms)": 1314.4,
+        "Details": "Server: decode=0ms, llm=1303.2ms, sympy=7.2ms"
+      },
+      {
+        "Stage": "8. Solve Received to First Step Created",
+        "Offset (ms)": 3500.3,
+        "Duration (ms)": 4005.9,
+        "Details": ""
+      },
+      {
+        "Stage": "10. Solve Clicked to First Audio Started",
+        "Offset (ms)": 38.2,
+        "Duration (ms)": 7.3,
+        "Details": ""
+      }
+    ],
+    "server": {
+      "solve": {
+        "decode": 0,
+        "llm": 1303.2,
+        "sympy": 7.2,
+        "total": 1310.7
+      }
+    }
+  },
+  {
+    "problem": "Solve x^2 - 5x + 6 = 0",
+    "run": 3,
+    "trace_id": "trace_p3_r3_1792914390097",
+    "solve_to_stroke_ms": 7710.2,
+    "circle_to_stroke_ms": 7750.5,
+    "marks": {
+      "trace_id": "trace_p3_r3_1792914390097",
+      "circle_finished": 13324.300000011921,
+      "crop_exported": 13337.5,
+      "recognize_sent": 0,
+      "recognize_received": 0,
+      "confirm_shown": 13349,
+      "solve_clicked": 13364.599999964237,
+      "solve_sent": 15616.699999988079,
+      "solve_received": 17063.80000001192,
+      "first_step_created": 21074.69999998808,
+      "first_stroke_painted": 0,
+      "first_audio_started": 13374.099999964237,
+      "step_audio": {},
+      "first_step_visible": 21074.80000001192
+    },
+    "table": [
+      {
+        "Stage": "1. Circle Finished to Crop Exported",
+        "Offset (ms)": 0,
+        "Duration (ms)": 13.2,
+        "Details": ""
+      },
+      {
+        "Stage": "5. Confirm Shown to Solve Clicked",
+        "Offset (ms)": 24.7,
+        "Duration (ms)": 15.6,
+        "Details": "Student review/pause"
+      },
+      {
+        "Stage": "6. Solve Clicked to Solve Sent",
+        "Offset (ms)": 40.3,
+        "Duration (ms)": 2252.1,
+        "Details": ""
+      },
+      {
+        "Stage": "7. Solve Network (Sent -> Received)",
+        "Offset (ms)": 2292.4,
+        "Duration (ms)": 1447.1,
+        "Details": "Server: decode=0ms, llm=1434.3ms, sympy=8.6ms"
+      },
+      {
+        "Stage": "8. Solve Received to First Step Created",
+        "Offset (ms)": 3739.5,
+        "Duration (ms)": 4010.9,
+        "Details": ""
+      },
+      {
+        "Stage": "10. Solve Clicked to First Audio Started",
+        "Offset (ms)": 40.3,
+        "Duration (ms)": 9.5,
+        "Details": ""
+      }
+    ],
+    "server": {
+      "solve": {
+        "decode": 0,
+        "llm": 1434.3,
+        "sympy": 8.6,
+        "total": 1443.3
+      }
+    }
+  },
+  {
+    "problem": "Differentiate y = (x^2 + 1)^3",
+    "run": 1,
+    "trace_id": "trace_p4_r1_1792914406527",
+    "solve_to_stroke_ms": 9226.0,
+    "circle_to_stroke_ms": 9269.8,
+    "marks": {
+      "trace_id": "trace_p4_r1_1792914406527",
+      "circle_finished": 7210.099999964237,
+      "crop_exported": 7222.399999976158,
+      "recognize_sent": 0,
+      "recognize_received": 0,
+      "confirm_shown": 7235.699999988079,
+      "solve_clicked": 7253.899999976158,
+      "solve_sent": 11300.300000011921,
+      "solve_received": 14004.199999988079,
+      "first_step_created": 16479.899999976158,
+      "first_stroke_painted": 0,
+      "first_audio_started": 7263.5,
+      "step_audio": {},
+      "first_step_visible": 16479.899999976158
+    },
+    "table": [
+      {
+        "Stage": "1. Circle Finished to Crop Exported",
+        "Offset (ms)": 0,
+        "Duration (ms)": 12.3,
+        "Details": ""
+      },
+      {
+        "Stage": "5. Confirm Shown to Solve Clicked",
+        "Offset (ms)": 25.6,
+        "Duration (ms)": 18.2,
+        "Details": "Student review/pause"
+      },
+      {
+        "Stage": "6. Solve Clicked to Solve Sent",
+        "Offset (ms)": 43.8,
+        "Duration (ms)": 4046.4,
+        "Details": ""
+      },
+      {
+        "Stage": "7. Solve Network (Sent -> Received)",
+        "Offset (ms)": 4090.2,
+        "Duration (ms)": 2703.9,
+        "Details": "Server: decode=0ms, llm=1837ms, sympy=4.5ms"
+      },
+      {
+        "Stage": "8. Solve Received to First Step Created",
+        "Offset (ms)": 6794.1,
+        "Duration (ms)": 2475.7,
+        "Details": ""
+      },
+      {
+        "Stage": "10. Solve Clicked to First Audio Started",
+        "Offset (ms)": 43.8,
+        "Duration (ms)": 9.6,
+        "Details": ""
+      }
+    ],
+    "server": {
+      "solve": {
+        "decode": 0,
+        "llm": 1837,
+        "sympy": 4.5,
+        "total": 1841.8
+      }
+    }
+  },
+  {
+    "problem": "Differentiate y = (x^2 + 1)^3",
+    "run": 2,
+    "trace_id": "trace_p4_r2_1792914423709",
+    "solve_to_stroke_ms": 10127.3,
+    "circle_to_stroke_ms": 10166.1,
+    "marks": {
+      "trace_id": "trace_p4_r2_1792914423709",
+      "circle_finished": 6469.100000023842,
+      "crop_exported": 6483.300000011921,
+      "recognize_sent": 0,
+      "recognize_received": 0,
+      "confirm_shown": 6492.800000011921,
+      "solve_clicked": 6507.899999976158,
+      "solve_sent": 10357,
+      "solve_received": 14019.5,
+      "first_step_created": 16635.100000023842,
+      "first_stroke_painted": 0,
+      "first_audio_started": 6516.5,
+      "step_audio": {},
+      "first_step_visible": 16635.19999998808
+    },
+    "table": [
+      {
+        "Stage": "1. Circle Finished to Crop Exported",
+        "Offset (ms)": 0,
+        "Duration (ms)": 14.2,
+        "Details": ""
+      },
+      {
+        "Stage": "5. Confirm Shown to Solve Clicked",
+        "Offset (ms)": 23.7,
+        "Duration (ms)": 15.1,
+        "Details": "Student review/pause"
+      },
+      {
+        "Stage": "6. Solve Clicked to Solve Sent",
+        "Offset (ms)": 38.8,
+        "Duration (ms)": 3849.1,
+        "Details": ""
+      },
+      {
+        "Stage": "7. Solve Network (Sent -> Received)",
+        "Offset (ms)": 3887.9,
+        "Duration (ms)": 3662.5,
+        "Details": "Server: decode=0ms, llm=2682ms, sympy=1.5ms"
+      },
+      {
+        "Stage": "8. Solve Received to First Step Created",
+        "Offset (ms)": 7550.4,
+        "Duration (ms)": 2615.6,
+        "Details": ""
+      },
+      {
+        "Stage": "10. Solve Clicked to First Audio Started",
+        "Offset (ms)": 38.8,
+        "Duration (ms)": 8.6,
+        "Details": ""
+      }
+    ],
+    "server": {
+      "solve": {
+        "decode": 0,
+        "llm": 2682,
+        "sympy": 1.5,
+        "total": 2683.8
+      }
+    }
+  },
+  {
+    "problem": "Differentiate y = (x^2 + 1)^3",
+    "run": 3,
+    "trace_id": "trace_p4_r3_1792914441672",
+    "solve_to_stroke_ms": 9352.2,
+    "circle_to_stroke_ms": 9392.9,
+    "marks": {
+      "trace_id": "trace_p4_r3_1792914441672",
+      "circle_finished": 6698.5,
+      "crop_exported": 6711.600000023842,
+      "recognize_sent": 0,
+      "recognize_received": 0,
+      "confirm_shown": 6721.300000011921,
+      "solve_clicked": 6739.200000047684,
+      "solve_sent": 10960.200000047684,
+      "solve_received": 13560,
+      "first_step_created": 16091.400000035763,
+      "first_stroke_painted": 0,
+      "first_audio_started": 6748.600000023842,
+      "step_audio": {},
+      "first_step_visible": 16091.400000035763
+    },
+    "table": [
+      {
+        "Stage": "1. Circle Finished to Crop Exported",
+        "Offset (ms)": 0,
+        "Duration (ms)": 13.1,
+        "Details": ""
+      },
+      {
+        "Stage": "5. Confirm Shown to Solve Clicked",
+        "Offset (ms)": 22.8,
+        "Duration (ms)": 17.9,
+        "Details": "Student review/pause"
+      },
+      {
+        "Stage": "6. Solve Clicked to Solve Sent",
+        "Offset (ms)": 40.7,
+        "Duration (ms)": 4221,
+        "Details": ""
+      },
+      {
+        "Stage": "7. Solve Network (Sent -> Received)",
+        "Offset (ms)": 4261.7,
+        "Duration (ms)": 2599.8,
+        "Details": "Server: decode=0ms, llm=1471.7ms, sympy=1.9ms"
+      },
+      {
+        "Stage": "8. Solve Received to First Step Created",
+        "Offset (ms)": 6861.5,
+        "Duration (ms)": 2531.4,
+        "Details": ""
+      },
+      {
+        "Stage": "10. Solve Clicked to First Audio Started",
+        "Offset (ms)": 40.7,
+        "Duration (ms)": 9.4,
+        "Details": ""
+      }
+    ],
+    "server": {
+      "solve": {
+        "decode": 0,
+        "llm": 1471.7,
+        "sympy": 1.9,
+        "total": 1474.1
+      }
+    }
+  },
+  {
+    "problem": "Integrate 2*x / (x^2 + 1)",
+    "run": 1,
+    "trace_id": "trace_p5_r1_1792914459455",
+    "solve_to_stroke_ms": 8607.9,
+    "circle_to_stroke_ms": 8649.0,
+    "marks": {
+      "trace_id": "trace_p5_r1_1792914459455",
+      "circle_finished": 7077.599999964237,
+      "crop_exported": 7090.800000011921,
+      "recognize_sent": 0,
+      "recognize_received": 0,
+      "confirm_shown": 7103.399999976158,
+      "solve_clicked": 7118.699999988079,
+      "solve_sent": 11199.599999964237,
+      "solve_received": 13071.099999964237,
+      "first_step_created": 15726.599999964237,
+      "first_stroke_painted": 0,
+      "first_audio_started": 7126.899999976158,
+      "step_audio": {},
+      "first_step_visible": 15726.599999964237
+    },
+    "table": [
+      {
+        "Stage": "1. Circle Finished to Crop Exported",
+        "Offset (ms)": 0,
+        "Duration (ms)": 13.2,
+        "Details": ""
+      },
+      {
+        "Stage": "5. Confirm Shown to Solve Clicked",
+        "Offset (ms)": 25.8,
+        "Duration (ms)": 15.3,
+        "Details": "Student review/pause"
+      },
+      {
+        "Stage": "6. Solve Clicked to Solve Sent",
+        "Offset (ms)": 41.1,
+        "Duration (ms)": 4080.9,
+        "Details": ""
+      },
+      {
+        "Stage": "7. Solve Network (Sent -> Received)",
+        "Offset (ms)": 4122,
+        "Duration (ms)": 1871.5,
+        "Details": "Server: decode=0ms, llm=1863.7ms, sympy=2.5ms"
+      },
+      {
+        "Stage": "8. Solve Received to First Step Created",
+        "Offset (ms)": 5993.5,
+        "Duration (ms)": 2655.5,
+        "Details": ""
+      },
+      {
+        "Stage": "10. Solve Clicked to First Audio Started",
+        "Offset (ms)": 41.1,
+        "Duration (ms)": 8.2,
+        "Details": ""
+      }
+    ],
+    "server": {
+      "solve": {
+        "decode": 0,
+        "llm": 1863.7,
+        "sympy": 2.5,
+        "total": 1866.6
+      }
+    }
+  },
+  {
+    "problem": "Integrate 2*x / (x^2 + 1)",
+    "run": 2,
+    "trace_id": "trace_p5_r2_1792914475750",
+    "solve_to_stroke_ms": 8833.0,
+    "circle_to_stroke_ms": 8871.9,
+    "marks": {
+      "trace_id": "trace_p5_r2_1792914475750",
+      "circle_finished": 6595.699999988079,
+      "crop_exported": 6609.600000023842,
+      "recognize_sent": 0,
+      "recognize_received": 0,
+      "confirm_shown": 6618,
+      "solve_clicked": 6634.600000023842,
+      "solve_sent": 10701.5,
+      "solve_received": 12130.400000035763,
+      "first_step_created": 15467.600000023842,
+      "first_stroke_painted": 0,
+      "first_audio_started": 6645.300000011921,
+      "step_audio": {},
+      "first_step_visible": 15467.600000023842
+    },
+    "table": [
+      {
+        "Stage": "1. Circle Finished to Crop Exported",
+        "Offset (ms)": 0,
+        "Duration (ms)": 13.9,
+        "Details": ""
+      },
+      {
+        "Stage": "5. Confirm Shown to Solve Clicked",
+        "Offset (ms)": 22.3,
+        "Duration (ms)": 16.6,
+        "Details": "Student review/pause"
+      },
+      {
+        "Stage": "6. Solve Clicked to Solve Sent",
+        "Offset (ms)": 38.9,
+        "Duration (ms)": 4066.9,
+        "Details": ""
+      },
+      {
+        "Stage": "7. Solve Network (Sent -> Received)",
+        "Offset (ms)": 4105.8,
+        "Duration (ms)": 1428.9,
+        "Details": "Server: decode=0ms, llm=1421.6ms, sympy=1.9ms"
+      },
+      {
+        "Stage": "8. Solve Received to First Step Created",
+        "Offset (ms)": 5534.7,
+        "Duration (ms)": 3337.2,
+        "Details": ""
+      },
+      {
+        "Stage": "10. Solve Clicked to First Audio Started",
+        "Offset (ms)": 38.9,
+        "Duration (ms)": 10.7,
+        "Details": ""
+      }
+    ],
+    "server": {
+      "solve": {
+        "decode": 0,
+        "llm": 1421.6,
+        "sympy": 1.9,
+        "total": 1423.9
+      }
+    }
+  },
+  {
+    "problem": "Integrate 2*x / (x^2 + 1)",
+    "run": 3,
+    "trace_id": "trace_p5_r3_1792914494851",
+    "solve_to_stroke_ms": 10196.9,
+    "circle_to_stroke_ms": 10246.8,
+    "marks": {
+      "trace_id": "trace_p5_r3_1792914494851",
+      "circle_finished": 8875,
+      "crop_exported": 8890,
+      "recognize_sent": 0,
+      "recognize_received": 0,
+      "confirm_shown": 8900.299999952316,
+      "solve_clicked": 8924.899999976158,
+      "solve_sent": 12761.099999964237,
+      "solve_received": 15848.199999988079,
+      "first_step_created": 19121.799999952316,
+      "first_stroke_painted": 0,
+      "first_audio_started": 8934.899999976158,
+      "step_audio": {},
+      "first_step_visible": 19121.799999952316
+    },
+    "table": [
+      {
+        "Stage": "1. Circle Finished to Crop Exported",
+        "Offset (ms)": 0,
+        "Duration (ms)": 15,
+        "Details": ""
+      },
+      {
+        "Stage": "5. Confirm Shown to Solve Clicked",
+        "Offset (ms)": 25.3,
+        "Duration (ms)": 24.6,
+        "Details": "Student review/pause"
+      },
+      {
+        "Stage": "6. Solve Clicked to Solve Sent",
+        "Offset (ms)": 49.9,
+        "Duration (ms)": 3836.2,
+        "Details": ""
+      },
+      {
+        "Stage": "7. Solve Network (Sent -> Received)",
+        "Offset (ms)": 3886.1,
+        "Duration (ms)": 3087.1,
+        "Details": "Server: decode=0ms, llm=3081.1ms, sympy=1ms"
+      },
+      {
+        "Stage": "8. Solve Received to First Step Created",
+        "Offset (ms)": 6973.2,
+        "Duration (ms)": 3273.6,
+        "Details": ""
+      },
+      {
+        "Stage": "10. Solve Clicked to First Audio Started",
+        "Offset (ms)": 49.9,
+        "Duration (ms)": 10,
+        "Details": ""
+      }
+    ],
+    "server": {
+      "solve": {
+        "decode": 0,
+        "llm": 3081.1,
+        "sympy": 1,
+        "total": 3082.5
+      }
+    }
+  }
+]

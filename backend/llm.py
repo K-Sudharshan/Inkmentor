@@ -1,6 +1,9 @@
 import os
+from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env"), override=False)
 
 
 def _get_required_env(var_name: str) -> str:
@@ -19,9 +22,30 @@ def validate_llm_env() -> None:
     _get_required_env("LLM_MODEL")
 
 
-def call_llm(system: str, user: str) -> str:
-    """Calls the configured LLM provider using its official SDK.
-    Implemented for gemini using google-genai SDK."""
+import threading
+import time
+from typing import Any, Dict, Optional, Tuple
+
+_client_lock = threading.Lock()
+_cached_client: Optional[genai.Client] = None
+_cached_api_key: Optional[str] = None
+
+USE_OPTIMIZED_LLM_CONFIG = os.getenv("USE_OPTIMIZED_LLM_CONFIG", "true").lower() in ("true", "1", "yes")
+LLM_MAX_OUTPUT_TOKENS = int(os.getenv("LLM_MAX_OUTPUT_TOKENS", "1024"))
+
+
+def get_genai_client(api_key: str) -> genai.Client:
+    """Returns a reused genai.Client instance to avoid rebuilding HTTP transport per request."""
+    global _cached_client, _cached_api_key
+    with _client_lock:
+        if _cached_client is None or _cached_api_key != api_key:
+            _cached_client = genai.Client(api_key=api_key)
+            _cached_api_key = api_key
+        return _cached_client
+
+
+def call_llm_with_meta(system: str, user: str) -> Tuple[str, Dict[str, Any]]:
+    """Calls the configured LLM provider using its official SDK and returns text and metadata."""
     provider = _get_required_env("LLM_PROVIDER").lower()
     if provider != "gemini":
         raise RuntimeError(f"Unsupported LLM_PROVIDER: {provider}. Expected 'gemini'.")
@@ -29,26 +53,126 @@ def call_llm(system: str, user: str) -> str:
     api_key = _get_required_env("LLM_API_KEY")
     model_name = _get_required_env("LLM_MODEL")
 
+    t0 = time.time()
     try:
-        client = genai.Client(api_key=api_key)
-        config = types.GenerateContentConfig(
-            system_instruction=system,
-            temperature=0.0,
-        )
+        client = get_genai_client(api_key)
+        if USE_OPTIMIZED_LLM_CONFIG:
+            try:
+                config = types.GenerateContentConfig(
+                    system_instruction=system,
+                    temperature=0.0,
+                    max_output_tokens=LLM_MAX_OUTPUT_TOKENS,
+                    thinking_config=types.ThinkingConfig(thinking_level=types.ThinkingLevel.MINIMAL),
+                )
+            except Exception:
+                config = types.GenerateContentConfig(
+                    system_instruction=system,
+                    temperature=0.0,
+                    max_output_tokens=LLM_MAX_OUTPUT_TOKENS,
+                )
+        else:
+            config = types.GenerateContentConfig(
+                system_instruction=system,
+                temperature=0.0,
+            )
+
         response = client.models.generate_content(
             model=model_name,
             contents=user,
             config=config,
         )
+        duration_ms = round((time.time() - t0) * 1000.0, 2)
         if not response.text:
             raise RuntimeError("LLM returned an empty response")
-        return response.text
+
+        meta = {
+            "duration_ms": duration_ms,
+            "input_tokens": None,
+            "output_tokens": None,
+            "thinking_tokens": None,
+            "total_tokens": None,
+        }
+        if response.usage_metadata:
+            meta["input_tokens"] = getattr(response.usage_metadata, "prompt_token_count", None)
+            meta["output_tokens"] = getattr(response.usage_metadata, "candidates_token_count", None)
+            meta["thinking_tokens"] = getattr(response.usage_metadata, "thoughts_token_count", None)
+            meta["total_tokens"] = getattr(response.usage_metadata, "total_token_count", None)
+
+        return response.text, meta
     except Exception as exc:
-        # Sanitize exception message so keys are never leaked
         err_msg = str(exc)
         if api_key in err_msg:
             err_msg = err_msg.replace(api_key, "[REDACTED]")
         raise RuntimeError(f"LLM provider call failed: {type(exc).__name__}: {err_msg}") from None
+
+
+def call_llm(system: str, user: str) -> str:
+    """Calls the configured LLM provider using its official SDK.
+    Implemented for gemini using google-genai SDK."""
+    text, _ = call_llm_with_meta(system, user)
+    return text
+
+
+def call_vision_llm_with_meta(
+    image_bytes: bytes,
+    mime_type: str = "image/png",
+    prompt: str = "Transcribe the handwritten math in this image into clean LaTeX. Return ONLY the LaTeX expression without markdown fences or commentary.",
+) -> Tuple[str, Dict[str, Any]]:
+    """Calls Gemini vision API and returns text and timing/token metadata."""
+    provider = _get_required_env("LLM_PROVIDER").lower()
+    if provider != "gemini":
+        raise RuntimeError(f"Unsupported LLM_PROVIDER: {provider}. Expected 'gemini'.")
+
+    api_key = _get_required_env("LLM_API_KEY")
+    model_name = _get_required_env("LLM_MODEL")
+
+    t0 = time.time()
+    try:
+        client = get_genai_client(api_key)
+        part = types.Part.from_bytes(data=image_bytes, mime_type=mime_type)
+        if USE_OPTIMIZED_LLM_CONFIG:
+            try:
+                config = types.GenerateContentConfig(
+                    temperature=0.0,
+                    max_output_tokens=LLM_MAX_OUTPUT_TOKENS,
+                    thinking_config=types.ThinkingConfig(thinking_level=types.ThinkingLevel.MINIMAL),
+                )
+            except Exception:
+                config = types.GenerateContentConfig(
+                    temperature=0.0,
+                    max_output_tokens=LLM_MAX_OUTPUT_TOKENS,
+                )
+        else:
+            config = types.GenerateContentConfig(temperature=0.0)
+
+        response = client.models.generate_content(
+            model=model_name,
+            contents=[prompt, part],
+            config=config,
+        )
+        duration_ms = round((time.time() - t0) * 1000.0, 2)
+        if not response.text:
+            raise RuntimeError("Vision model returned an empty response")
+
+        meta = {
+            "duration_ms": duration_ms,
+            "input_tokens": None,
+            "output_tokens": None,
+            "thinking_tokens": None,
+            "total_tokens": None,
+        }
+        if response.usage_metadata:
+            meta["input_tokens"] = getattr(response.usage_metadata, "prompt_token_count", None)
+            meta["output_tokens"] = getattr(response.usage_metadata, "candidates_token_count", None)
+            meta["thinking_tokens"] = getattr(response.usage_metadata, "thoughts_token_count", None)
+            meta["total_tokens"] = getattr(response.usage_metadata, "total_token_count", None)
+
+        return response.text, meta
+    except Exception as exc:
+        err_msg = str(exc)
+        if api_key in err_msg:
+            err_msg = err_msg.replace(api_key, "[REDACTED]")
+        raise RuntimeError(f"LLM provider vision call failed: {type(exc).__name__}: {err_msg}") from None
 
 
 def call_vision_llm(
@@ -57,29 +181,8 @@ def call_vision_llm(
     prompt: str = "Transcribe the handwritten math in this image into clean LaTeX. Return ONLY the LaTeX expression without markdown fences or commentary.",
 ) -> str:
     """Calls Gemini vision API to transcribe handwritten math from image bytes."""
-    provider = _get_required_env("LLM_PROVIDER").lower()
-    if provider != "gemini":
-        raise RuntimeError(f"Unsupported LLM_PROVIDER: {provider}. Expected 'gemini'.")
-
-    api_key = _get_required_env("LLM_API_KEY")
-    model_name = _get_required_env("LLM_MODEL")
-
-    try:
-        client = genai.Client(api_key=api_key)
-        part = types.Part.from_bytes(data=image_bytes, mime_type=mime_type)
-        response = client.models.generate_content(
-            model=model_name,
-            contents=[prompt, part],
-            config=types.GenerateContentConfig(temperature=0.0),
-        )
-        if not response.text:
-            raise RuntimeError("Vision model returned an empty response")
-        return response.text
-    except Exception as exc:
-        err_msg = str(exc)
-        if api_key in err_msg:
-            err_msg = err_msg.replace(api_key, "[REDACTED]")
-        raise RuntimeError(f"LLM provider vision call failed: {type(exc).__name__}: {err_msg}") from None
+    text, _ = call_vision_llm_with_meta(image_bytes, mime_type=mime_type, prompt=prompt)
+    return text
 
 
 def call_embedding(
