@@ -542,7 +542,7 @@ def synthesize_speech_gemini(
     voice_name: str,
     timeout_sec: float
 ) -> bytes:
-    api_key = (os.environ.get("TTS_API_KEY") or os.environ.get("LLM_API_KEY") or "").strip()
+    api_key = (os.environ.get("TTS_API_KEY") or os.environ.get("LLM_API_KEY") or os.environ.get("GEMINI_API_KEY") or "").strip()
     if not api_key:
         raise RuntimeError("Missing required environment variable: LLM_API_KEY or TTS_API_KEY")
 

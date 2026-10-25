@@ -302,6 +302,7 @@ class SympyWorkerPool:
     def start(self) -> None:
         self.stop()
         cmd = [sys.executable, "-m", "backend.verify", "--worker"]
+        proc_env = dict(os.environ, PYTHONPATH=os.getcwd())
         self._proc = subprocess.Popen(
             cmd,
             stdin=subprocess.PIPE,
@@ -309,6 +310,7 @@ class SympyWorkerPool:
             stderr=subprocess.PIPE,
             text=True,
             bufsize=1,
+            env=proc_env,
         )
         self._queue = queue.Queue()
         t = threading.Thread(target=self._reader, args=(self._proc, self._queue), daemon=True)
@@ -391,6 +393,43 @@ def shutdown_sympy_worker_pool() -> None:
 atexit.register(shutdown_sympy_worker_pool)
 
 
+import concurrent.futures
+
+
+def verify_in_process(
+    task_type: str,
+    variable: str,
+    expression_sympy: str,
+    final_answer_sympy: str,
+    timeout_seconds: float = 10.0,
+) -> Tuple[bool, Optional[str], Optional[str], Dict[str, float]]:
+    """Runs SymPy verification directly in-process with a thread timeout for serverless environments."""
+    t0 = time.time()
+    timing: Dict[str, float] = {"total_ms": 0.0, "startup_import_ms": 0.0, "calc_ms": 0.0}
+    try:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(
+                run_verification_logic,
+                task_type=task_type,
+                variable=variable,
+                expression_sympy=expression_sympy,
+                final_answer_sympy=final_answer_sympy,
+            )
+            verified, error, truth = future.result(timeout=timeout_seconds)
+            total_ms = round((time.time() - t0) * 1000.0, 2)
+            timing["total_ms"] = total_ms
+            timing["calc_ms"] = total_ms
+            return verified, error, truth, timing
+    except concurrent.futures.TimeoutError:
+        total_ms = round((time.time() - t0) * 1000.0, 2)
+        timing["total_ms"] = total_ms
+        return False, "verification timed out", None, timing
+    except Exception as exc:
+        total_ms = round((time.time() - t0) * 1000.0, 2)
+        timing["total_ms"] = total_ms
+        return False, f"In-process verification failed: {exc}", None, timing
+
+
 def verify_with_timing(
     task_type: str,
     variable: str,
@@ -401,6 +440,16 @@ def verify_with_timing(
     """Runs verification with execution stage timing in ms.
     Uses pre-warmed SympyWorkerPool if USE_SYMPY_WORKER_POOL is True,
     otherwise falls back to isolated one-off subprocess."""
+    # In serverless environments like Vercel, run directly in-process for maximum speed and zero subprocess overhead
+    if os.environ.get("VERCEL") or not USE_SYMPY_WORKER_POOL:
+        return verify_in_process(
+            task_type=task_type,
+            variable=variable,
+            expression_sympy=expression_sympy,
+            final_answer_sympy=final_answer_sympy,
+            timeout_seconds=timeout_seconds,
+        )
+
     payload = {
         "task_type": task_type,
         "variable": variable,
@@ -432,19 +481,28 @@ def verify_with_timing(
 
     # Fallback: one-off isolated subprocess
     try:
+        proc_env = dict(os.environ, PYTHONPATH=os.getcwd())
         proc = subprocess.run(
             [sys.executable, "-m", "backend.verify"],
             input=json.dumps(payload),
             text=True,
             capture_output=True,
             timeout=timeout_seconds,
+            env=proc_env,
         )
         total_ms = round((time.time() - t0) * 1000.0, 2)
         timing["total_ms"] = total_ms
 
         if proc.returncode != 0:
             err_msg = proc.stderr.strip() or f"Process exited with code {proc.returncode}"
-            return False, f"Verification process error: {err_msg}", None, timing
+            logger.warning(f"Verification subprocess error ({err_msg}); falling back to in-process verification")
+            return verify_in_process(
+                task_type=task_type,
+                variable=variable,
+                expression_sympy=expression_sympy,
+                final_answer_sympy=final_answer_sympy,
+                timeout_seconds=max(1.0, timeout_seconds - (time.time() - t0)),
+            )
 
         output_data = json.loads(proc.stdout)
         calc_ms = float(output_data.get("calc_ms", 0.0))
@@ -456,8 +514,14 @@ def verify_with_timing(
         timing["total_ms"] = round((time.time() - t0) * 1000.0, 2)
         return False, "verification timed out", None, timing
     except Exception as e:
-        timing["total_ms"] = round((time.time() - t0) * 1000.0, 2)
-        return False, f"Verification failed to run: {e}", None, timing
+        logger.warning(f"Verification subprocess failed to run ({e}); falling back to in-process verification")
+        return verify_in_process(
+            task_type=task_type,
+            variable=variable,
+            expression_sympy=expression_sympy,
+            final_answer_sympy=final_answer_sympy,
+            timeout_seconds=max(1.0, timeout_seconds - (time.time() - t0)),
+        )
 
 
 def verify(
