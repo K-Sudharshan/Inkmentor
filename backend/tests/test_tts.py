@@ -153,6 +153,8 @@ def test_10_rate_limit_exceeded_is_429():
 def test_11_direction_prefix_applied_correctly_per_position():
     """Vocal directions from TTS_DIRECTION_FIRST, TTS_DIRECTION, and TTS_DIRECTION_LAST
     are correctly routed based on step position."""
+    from backend.tts import clear_cache
+    clear_cache()
     fake_wav = pcm_to_wav(make_dummy_pcm(0.2), sample_rate=24000)
     env_vars = {
         "TTS_PROVIDER": "groq",

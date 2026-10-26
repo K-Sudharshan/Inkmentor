@@ -2545,6 +2545,9 @@ function unlockAudio() {
     var silent = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA');
     silent.play().catch(function() {});
   } catch (e) {}
+  if (typeof VoiceArbiter !== 'undefined' && VoiceArbiter.unlock) {
+    VoiceArbiter.unlock();
+  }
 }
 window.addEventListener('pointerdown', unlockAudio, { once: true });
 window.addEventListener('keydown', unlockAudio, { once: true });
@@ -2749,16 +2752,20 @@ var VoiceArbiter = (function() {
 
     try {
       var u = new SpeechSynthesisUtterance(clean);
+      window._activeUtterance = u;
       var curLang = VOICE_LANGS[voiceLangIdx] || { code: 'en-US' };
       u.lang = curLang.code;
       u.rate = VOICE_RATE;
       u.pitch = VOICE_PITCH;
       var chosenVoice = pickBestVoice(curLang.code);
       if (chosenVoice) u.voice = chosenVoice;
-      u.onend = function() { settle(true); };
-      u.onerror = function() { settle(false); };
+      u.onend = function() { window._activeUtterance = null; settle(true); };
+      u.onerror = function() { window._activeUtterance = null; settle(false); };
       safetyTimer = setTimeout(function() { settle(true); }, (estimatedDur || 2000) + 2500);
       recordPerfMark('first_audio_started');
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
       window.speechSynthesis.speak(u);
     } catch (err) {
       settle(false);
@@ -2912,11 +2919,29 @@ var VoiceArbiter = (function() {
     });
   }
 
+  function unlock() {
+    try {
+      if (!sharedAudio.src || sharedAudio.src === '') {
+        sharedAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+      }
+      var p = sharedAudio.play();
+      if (p && p.catch) p.catch(function() {});
+    } catch (e) {}
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      try {
+        if (window.speechSynthesis.paused) {
+          window.speechSynthesis.resume();
+        }
+      } catch (e) {}
+    }
+  }
+
   init();
 
   return {
     speak: speak,
     stop: stop,
+    unlock: unlock,
     getState: function() { return arbiterState; },
     getProvider: function() { return currentProvider; },
     getSharedAudio: function() { return sharedAudio; }
@@ -3156,6 +3181,7 @@ $('#cp-solve').onclick = function() {
     return;
   }
   recordPerfMark('solve_clicked');
+  VoiceArbiter.unlock();
   hideConfirmPanel();
   runSolvePipeline(q, currentCircleBox);
 };
@@ -3476,6 +3502,7 @@ async function runHintLadder(questionText, box) {
 
 // --- Solve Pipeline with Retrieval & Verification ---
 async function runSolvePipeline(questionText, box) {
+  VoiceArbiter.unlock();
   stopVoiceAndAnimation();
   var currentSolveSeqId = activeSolveSeqId;
   solveInProgressSeqId = currentSolveSeqId;
@@ -3495,6 +3522,14 @@ async function runSolvePipeline(questionText, box) {
   var spEl = document.createElement('div');
   spEl.className = 'sp';
   notes.appendChild(spEl);
+
+  var solvingInd = document.createElement('div');
+  solvingInd.id = 'ai-solving-indicator';
+  solvingInd.className = 'ln';
+  solvingInd.style.cssText = 'opacity:0.75;font-size:calc(var(--g)*0.95);color:var(--tx2);font-style:italic;margin-top:calc(var(--g)*0.2);';
+  solvingInd.textContent = 'Solving with SymPy verification…';
+  notes.appendChild(solvingInd);
+
   updateClearSolBtn();
 
   setStatusStage('Searching notebook memory…');
@@ -3590,6 +3625,9 @@ async function runSolvePipeline(questionText, box) {
     }
 
   recordPerfMark('solve_received');
+
+  var oldInd = document.getElementById('ai-solving-indicator');
+  if (oldInd) oldInd.remove();
 
   if (!data.verified) {
     clearStatusStage();
@@ -3728,6 +3766,8 @@ async function runSolvePipeline(questionText, box) {
     await interruptibleWait(2200, currentSolveSeqId);
 
   } catch (err) {
+    var oldInd = document.getElementById('ai-solving-indicator');
+    if (oldInd) oldInd.remove();
     if (currentSolveSeqId === activeSolveSeqId) {
       console.error('Solve error:', err);
       toast('API error: ' + err.message);
@@ -3751,6 +3791,7 @@ window.go = go;
 
 // Solve Button Click in Header
 $('#solve').onclick = function() {
+  VoiceArbiter.unlock();
   if (busy) return;
   if (confirmPanel.style.display === 'flex') {
     $('#cp-solve').click();
