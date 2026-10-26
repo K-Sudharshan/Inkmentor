@@ -72,7 +72,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-off
 .mem i{width:8px;height:8px;border-radius:50%;background:var(--ac);box-shadow:0 0 0 0 var(--ac);animation:pl 2.4s infinite}
 @keyframes pl{70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}
 .st{display:flex;align-items:center;gap:10px;padding:8px;border-radius:12px;color:var(--tx2);white-space:nowrap}.st:hover{background:var(--line)}
-#mn{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px}
+#mn{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;position:relative}
 #hd{display:flex;align-items:center;gap:12px;min-height:52px}
 .ib{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:var(--tx);flex:none;transition:background .2s}
 .ib:hover{background:var(--line)}
@@ -87,11 +87,20 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-off
 .sv{display:flex;align-items:center;gap:6px;height:38px;padding:0 16px 0 12px;margin-left:4px;border-radius:999px;background:linear-gradient(90deg,#FFB347,#FF5E7E);color:#2a0f14;font-weight:600;flex:none;transition:transform .15s,filter .2s}
 .sv:hover{filter:brightness(1.06)}.sv:active{transform:scale(.97)}
 .sv:disabled,.ib:disabled{opacity:0.4;cursor:not-allowed;pointer-events:none}
-#paper{flex:1;position:relative;border-radius:24px;overflow:hidden;background:#fff;background-image:linear-gradient(rgba(0,0,0,.2) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.2) 1px,transparent 1px);background-size:var(--g) var(--g);box-shadow:var(--sh),0 0 0 1px var(--line);color:#0b0b14;touch-action:none}
-#cv{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:crosshair;z-index:1}
-#ov{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;pointer-events:none;z-index:2}
-#notes{position:absolute;inset:0;padding:calc(var(--g)*2) var(--g);display:flex;flex-direction:column;align-items:flex-start;pointer-events:none;font:400 var(--ai-font-size)/var(--ai-line-height) var(--ai-font);font-family:var(--ai-font);overflow:hidden;z-index:3}
-.ln{max-width:100%;font-family:var(--ai-font)}.sp{height:calc(var(--g)*1.2);flex:none}
+#paper{flex:1;position:relative;border-radius:24px;overflow-y:auto;overflow-x:hidden;background:#fff;background-image:linear-gradient(rgba(0,0,0,.2) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.2) 1px,transparent 1px);background-size:var(--g) var(--g);background-attachment:local;box-shadow:var(--sh),0 0 0 1px var(--line);color:#0b0b14;touch-action:pan-y;scrollbar-width:thin;scrollbar-color:rgba(0,0,0,0.2) transparent}
+#paper::-webkit-scrollbar{width:8px}
+#paper::-webkit-scrollbar-track{background:transparent;margin:12px 0}
+#paper::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.18);border-radius:8px}
+#paper::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,0.32)}
+#cv{position:absolute;top:0;left:0;width:100%;height:100%;display:block;touch-action:none;cursor:crosshair;z-index:1}
+#ov{position:absolute;top:0;left:0;width:100%;height:100%;display:block;touch-action:none;pointer-events:none;z-index:2}
+#notes{position:relative;width:100%;min-height:100%;padding:calc(var(--g)*1.8) var(--g) calc(var(--g)*8);display:flex;flex-direction:column;align-items:flex-start;pointer-events:none;font:400 var(--ai-font-size)/var(--ai-line-height) var(--ai-font);font-family:var(--ai-font);z-index:3}
+.ln{max-width:100%;font-family:var(--ai-font);user-select:none;-webkit-user-select:none;transition:background .15s}
+.ln[contenteditable="true"]{user-select:text;-webkit-user-select:text;cursor:text}
+.sp{height:calc(var(--g)*0.45);flex:none}
+.nb-line{color:#0f172a !important;font-size:calc(var(--g)*0.86);line-height:1.32;font-weight:400}
+.nb-title{line-height:1.2;font-size:calc(var(--g)*1.75) !important}
+.nb-section{font-size:calc(var(--g)*0.96) !important;font-weight:700 !important;color:#1e1b4b !important;margin-top:calc(var(--g)*0.2)}
 .ai{margin-left:var(--g);color:#FF5E7E;text-shadow:0 0 18px rgba(255,94,126,.35)}
 .ai-line-container{display:inline-block;position:relative;max-width:100%;vertical-align:middle}
 .ai-reenie-line{display:inline-block;font-family:var(--ai-font) !important;font-size:var(--ai-font-size);line-height:var(--ai-line-height);white-space:nowrap;vertical-align:middle;background:linear-gradient(90deg,#FFA23A 0%,#FF5E7E 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:var(--ai-glow)}
@@ -108,7 +117,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-off
 .math-delim{display:inline-block;font-size:0.94em;vertical-align:0.02em}
 #ring{position:absolute;border:2.5px solid var(--ac);border-radius:18px;opacity:0;transform:scale(1.04);transition:.4s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 24px color-mix(in srgb,var(--ac) 45%,transparent);pointer-events:none;z-index:4}
 #ring.on{opacity:1;transform:none}
-#confirm-panel{position:absolute;bottom:78px;left:50%;transform:translateX(-50%);width:min(460px,calc(100% - 32px));z-index:15;padding:16px;border-radius:20px;display:none;flex-direction:column;gap:10px;box-shadow:var(--sh)}
+#confirm-panel{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);width:min(460px,calc(100% - 32px));z-index:50;padding:16px;border-radius:20px;display:none;flex-direction:column;gap:10px;box-shadow:var(--sh)}
 .cp-hdr{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.06em}
 .cp-input{width:100%;border:1px solid var(--line);background:var(--line);border-radius:12px;padding:10px 14px;color:var(--tx);font:500 14px -apple-system,'Inter',sans-serif;outline:none;transition:border-color .2s}
 .cp-input:focus{border-color:var(--ac)}
@@ -120,7 +129,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-off
 .cp-btn.cancel:hover{background:var(--line);color:var(--tx)}
 .cp-btn.solve{background:linear-gradient(90deg,#FFB347,#FF5E7E);color:#2a0f14}
 .cp-btn.solve:hover{filter:brightness(1.06)}
-#chip{position:absolute;left:50%;bottom:20px;transform:translate(-50%,20px);opacity:0;pointer-events:none;display:flex;align-items:center;gap:12px;padding:12px 18px;border-radius:999px;transition:.4s cubic-bezier(.2,.8,.2,1);white-space:nowrap;max-width:calc(100% - 24px);color:var(--tx);z-index:20}
+#chip{position:absolute;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;display:flex;align-items:center;gap:12px;padding:12px 18px;border-radius:999px;transition:.4s cubic-bezier(.2,.8,.2,1);white-space:nowrap;max-width:calc(100% - 24px);color:var(--tx);z-index:50}
 #chip.on{opacity:1;transform:translate(-50%,0)}
 .wv{display:flex;gap:3px;align-items:center;height:20px}
 .wv i{width:3px;border-radius:2px;background:linear-gradient(#FFB347,#FF5E7E);height:5px;animation:wb .7s ease-in-out infinite alternate}
@@ -142,9 +151,141 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-off
 .ttl{display:none}#hd{justify-content:space-between}
 .tb{margin-left:auto}
 }
+/* --- Motion Graphics Loading Screen --- */
+#loader-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  background: #08080d;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: -apple-system, 'Inter', system-ui, sans-serif;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+  transition: opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1), transform 1.8s cubic-bezier(0.16, 1, 0.3, 1), filter 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform, filter;
+}
+#loader-screen.unveil {
+  opacity: 0;
+  transform: scale(1.06);
+  filter: blur(28px);
+  pointer-events: none;
+}
+.loader-bg-glow {
+  position: absolute;
+  width: 580px;
+  height: 580px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(124, 92, 255, 0.24) 0%, rgba(255, 94, 126, 0.18) 45%, transparent 70%);
+  filter: blur(52px);
+  pointer-events: none;
+  animation: loader-glow-pulse 4s ease-in-out infinite alternate;
+}
+@keyframes loader-glow-pulse {
+  0% { transform: scale(0.92) translate(-10px, -10px); opacity: 0.75; }
+  100% { transform: scale(1.18) translate(10px, 10px); opacity: 1; }
+}
+.loader-stage {
+  position: relative;
+  width: min(600px, 92vw);
+  height: calc(min(600px, 92vw) * 0.367);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ink-trail-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.trail-path {
+  fill: none;
+  stroke: url(#loader-grad);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 10px rgba(255, 94, 126, 0.7));
+}
+.needle-glow-dot {
+  fill: #FFA23A;
+  filter: drop-shadow(0 0 12px #FFA23A) drop-shadow(0 0 20px #FF5E7E);
+  transition: opacity 0.3s ease;
+}
+.loader-brand {
+  font: 400 42px 'Instrument Serif', Georgia, serif;
+  letter-spacing: -0.5px;
+  color: #ffffff;
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.loader-brand span {
+  font-style: italic;
+  background: linear-gradient(135deg, #FFB347, #FF5E7E, #7C5CFF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-left: 2px;
+}
+.loader-tagline {
+  font-size: 16px;
+  font-weight: 400;
+  color: #94a3b8;
+  margin-top: 8px;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+.loader-tagline b {
+  font-weight: 600;
+  background: linear-gradient(90deg, #FFB347, #FF5E7E);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.loader-bar-wrap {
+  width: 220px;
+  height: 2.5px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  margin-top: 26px;
+  overflow: hidden;
+  position: relative;
+}
+.loader-bar-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #FFB347, #FF5E7E, #7C5CFF);
+  border-radius: 999px;
+}
+.loader-hint {
+  font-size: 11px;
+  color: rgba(255,255,255,0.25);
+  margin-top: 14px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+#app {
+  transition: opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1), filter 1.8s cubic-bezier(0.16, 1, 0.3, 1), transform 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, filter, transform;
+}
+body.app-loading #app {
+  opacity: 0;
+  filter: blur(16px);
+  transform: scale(0.98);
+  pointer-events: none;
+}
 </style>
 </head>
-<body>
+<body class="app-loading">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="ai-ink-grad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="700" y2="0"><stop offset="0%" stop-color="#FFA23A"/><stop offset="100%" stop-color="#FF5E7E"/></linearGradient>
 <symbol id="pen" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></symbol>
@@ -158,6 +299,62 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-off
 <symbol id="spk" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></symbol>
 <symbol id="set" viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6zM19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 01-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 010-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 014 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 010 4h-.1a1.7 1.7 0 00-1.5 1z"/></symbol>
 </defs></svg>
+<div id="loader-screen" role="progressbar" aria-label="Loading InkMentor" title="Click anywhere to enter">
+  <div class="loader-bg-glow"></div>
+  <div class="loader-stage">
+    <svg class="ink-trail-svg" viewBox="0 0 600 220">
+      <defs>
+        <linearGradient id="loader-grad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#FFB347"/>
+          <stop offset="50%" stop-color="#FF5E7E"/>
+          <stop offset="100%" stop-color="#7C5CFF"/>
+        </linearGradient>
+        <linearGradient id="nib-body-grad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="35%" stop-color="#e2e8f0"/>
+          <stop offset="70%" stop-color="#94a3b8"/>
+          <stop offset="100%" stop-color="#64748b"/>
+        </linearGradient>
+        <linearGradient id="nib-gold-accent" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#FDE047"/>
+          <stop offset="50%" stop-color="#FFA23A"/>
+          <stop offset="100%" stop-color="#FF5E7E"/>
+        </linearGradient>
+      </defs>
+      <!-- Mathematical cursive flourish path -->
+      <path id="loader-curve" class="trail-path" d="M 50 120 C 110 50, 160 180, 230 100 C 290 30, 350 170, 420 95 C 470 45, 510 135, 550 90" />
+      
+      <!-- Glowing Needle Contact Point -->
+      <circle id="loader-needle-dot" class="needle-glow-dot" cx="50" cy="120" r="4.5" />
+      
+      <!-- Precision Pen Nib: Tip physically at (0, 0) -->
+      <g id="loader-nib-mover" style="filter:drop-shadow(0 8px 24px rgba(0,0,0,0.7)); pointer-events: none;">
+        <!-- Pen Grip Barrel -->
+        <rect x="-14" y="-124" width="28" height="42" rx="3" fill="#181820" stroke="#334155" stroke-width="1.1" />
+        <rect x="-15.5" y="-85" width="31" height="4" rx="1" fill="url(#nib-gold-accent)" />
+        <rect x="-14.5" y="-124" width="29" height="3" rx="1" fill="url(#nib-gold-accent)" />
+        <!-- Nib Body -->
+        <path d="M -22 -81 L 22 -81 L 19 -50 C 18 -32 10 -15 0 0 C -10 -15 -18 -32 -19 -50 Z" fill="url(#nib-body-grad)" stroke="#334155" stroke-width="1.3" />
+        <!-- Inner Gold Filigree -->
+        <path d="M -15 -68 Q 0 -60 15 -68 L 14 -50 C 13 -36 8 -22 0 -6 C -8 -22 -13 -36 -14 -50 Z" fill="none" stroke="url(#nib-gold-accent)" stroke-width="1.2" opacity="0.9" />
+        <!-- Breather Hole -->
+        <circle cx="0" cy="-44" r="3.4" fill="#08080d" stroke="url(#nib-gold-accent)" stroke-width="1" />
+        <!-- Nib Slit down to needle tip -->
+        <line x1="0" y1="-40.6" x2="0" y2="0" stroke="#08080d" stroke-width="1.4" />
+        <!-- Needle Point Highlight -->
+        <circle cx="0" cy="0" r="1.3" fill="#FFA23A" />
+      </g>
+    </svg>
+  </div>
+
+  <div class="loader-brand">Ink<span>Mentor</span></div>
+  <div class="loader-tagline">The ink that <b>writes</b>, <b>talks</b>, and <b>guides you</b>.</div>
+  
+  <div class="loader-bar-wrap">
+    <div id="loader-bar-fill" class="loader-bar-fill"></div>
+  </div>
+  <div class="loader-hint">Click anywhere to enter</div>
+</div>
 <div id="app">
 <aside id="sb" class="glass" aria-label="Notebook sidebar">
 <div class="brand"><span class="logo"><svg class="i"><use href="#pen"/></svg></span><b>Ink<i>Mentor</i></b></div>
@@ -196,6 +393,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-off
 <canvas id="ov"></canvas>
 <div id="notes"></div>
 <div id="ring"></div>
+</section>
 <div id="confirm-panel" class="glass" role="dialog" aria-label="Confirm recognized question">
   <div class="cp-hdr"><span id="cp-title">Confirm Question</span><span id="cp-status"></span></div>
   <input id="cp-text" class="cp-input" placeholder="Type your math question here..." autocomplete="off">
@@ -207,12 +405,129 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-off
   </div>
 </div>
 <div id="chip" class="glass" role="status" aria-live="polite"><div class="wv"><i></i><i></i><i></i><i></i><i></i></div><span id="ct"></span></div>
-</section>
 </main>
 </div>
 <div id="toast" class="glass" role="status"></div>
 <div id="server-wakeup-toast" class="glass" role="status"><span style="display:inline-block;width:12px;height:12px;border:2px solid rgba(255,162,58,.3);border-top-color:#FFA23A;border-radius:50%;animation:ai-spin 1s linear infinite"></span><span>Waking up the server…</span></div>
 <script>
+// --- Motion Graphics App Loader ---
+(function initAppLoader() {
+  var loader = document.getElementById('loader-screen');
+  if (!loader) return;
+  document.body.classList.add('app-loading');
+
+  var curve = document.getElementById('loader-curve');
+  var mover = document.getElementById('loader-nib-mover');
+  var dot = document.getElementById('loader-needle-dot');
+  var bar = document.getElementById('loader-bar-fill');
+
+  var totalLength = 600;
+  try {
+    if (curve && typeof curve.getTotalLength === 'function') {
+      totalLength = curve.getTotalLength() || 600;
+    }
+  } catch (e) {
+    totalLength = 600;
+  }
+
+  if (curve) {
+    curve.style.strokeDasharray = totalLength + ' ' + totalLength;
+    curve.style.strokeDashoffset = totalLength;
+  }
+
+  var TOTAL_TIME = 5500;  // 5.5 seconds total screen duration
+  var DRAW_TIME = 4000;   // 4.0 seconds drawing
+  var LIFT_TIME = 700;    // 0.7 seconds graceful nib lift
+  var startTime = null;
+  var dismissed = false;
+  var rafId = null;
+
+  function easeInOutCubic(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  function dismissLoader() {
+    if (dismissed) return;
+    dismissed = true;
+    if (rafId) cancelAnimationFrame(rafId);
+    loader.classList.add('unveil');
+    document.body.classList.remove('app-loading');
+    setTimeout(function() {
+      if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
+      if (typeof size === 'function') size();
+    }, 1950);
+  }
+
+  loader.addEventListener('click', dismissLoader);
+  window.addEventListener('keydown', function(e) {
+    if (!dismissed && (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ')) {
+      dismissLoader();
+    }
+  }, { once: true });
+
+  function step(timestamp) {
+    if (dismissed) return;
+    if (!startTime) startTime = timestamp;
+    var elapsed = timestamp - startTime;
+
+    // 1. Progress Bar filling smoothly over 5.5s
+    if (bar) {
+      var pct = Math.min(100, (elapsed / TOTAL_TIME) * 100);
+      bar.style.width = pct.toFixed(1) + '%';
+    }
+
+    // 2. Calligraphic Pen Animation
+    if (curve && mover && dot) {
+      if (elapsed <= DRAW_TIME) {
+        var t = elapsed / DRAW_TIME;
+        var p = easeInOutCubic(t);
+        var dist = p * totalLength;
+        var pt = curve.getPointAtLength(dist);
+
+        // Organic dynamic tilt: pen rests at ~34deg slant and naturally flexes with curve tangent
+        var delta = 3;
+        var p1 = curve.getPointAtLength(Math.max(0, dist - delta));
+        var p2 = curve.getPointAtLength(Math.min(totalLength, dist + delta));
+        var dx = p2.x - p1.x;
+        var dy = p2.y - p1.y;
+        var tangentDeg = Math.atan2(dy, dx) * 180 / Math.PI;
+        var tilt = 34 + (tangentDeg * 0.18);
+
+        curve.style.strokeDashoffset = (totalLength - dist).toFixed(2);
+        mover.setAttribute('transform', 'translate(' + pt.x.toFixed(2) + ',' + pt.y.toFixed(2) + ') rotate(' + tilt.toFixed(2) + ')');
+        dot.setAttribute('cx', pt.x.toFixed(2));
+        dot.setAttribute('cy', pt.y.toFixed(2));
+        dot.style.opacity = '1';
+      } else if (elapsed <= DRAW_TIME + LIFT_TIME) {
+        // Nib lifts off the page gracefully
+        curve.style.strokeDashoffset = '0';
+        var endPt = curve.getPointAtLength(totalLength);
+        var liftProg = (elapsed - DRAW_TIME) / LIFT_TIME;
+        var liftEase = 1 - Math.pow(1 - liftProg, 3);
+        var liftY = endPt.y - (liftEase * 20);
+        var liftX = endPt.x + (liftEase * 10);
+        var liftTilt = 34 - (liftEase * 6);
+
+        mover.setAttribute('transform', 'translate(' + liftX.toFixed(2) + ',' + liftY.toFixed(2) + ') rotate(' + liftTilt.toFixed(2) + ')');
+        dot.setAttribute('cx', endPt.x.toFixed(2));
+        dot.setAttribute('cy', endPt.y.toFixed(2));
+        dot.style.opacity = (1 - (liftProg * 0.35)).toFixed(2);
+      } else {
+        // Holding in poised glowing stillness until transition
+        curve.style.strokeDashoffset = '0';
+      }
+    }
+
+    if (elapsed >= TOTAL_TIME) {
+      dismissLoader();
+    } else {
+      rafId = requestAnimationFrame(step);
+    }
+  }
+
+  rafId = requestAnimationFrame(step);
+})();
+
 // --- Serverless Wakeup Health Check ---
 (function initServerWakeupCheck() {
   var backoffMs = 1000;
@@ -294,18 +609,330 @@ var notes = $('#notes'), ring = $('#ring');
 var confirmPanel = $('#confirm-panel');
 
 var SEEDED_PAGES = [
-  { t: 'Chain rule', l: ['Chain rule', 'd/dx f(g(x)) = f′(g(x)) · g′(x)', 'e.g. d/dx (x²+1)³ = 6x(x²+1)²'] },
-  { t: 'Product rule', l: ['Product rule', '(uv)′ = u′v + uv′'] },
-  { t: 'Quotient rule', l: ['Quotient rule', '(u/v)′ = (u′v − uv′) / v²'] },
-  { t: 'Trig derivatives', l: ['Trig derivatives', 'd/dx sin x = cos x', 'd/dx cos x = −sin x'] },
-  { t: 'Implicit differentiation', l: ['Implicit differentiation', 'x² + y² = 25  →  2x + 2y·y′ = 0'] },
-  { t: 'Limits', l: ['Limits', 'lim sin x / x = 1  as x → 0'] },
-  { t: 'Integration basics', l: ['Integration basics', '∫ xⁿ dx = xⁿ⁺¹ / (n+1) + C'] },
-  { t: 'Practice problems', q: 1 }
+  {
+    t: 'Quick Start Guide',
+    c: '#4F46E5',
+    l: [
+      '✦ Welcome to InkMentor · Quick Start Guide',
+      '',
+      'InkMentor is your AI math notebook that learns, solves, and speaks.',
+      'Follow these simple guidelines to make the most of your notes:',
+      '',
+      '1. Write with the Pen ✎',
+      '   Choose your favorite ink color (Black, Violet, or Coral) from the',
+      '   toolbar above. Write naturally on the lines with your mouse or stylus.',
+      '',
+      '2. Circle to Solve ◯',
+      '   Switch to the Circle tool (or click Solve), and draw a loop around',
+      '   any problem or formula. InkMentor reads your handwriting instantly.',
+      '',
+      '3. Step-by-Step Handwriting & Voice Mentor ✨',
+      '   Watch your AI tutor write out the complete solution stroke-by-stroke,',
+      '   accompanied by synchronized speech explaining every mathematical step.',
+      '',
+      '4. Progressive Hint Ladder 💡',
+      '   Want to solve it yourself? Click the Hint button in the toolbar',
+      '   to receive 3 gentle nudges before seeing the final answer.',
+      '',
+      '5. Real Notebook Memory 🧠',
+      '   Flip through Pages 2 to 5 to explore detailed Calculus study notes.',
+      '   InkMentor remembers and cites these pages when explaining solutions!',
+      '',
+      '6. Fully Editable Notes ✏',
+      '   Double-click any note line to edit text, or annotate freely with ink!',
+      '',
+      '👉 Click on Page 6 in the sidebar now to try solving your first problem!'
+    ]
+  },
+  {
+    t: 'Derivatives & Power Rule',
+    c: '#7C3AED',
+    fig: {
+      cap: '✦ Fig 1. Tangent Slope: The derivative f′(x) is the instantaneous slope m = Δy/Δx as h → 0.',
+      svg: '<svg viewBox="0 0 500 155" width="100%" height="145" style="display:block;overflow:visible;" xmlns="http://www.w3.org/2000/svg">' +
+        '<defs>' +
+          '<marker id="arr-p2" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#7C3AED"/></marker>' +
+          '<marker id="arr-gray" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#94A3B8"/></marker>' +
+        '</defs>' +
+        '<line x1="40" y1="135" x2="470" y2="135" stroke="#94A3B8" stroke-width="1.6" marker-end="url(#arr-gray)"/>' +
+        '<line x1="60" y1="145" x2="60" y2="15" stroke="#94A3B8" stroke-width="1.6" marker-end="url(#arr-gray)"/>' +
+        '<text x="475" y="139" font-family="Caveat, cursive" font-size="18" fill="#64748B">x</text>' +
+        '<text x="52" y="16" font-family="Caveat, cursive" font-size="18" fill="#64748B">y</text>' +
+        '<path d="M 80 125 Q 180 110 240 75 T 410 20" fill="none" stroke="#7C3AED" stroke-width="3" stroke-linecap="round"/>' +
+        '<text x="415" y="22" font-family="Caveat, cursive" font-size="20" font-weight="700" fill="#7C3AED">y = f(x)</text>' +
+        '<line x1="120" y1="140" x2="330" y2="30" stroke="#E11D48" stroke-width="2.2" stroke-linecap="round"/>' +
+        '<text x="335" y="36" font-family="Caveat, cursive" font-size="18" font-weight="700" fill="#E11D48">Tangent: m = f′(x)</text>' +
+        '<circle cx="215" cy="88" r="4.5" fill="#E11D48" stroke="#fff" stroke-width="1.5"/>' +
+        '<text x="195" y="78" font-family="Caveat, cursive" font-size="19" font-weight="700" fill="#1E1B4B">P(x, f(x))</text>' +
+        '<line x1="215" y1="88" x2="285" y2="88" stroke="#0284C7" stroke-width="1.5" stroke-dasharray="3 3"/>' +
+        '<line x1="285" y1="88" x2="285" y2="52" stroke="#0284C7" stroke-width="1.5" stroke-dasharray="3 3"/>' +
+        '<path d="M 277 88 L 277 80 L 285 80" fill="none" stroke="#0284C7" stroke-width="1.2"/>' +
+        '<text x="240" y="105" font-family="Caveat, cursive" font-size="16" fill="#0284C7">Δx = h</text>' +
+        '<text x="292" y="74" font-family="Caveat, cursive" font-size="16" fill="#0284C7">Δy</text>' +
+        '<rect x="330" y="80" width="150" height="46" rx="8" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1"/>' +
+        '<text x="340" y="100" font-family="Caveat, cursive" font-size="16" font-weight="700" fill="#1E1B4B">f′(x) = lim  Δy / Δx</text>' +
+        '<text x="382" y="117" font-family="Caveat, cursive" font-size="13" fill="#64748B">h → 0</text>' +
+      '</svg>'
+    },
+    l: [
+      'Calculus · Derivatives & The Power Rule',
+      '',
+      '✦ What is a Derivative?',
+      '   The derivative represents the instantaneous rate of change of a',
+      '   function, giving the exact slope of the tangent line at any point.',
+      '   Limit Definition:   f′(x) = lim[h→0] ( f(x+h) − f(x) ) / h',
+      '{FIG}',
+      '',
+      '✦ The Power Rule (Fundamental Formula):',
+      '   For any real exponent n:',
+      '   d/dx [ xⁿ ] = n · xⁿ⁻¹',
+      '',
+      '✦ Linearity Rules of Differentiation:',
+      '   • Constant Multiple Rule:   d/dx [ c · f(x) ] = c · f′(x)',
+      '   • Sum & Difference Rule:   d/dx [ f(x) ± g(x) ] = f′(x) ± g′(x)',
+      '   • Derivative of a Constant:   d/dx [ c ] = 0',
+      '',
+      '✦ Worked Examples:',
+      '   1. d/dx [ x³ ] = 3 · x³⁻¹ = 3x²',
+      '   2. d/dx [ 5x⁴ − 2x² + 7 ] = 5(4x³) − 2(2x) + 0 = 20x³ − 4x',
+      '   3. d/dx [ 1/x ] = d/dx [ x⁻¹ ] = −1 · x⁻² = −1 / x²',
+      '   4. d/dx [ √x ] = d/dx [ x^(1/2) ] = (1/2) x^(−1/2) = 1 / (2√x)',
+      '',
+      '✦ Student Note:',
+      '   Before applying the power rule, always rewrite roots as fractional powers',
+      '   and denominators as negative powers of x!'
+    ]
+  },
+  {
+    t: 'Product & Chain Rules',
+    c: '#0284C7',
+    fig: {
+      cap: '✦ Fig 2. Geometric Proof of Product Rule: Expanding rectangle area gives d(uv) = u·dv + v·du.',
+      svg: '<svg viewBox="0 0 500 155" width="100%" height="145" style="display:block;overflow:visible;" xmlns="http://www.w3.org/2000/svg">' +
+        '<defs>' +
+          '<marker id="arr-p3" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#0284C7"/></marker>' +
+        '</defs>' +
+        '<rect x="70" y="32" width="165" height="88" fill="#E0F2FE" stroke="#0284C7" stroke-width="2.2"/>' +
+        '<text x="120" y="82" font-family="Caveat, cursive" font-size="22" font-weight="700" fill="#0369A1">Area = u · v</text>' +
+        '<line x1="70" y1="22" x2="235" y2="22" stroke="#0284C7" stroke-width="1.5" marker-end="url(#arr-p3)" marker-start="url(#arr-p3)"/>' +
+        '<text x="150" y="17" font-family="Caveat, cursive" font-size="18" font-weight="700" fill="#0284C7">u</text>' +
+        '<line x1="58" y1="32" x2="58" y2="120" stroke="#0284C7" stroke-width="1.5" marker-end="url(#arr-p3)" marker-start="url(#arr-p3)"/>' +
+        '<text x="44" y="82" font-family="Caveat, cursive" font-size="18" font-weight="700" fill="#0284C7">v</text>' +
+        '<rect x="235" y="32" width="40" height="88" fill="#BAE6FD" stroke="#0284C7" stroke-width="1.8" stroke-dasharray="3 2"/>' +
+        '<text x="240" y="82" font-family="Caveat, cursive" font-size="17" font-weight="700" fill="#0369A1">v · du</text>' +
+        '<text x="245" y="137" font-family="Caveat, cursive" font-size="16" fill="#0284C7">du</text>' +
+        '<line x1="235" y1="125" x2="275" y2="125" stroke="#0284C7" stroke-width="1.2"/>' +
+        '<rect x="70" y="10" width="165" height="22" fill="#BAE6FD" stroke="#0284C7" stroke-width="1.8" stroke-dasharray="3 2"/>' +
+        '<text x="130" y="26" font-family="Caveat, cursive" font-size="17" font-weight="700" fill="#0369A1">u · dv</text>' +
+        '<text x="32" y="23" font-family="Caveat, cursive" font-size="16" fill="#0284C7">dv</text>' +
+        '<rect x="235" y="10" width="40" height="22" fill="#F1F5F9" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2 2"/>' +
+        '<text x="238" y="25" font-family="Caveat, cursive" font-size="13" fill="#94A3B8">du·dv≈0</text>' +
+        '<path d="M 295 72 L 320 72" stroke="#0284C7" stroke-width="2.5" marker-end="url(#arr-p3)"/>' +
+        '<rect x="330" y="25" width="155" height="98" rx="10" fill="#F0F9FF" stroke="#0284C7" stroke-width="1.5"/>' +
+        '<text x="342" y="50" font-family="Caveat, cursive" font-size="16" font-weight="700" fill="#0369A1">Total Area Change:</text>' +
+        '<text x="342" y="78" font-family="Caveat, cursive" font-size="19" font-weight="700" fill="#0284C7">= u·dv + v·du</text>' +
+        '<text x="342" y="108" font-family="Caveat, cursive" font-size="15" fill="#0369A1">Divide by dx ➔ (uv)′</text>' +
+      '</svg>'
+    },
+    l: [
+      'Calculus · Product & Chain Rules',
+      '',
+      '✦ The Product Rule (Multiplying Functions):',
+      '   When differentiating a product of two functions y = u(x) · v(x):',
+      '   Formula:   (u · v)′ = u′ · v + u · v′',
+      '   Mnemonic: "Derivative of first times second, plus first times derivative of second"',
+      '{FIG}',
+      '',
+      '✦ Product Rule Walkthrough:',
+      '   Find d/dx [ x² · sin(x) ]:',
+      '   • Let u = x²  →  u′ = 2x',
+      '   • Let v = sin(x)  →  v′ = cos(x)',
+      '   • Combine:   (2x) · sin(x) + (x²) · cos(x)',
+      '',
+      '✦ The Chain Rule (Composite Functions):',
+      '   For composite nested functions y = f(g(x)), differentiate outside-in:',
+      '   Formula:   d/dx [ f(g(x)) ] = f′(g(x)) · g′(x)',
+      '   Leibniz Form:   dy/dx = (dy/du) · (du/dx)',
+      '',
+      '✦ Chain Rule Walkthrough:',
+      '   Find d/dx [ sin(3x²) ]:',
+      '   • Inside function:   u = 3x²   →   du/dx = 6x',
+      '   • Outside function:   f(u) = sin(u)   →   f′(u) = cos(u)',
+      '   • Multiply by inside′:   cos(3x²) · (6x) = 6x · cos(3x²)',
+      '',
+      '✦ Student Note:',
+      '   Think of the Chain Rule like peeling an onion: differentiate outer layers first,',
+      '   keeping the inner expression untouched, then multiply by the inner derivative!'
+    ]
+  },
+  {
+    t: 'Integration & Antiderivatives',
+    c: '#059669',
+    fig: {
+      cap: '✦ Fig 3. Geometric Meaning of Integration: Summing infinite thin strips dA = f(x)·dx yields total net area.',
+      svg: '<svg viewBox="0 0 500 155" width="100%" height="145" style="display:block;overflow:visible;" xmlns="http://www.w3.org/2000/svg">' +
+        '<defs>' +
+          '<linearGradient id="area-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#10B981" stop-opacity="0.32"/><stop offset="100%" stop-color="#10B981" stop-opacity="0.04"/></linearGradient>' +
+        '</defs>' +
+        '<line x1="40" y1="130" x2="470" y2="130" stroke="#94A3B8" stroke-width="1.6"/>' +
+        '<line x1="60" y1="140" x2="60" y2="15" stroke="#94A3B8" stroke-width="1.6"/>' +
+        '<text x="475" y="134" font-family="Caveat, cursive" font-size="18" fill="#64748B">x</text>' +
+        '<text x="52" y="16" font-family="Caveat, cursive" font-size="18" fill="#64748B">y</text>' +
+        '<path d="M 110 130 L 110 102 Q 170 65 220 48 T 330 82 L 330 130 Z" fill="url(#area-grad)"/>' +
+        '<path d="M 80 118 Q 170 65 220 48 T 380 112" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round"/>' +
+        '<text x="375" y="92" font-family="Caveat, cursive" font-size="20" font-weight="700" fill="#059669">y = f(x)</text>' +
+        '<line x1="110" y1="130" x2="110" y2="102" stroke="#059669" stroke-width="1.8" stroke-dasharray="3 3"/>' +
+        '<line x1="330" y1="130" x2="330" y2="82" stroke="#059669" stroke-width="1.8" stroke-dasharray="3 3"/>' +
+        '<text x="105" y="147" font-family="Caveat, cursive" font-size="18" font-weight="700" fill="#059669">a</text>' +
+        '<text x="326" y="147" font-family="Caveat, cursive" font-size="18" font-weight="700" fill="#059669">b</text>' +
+        '<rect x="205" y="50" width="22" height="80" fill="#34D399" fill-opacity="0.45" stroke="#059669" stroke-width="1.6"/>' +
+        '<text x="204" y="147" font-family="Caveat, cursive" font-size="16" font-weight="700" fill="#047857">dx</text>' +
+        '<text x="175" y="42" font-family="Caveat, cursive" font-size="16" font-weight="700" fill="#047857">height f(x)</text>' +
+        '<text x="135" y="95" font-family="Caveat, cursive" font-size="22" font-weight="700" fill="#065F46">Area = ∫ₐᵇ f(x) dx</text>' +
+        '<rect x="355" y="18" width="135" height="58" rx="8" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1"/>' +
+        '<text x="365" y="40" font-family="Caveat, cursive" font-size="16" font-weight="700" fill="#047857">dA = f(x) · dx</text>' +
+        '<text x="365" y="62" font-family="Caveat, cursive" font-size="15" fill="#065F46">Summing strips ➔ ∫</text>' +
+      '</svg>'
+    },
+    l: [
+      'Calculus · Integration & Antiderivatives',
+      '',
+      '✦ What is Integration?',
+      '   Integration is the inverse operation of differentiation. It reconstructs',
+      '   the parent function and computes the net signed area under curves.',
+      '   Indefinite Integral:   ∫ f(x) dx = F(x) + C     (where F′(x) = f(x))',
+      '{FIG}',
+      '',
+      '✦ Power Rule for Integration:',
+      '   For any real exponent n ≠ −1:',
+      '   ∫ xⁿ dx = [ xⁿ⁺¹ / (n + 1) ] + C',
+      '   Special Case (n = −1):   ∫ (1/x) dx = ln|x| + C',
+      '',
+      '✦ Fundamental Trig & Exponential Integrals:',
+      '   • ∫ cos(x) dx = sin(x) + C',
+      '   • ∫ sin(x) dx = −cos(x) + C',
+      '   • ∫ sec²(x) dx = tan(x) + C',
+      '   • ∫ eˣ dx = eˣ + C',
+      '',
+      '✦ Worked Examples:',
+      '   1. ∫ (3x² + 4x − 5) dx = 3(x³/3) + 4(x²/2) − 5x + C = x³ + 2x² − 5x + C',
+      '   2. ∫ (√x) dx = ∫ x^(1/2) dx = [ x^(3/2) / (3/2) ] + C = (2/3) x^(3/2) + C',
+      '',
+      '✦ Golden Notebook Rule:',
+      '   Never forget the constant of integration "+ C" on indefinite integrals!',
+      '   Any constant term differentiates away to 0, so + C accounts for all antiderivatives.'
+    ]
+  },
+  {
+    t: 'Integration by U-Substitution',
+    c: '#D97706',
+    fig: {
+      cap: '✦ Fig 4. U-Substitution Geometry: Warped x-domain curve transforms into an elementary standard curve in u-domain.',
+      svg: '<svg viewBox="0 0 500 155" width="100%" height="145" style="display:block;overflow:visible;" xmlns="http://www.w3.org/2000/svg">' +
+        '<defs>' +
+          '<marker id="arr-p5" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#D97706"/></marker>' +
+        '</defs>' +
+        '<rect x="25" y="12" width="175" height="128" rx="10" fill="#FFFBEB" stroke="#FDE68A" stroke-width="1.4"/>' +
+        '<text x="35" y="32" font-family="Caveat, cursive" font-size="16" font-weight="700" fill="#92400E">x-domain (composite)</text>' +
+        '<line x1="45" y1="120" x2="185" y2="120" stroke="#CBD5E1" stroke-width="1.2"/>' +
+        '<line x1="55" y1="125" x2="55" y2="42" stroke="#CBD5E1" stroke-width="1.2"/>' +
+        '<path d="M 55 120 Q 85 45 115 105 T 175 60 L 175 120 Z" fill="#FDE68A" fill-opacity="0.4"/>' +
+        '<path d="M 55 120 Q 85 45 115 105 T 175 60" fill="none" stroke="#D97706" stroke-width="2.2"/>' +
+        '<text x="48" y="134" font-family="Caveat, cursive" font-size="15" font-weight="700" fill="#B45309">∫ 2x·cos(x²) dx</text>' +
+        '<path d="M 210 70 Q 240 50 270 70" fill="none" stroke="#D97706" stroke-width="2.6" marker-end="url(#arr-p5)"/>' +
+        '<text x="218" y="46" font-family="Caveat, cursive" font-size="17" font-weight="700" fill="#D97706">u = x²</text>' +
+        '<text x="210" y="98" font-family="Caveat, cursive" font-size="15" font-weight="700" fill="#B45309">du = 2x dx</text>' +
+        '<rect x="285" y="12" width="185" height="128" rx="10" fill="#FFFBEB" stroke="#FDE68A" stroke-width="1.4"/>' +
+        '<text x="295" y="32" font-family="Caveat, cursive" font-size="16" font-weight="700" fill="#92400E">u-domain (standard)</text>' +
+        '<line x1="305" y1="120" x2="455" y2="120" stroke="#CBD5E1" stroke-width="1.2"/>' +
+        '<line x1="315" y1="125" x2="315" y2="42" stroke="#CBD5E1" stroke-width="1.2"/>' +
+        '<path d="M 315 55 Q 375 60 435 120 L 315 120 Z" fill="#FDE68A" fill-opacity="0.5"/>' +
+        '<path d="M 315 55 Q 375 60 435 120" fill="none" stroke="#D97706" stroke-width="2.5"/>' +
+        '<text x="306" y="134" font-family="Caveat, cursive" font-size="15" font-weight="700" fill="#B45309">= ∫ cos(u) du = sin(u)+C</text>' +
+      '</svg>'
+    },
+    l: [
+      'Calculus · Integration by U-Substitution',
+      '',
+      '✦ What is U-Substitution?',
+      '   U-Substitution reverses the Chain Rule for integrals. It transforms',
+      '   a complicated integral into a simple standard power or trig integral.',
+      '',
+      '✦ The 4-Step U-Substitution Method:',
+      '   1. Choose u = g(x)  (look for an inside function whose derivative is also in the integral)',
+      '   2. Compute du = g′(x) dx   →   solve for dx = du / g′(x)',
+      '   3. Substitute u and dx into the integrand to cancel all x variables completely',
+      '   4. Integrate with respect to u, then substitute back u = g(x)',
+      '{FIG}',
+      '',
+      '✦ Full Worked Walkthrough:',
+      '   Evaluate:   ∫ 2x · cos(x²) dx',
+      '   • Let u = x²',
+      '   • Differentiate:   du/dx = 2x   →   du = 2x dx   →   dx = du / (2x)',
+      '   • Substitute:   ∫ 2x · cos(u) · (du / 2x)',
+      '   • Notice 2x cancels out!   →   ∫ cos(u) du',
+      '   • Standard integral:   = sin(u) + C',
+      '   • Substitute back u = x²:   = sin(x²) + C   ✓',
+      '',
+      '✦ Student Note:',
+      '   If your du differs by only a constant number (e.g. 5x dx instead of x dx),',
+      '   factor the constant outside the integral sign before integrating!'
+    ]
+  },
+  {
+    t: 'Try It Out · Circle to Solve',
+    c: '#E11D48',
+    q: 1,
+    fig: {
+      cap: '✦ Fig 5. How It Works: Write naturally, loop with the circle tool, and let InkMentor solve and explain out loud!',
+      svg: '<svg viewBox="0 0 500 120" width="100%" height="115" style="display:block;overflow:visible;" xmlns="http://www.w3.org/2000/svg">' +
+        '<defs>' +
+          '<marker id="arr-p6" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#E11D48"/></marker>' +
+        '</defs>' +
+        '<rect x="15" y="10" width="130" height="92" rx="10" fill="#FFF1F2" stroke="#FECDD3" stroke-width="1.6"/>' +
+        '<text x="25" y="30" font-family="Caveat, cursive" font-size="15" font-weight="700" fill="#9F1239">1. Write Question</text>' +
+        '<rect x="25" y="38" width="110" height="52" rx="6" fill="#fff" stroke="#E2E8F0" stroke-width="1"/>' +
+        '<text x="33" y="64" font-family="Caveat, cursive" font-size="19" font-weight="700" fill="#0F172A">∫ sin(x) dx</text>' +
+        '<text x="33" y="82" font-family="Caveat, cursive" font-size="13" fill="#E11D48">✎ Pen Tool</text>' +
+        '<path d="M 152 56 L 175 56" stroke="#E11D48" stroke-width="2.2" stroke-dasharray="3 2" marker-end="url(#arr-p6)"/>' +
+        '<rect x="185" y="10" width="130" height="92" rx="10" fill="#FFF1F2" stroke="#FECDD3" stroke-width="1.6"/>' +
+        '<text x="195" y="30" font-family="Caveat, cursive" font-size="15" font-weight="700" fill="#9F1239">2. Circle It ◯</text>' +
+        '<rect x="195" y="38" width="110" height="52" rx="6" fill="#fff" stroke="#E2E8F0" stroke-width="1"/>' +
+        '<ellipse cx="250" cy="62" rx="46" ry="16" fill="none" stroke="#7C5CFF" stroke-width="2" stroke-dasharray="4 3"/>' +
+        '<text x="218" y="66" font-family="Caveat, cursive" font-size="17" font-weight="700" fill="#0F172A">∫ sin(x) dx</text>' +
+        '<text x="203" y="84" font-family="Caveat, cursive" font-size="12" fill="#7C5CFF">Closed loop gesture</text>' +
+        '<path d="M 322 56 L 345 56" stroke="#E11D48" stroke-width="2.2" stroke-dasharray="3 2" marker-end="url(#arr-p6)"/>' +
+        '<rect x="355" y="10" width="130" height="92" rx="10" fill="#FFF1F2" stroke="#FECDD3" stroke-width="1.6"/>' +
+        '<text x="365" y="30" font-family="Caveat, cursive" font-size="15" font-weight="700" fill="#9F1239">3. AI Solve &amp; Voice</text>' +
+        '<rect x="365" y="38" width="110" height="52" rx="6" fill="#fff" stroke="#E2E8F0" stroke-width="1"/>' +
+        '<text x="373" y="58" font-family="Caveat, cursive" font-size="15" font-weight="700" fill="#FF5E7E">= −cos(x) + C</text>' +
+        '<text x="373" y="78" font-family="Caveat, cursive" font-size="12" fill="#059669">✓ SymPy Verified</text>' +
+      '</svg>'
+    },
+    l: [
+      '✦ Try It Out · Write a Question & Circle to Solve',
+      '',
+      'Welcome to your interactive workspace!',
+      'Follow these 3 easy steps to test the AI tutor:',
+      '',
+      '1. Select the Pen ✎ tool from the top toolbar.',
+      '2. Write any calculus problem on the paper below with your mouse or stylus.',
+      '      e.g.   ∫ sin(x) dx     or     d/dx (x³ + 4x)',
+      '3. Switch to the Circle ◯ tool and draw a loop around your question.',
+      '{FIG}',
+      '',
+      '✦ What happens next?',
+      '• InkMentor recognizes your handwritten math instantly.',
+      '• Voice narration explains each step while handwriting the solution!',
+      '• It even cites relevant formulas from your notes on Pages 2–5.',
+      '',
+      '✏ Write your question anywhere below and circle it to solve:'
+    ]
+  }
 ];
 
 var pages = SEEDED_PAGES.slice();
-var cur = 8;
+var cur = 1;
 var tool = 'pen'; // 'pen' | 'era' | 'circle'
 var col = '#111118';
 var busy = false;
@@ -648,10 +1275,11 @@ window.setFont = function(fontName) {
 };
 
 // --- Storage Keys ---
-var STROKES_KEY = 'inkmentor_notebook_strokes_v1';
-var PAGES_KEY = 'inkmentor_notebook_pages_v1';
-var AI_OUTPUT_KEY = 'inkmentor_notebook_ai_output_v1';
-var UNDO_KEY = 'inkmentor_notebook_undo_v1';
+var STROKES_KEY = 'inkmentor_notebook_strokes_v3';
+var PAGES_KEY = 'inkmentor_notebook_pages_v3';
+var AI_OUTPUT_KEY = 'inkmentor_notebook_ai_output_v3';
+var EDITED_SEEDED_KEY = 'inkmentor_notebook_seeded_edits_v3';
+var UNDO_KEY = 'inkmentor_notebook_undo_v3';
 
 var pageStrokes = {};
 var redoHistory = {};
@@ -1709,6 +2337,22 @@ function loadPersistedData() {
   } catch (e) { pageStrokes = {}; }
 
   try {
+    var rawEdits = localStorage.getItem(EDITED_SEEDED_KEY);
+    if (rawEdits) {
+      var seededEdits = JSON.parse(rawEdits);
+      for (var k in seededEdits) {
+        var idx = +k;
+        if (pages[idx] && seededEdits[k]) {
+          if (seededEdits[k].t) pages[idx].t = seededEdits[k].t;
+          if (seededEdits[k].l) pages[idx].l = seededEdits[k].l;
+          if (seededEdits[k].c) pages[idx].c = seededEdits[k].c;
+          if (seededEdits[k].fig) pages[idx].fig = seededEdits[k].fig;
+        }
+      }
+    }
+  } catch (e) {}
+
+  try {
     var rawPages = localStorage.getItem(PAGES_KEY);
     if (rawPages) {
       var custom = JSON.parse(rawPages);
@@ -1738,6 +2382,11 @@ function savePersistedPages() {
   try {
     var custom = pages.slice(SEEDED_PAGES.length);
     localStorage.setItem(PAGES_KEY, JSON.stringify(custom));
+    var seededEdits = {};
+    for (var i = 0; i < Math.min(pages.length, SEEDED_PAGES.length); i++) {
+      seededEdits[i] = { t: pages[i].t, l: pages[i].l, c: pages[i].c, q: pages[i].q, fig: pages[i].fig };
+    }
+    localStorage.setItem(EDITED_SEEDED_KEY, JSON.stringify(seededEdits));
   } catch (e) {}
 }
 
@@ -1791,24 +2440,6 @@ function eraseAiAt(px, py, radius) {
   try {
     var cvRect = cv.getBoundingClientRect();
     var ai = pageAiOutput[cur];
-
-    // If page 8 has seeded demo without pageAiOutput, initialize it on first interaction
-    if (!ai && cur === 8) {
-      var p = pages[cur - 1];
-      if (p && p.q && !clearedPages[8]) {
-        pageAiOutput[8] = {
-          question: 'Q3. Differentiate y = sin(3x²)',
-          steps: [
-            { write: "Let u = 3x^2,  du/dx = 6x", narration: "Let's use u-substitution for the inside expression." },
-            { write: "y′ = cos(u) · du/dx", narration: "Differentiating with respect to u gives cosine of u times du dx." },
-            { write: "y′ = 6x cos(3x²)", narration: "Substituting back gives six x cosine of three x squared." }
-          ],
-          cited: 1
-        };
-        ai = pageAiOutput[8];
-        savePersistedAiOutput();
-      }
-    }
 
     if (!ai) return false;
 
@@ -1975,8 +2606,8 @@ function renderStroke(s, targetCx) {
 }
 
 function redraw() {
-  var r = paper.getBoundingClientRect();
-  cx.clearRect(0, 0, r.width, r.height);
+  var d = window.devicePixelRatio || 1;
+  cx.clearRect(0, 0, cv.width / d, cv.height / d);
   var list = getStrokes(cur);
   for (var i = 0; i < list.length; i++) {
     renderStroke(list[i]);
@@ -1987,19 +2618,24 @@ function redraw() {
 }
 
 function size() {
-  var r = paper.getBoundingClientRect();
-  if (!r.width || !r.height) return;
+  var w = paper.clientWidth;
+  if (!w) return;
   var d = window.devicePixelRatio || 1;
-  cv.width = Math.round(r.width * d);
-  cv.height = Math.round(r.height * d);
-  cv.style.width = r.width + 'px';
-  cv.style.height = r.height + 'px';
+  var contentH = notes ? notes.scrollHeight : 0;
+  var visibleH = paper.clientHeight;
+  var fullH = Math.max(visibleH, contentH);
+  if (!fullH) return;
+
+  cv.width = Math.round(w * d);
+  cv.height = Math.round(fullH * d);
+  cv.style.width = w + 'px';
+  cv.style.height = fullH + 'px';
   cx.setTransform(d, 0, 0, d, 0, 0);
 
   ov.width = cv.width;
   ov.height = cv.height;
-  ov.style.width = r.width + 'px';
-  ov.style.height = r.height + 'px';
+  ov.style.width = w + 'px';
+  ov.style.height = fullH + 'px';
   ox.setTransform(d, 0, 0, d, 0, 0);
 
   redraw();
@@ -2007,6 +2643,7 @@ function size() {
 
 if (window.ResizeObserver) {
   new ResizeObserver(function() { size(); }).observe(paper);
+  if (notes) new ResizeObserver(function() { size(); }).observe(notes);
 }
 window.addEventListener('resize', size);
 
@@ -2055,8 +2692,8 @@ cv.addEventListener('pointerdown', function(e) {
     ring.classList.remove('on');
     hideConfirmPanel();
     loopPoints = [pt];
-    var r = paper.getBoundingClientRect();
-    ox.clearRect(0, 0, r.width, r.height);
+    var d = window.devicePixelRatio || 1;
+    ox.clearRect(0, 0, ov.width / d, ov.height / d);
     return;
   }
 
@@ -2106,8 +2743,8 @@ cv.addEventListener('pointermove', function(e) {
 });
 
 function drawLoopPreview() {
-  var r = paper.getBoundingClientRect();
-  ox.clearRect(0, 0, r.width, r.height);
+  var d = window.devicePixelRatio || 1;
+  ox.clearRect(0, 0, ov.width / d, ov.height / d);
   if (!loopPoints || loopPoints.length < 2) return;
   ox.save();
   ox.strokeStyle = '#7C5CFF';
@@ -2134,8 +2771,8 @@ function endStroke(e) {
   if (tool === 'era') return;
 
   if (tool === 'circle') {
-    var r = paper.getBoundingClientRect();
-    ox.clearRect(0, 0, r.width, r.height);
+    var d = window.devicePixelRatio || 1;
+    ox.clearRect(0, 0, ov.width / d, ov.height / d);
     if (!loopPoints || loopPoints.length < 3) {
       loopPoints = null;
       return;
@@ -2358,26 +2995,14 @@ function render(opt) {
   stopVoiceAndAnimation();
   hideConfirmPanel();
   ring.classList.remove('on');
-  var r = paper.getBoundingClientRect();
-  ox.clearRect(0, 0, r.width, r.height);
+  var d = window.devicePixelRatio || 1;
+  ox.clearRect(0, 0, ov.width / d, ov.height / d);
 
   var p = pages[cur - 1];
   $('#pg').textContent = 'Page ' + cur + ' · ' + (p ? p.t : '');
 
   // Render AI Output if present on this page
   var ai = pageAiOutput[cur];
-  if (!ai && cur === 8 && p && p.q && !clearedPages[8]) {
-    pageAiOutput[8] = {
-      question: 'Q3. Differentiate y = sin(3x²)',
-      steps: [
-        { write: 'Let u = 3x^2,  du/dx = 6x', narration: "Let's use u-substitution for the inside expression." },
-        { write: "y' = cos(u) * du/dx", narration: "Differentiating with respect to u gives cosine of u times du dx." },
-        { write: "y' = 6x cos(3x^2)", narration: "Substituting back gives six x cosine of three x squared." }
-      ],
-      cited: 1
-    };
-    ai = pageAiOutput[8];
-  }
 
   if (ai && ((ai.steps && ai.steps.length > 0) || ai.question)) {
     notes.innerHTML = '';
@@ -2416,8 +3041,27 @@ function render(opt) {
       notes.appendChild(mkBtn);
     }
   } else if (p && p.l) {
+    var titleColor = p.c || 'var(--tx)';
     notes.innerHTML = p.l.map(function(s, i) {
-      return '<div class="ln"' + (i ? '' : ' style="font-size:calc(var(--g)*2.3)"') + '>' + escapeHtml(s) + '</div>';
+      if (s === '' || s.trim() === '') {
+        return '<div class="sp"></div>';
+      }
+      if (s === '{FIG}' && p.fig) {
+        return '<div class="nb-fig-wrap" style="pointer-events:none;margin:calc(var(--g)*0.2) 0 calc(var(--g)*0.3);width:100%;max-width:520px;">' +
+                 '<div class="nb-fig-card" style="background:rgba(255,255,255,0.92);border:1.5px solid color-mix(in srgb,' + titleColor + ' 35%, transparent);border-radius:14px;padding:6px 12px 8px;box-shadow:0 3px 12px rgba(0,0,0,0.03);">' +
+                   p.fig.svg +
+                   (p.fig.cap ? '<div class="nb-fig-caption" style="font-family:var(--ai-font);font-size:calc(var(--g)*0.72);color:color-mix(in srgb,' + titleColor + ' 85%, #000);margin-top:3px;font-style:italic;">' + escapeHtml(p.fig.cap) + '</div>' : '') +
+                 '</div>' +
+               '</div>';
+      }
+      if (i === 0) {
+        return '<div class="ln nb-title" data-idx="0" title="Double-click to edit title" style="color:' + titleColor + ';font-size:calc(var(--g)*2.05);font-weight:700;line-height:1.25;margin-bottom:calc(var(--g)*0.35);padding-bottom:calc(var(--g)*0.15);border-bottom:1.5px dashed color-mix(in srgb,' + titleColor + ' 40%,transparent);letter-spacing:0.01em;">' + escapeHtml(s) + '</div>';
+      }
+      var isSub = s.startsWith('   ') || s.startsWith('    ');
+      var isHeader = s.trim().startsWith('✦') || s.trim().startsWith('Step') || s.trim().startsWith('Golden');
+      var cls = 'ln nb-line' + (isHeader ? ' nb-section' : '');
+      var padStyle = isSub ? 'padding-left:calc(var(--g)*0.95);' : '';
+      return '<div class="' + cls + '" data-idx="' + i + '" title="Double-click to edit" style="' + padStyle + '">' + escapeHtml(s) + '</div>';
     }).join('');
   } else {
     notes.innerHTML = '';
@@ -2425,14 +3069,16 @@ function render(opt) {
 
   updateClearSolBtn();
   $('#chip').classList.remove('on');
-  redraw();
+  size();
   list();
 }
 
 function go(n) {
   stopVoiceAndAnimation();
   cur = n;
+  if (paper) paper.scrollTop = 0;
   render();
+  size();
   app.classList.remove('open');
 }
 window.go = go;
@@ -3065,6 +3711,78 @@ notes.addEventListener('click', function(e) {
   }
 });
 
+// --- Inline Notes Editing System ---
+function startEditingLine(ln) {
+  if (ln.isContentEditable || ln.classList.contains('ai') || ln.id === 'ai-question') return;
+  var idx = +ln.dataset.idx;
+  if (isNaN(idx)) return;
+
+  ln.contentEditable = 'true';
+  ln.style.pointerEvents = 'auto';
+  ln.focus();
+
+  try {
+    var range = document.createRange();
+    range.selectNodeContents(ln);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  } catch (err) {}
+
+  ln.style.outline = '1.5px dashed var(--ac)';
+  ln.style.borderRadius = '6px';
+  ln.style.padding = '2px 6px';
+  ln.style.background = 'color-mix(in srgb, var(--ac) 8%, transparent)';
+
+  function finishEditing() {
+    ln.contentEditable = 'false';
+    ln.style.pointerEvents = 'none';
+    ln.style.outline = 'none';
+    ln.style.borderRadius = '';
+    ln.style.padding = '';
+    ln.style.background = 'transparent';
+
+    var p = pages[cur - 1];
+    if (p && p.l && idx >= 0 && idx < p.l.length) {
+      var newText = ln.innerText.replace(/[\r\n]+$/, '');
+      p.l[idx] = newText;
+      if (idx === 0) {
+        var cleanTitle = newText.replace(/^[✦•\s]+/, '').trim() || ('Page ' + cur);
+        p.t = cleanTitle;
+        list();
+        $('#pg').textContent = 'Page ' + cur + ' · ' + p.t;
+      }
+      savePersistedPages();
+    }
+  }
+
+  ln.addEventListener('blur', finishEditing, { once: true });
+  ln.addEventListener('keydown', function(ev) {
+    if (ev.key === 'Enter' && !ev.shiftKey) {
+      ev.preventDefault();
+      ln.blur();
+    } else if (ev.key === 'Escape') {
+      ev.preventDefault();
+      var p = pages[cur - 1];
+      if (p && p.l && p.l[idx] !== undefined) ln.innerText = p.l[idx];
+      ln.blur();
+    }
+  });
+}
+
+paper.addEventListener('dblclick', function(e) {
+  if (busy) return;
+  var lines = notes.querySelectorAll('.ln');
+  for (var i = 0; i < lines.length; i++) {
+    var rect = lines[i].getBoundingClientRect();
+    if (e.clientX >= rect.left && e.clientX <= rect.right &&
+        e.clientY >= rect.top && e.clientY <= rect.bottom) {
+      startEditingLine(lines[i]);
+      return;
+    }
+  }
+});
+
 function wait(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
 
 // --- Stage Tracking & Status Pill Timer (Optimization G) ---
@@ -3219,6 +3937,36 @@ $('#cp-solve').onclick = function() {
 };
 
 // --- Part B: Circle Gesture & Recognition ---
+function getNoteTextInBox(box) {
+  try {
+    var rPaper = paper.getBoundingClientRect();
+    var lines = notes.querySelectorAll('.ln');
+    for (var i = 0; i < lines.length; i++) {
+      var el = lines[i];
+      var r = el.getBoundingClientRect();
+      var elBox = {
+        x: r.left - rPaper.left,
+        y: r.top - rPaper.top + paper.scrollTop,
+        w: r.width,
+        h: r.height
+      };
+      var intersects = !(elBox.x > box.x + box.w ||
+                         elBox.x + elBox.w < box.x ||
+                         elBox.y > box.y + box.h ||
+                         elBox.y + elBox.h < box.y);
+      if (intersects) {
+        var raw = (el.innerText || el.textContent || '').trim();
+        var mathMatch = raw.match(/(?:∫|d\/dx)[^)]+\)?(?:\s*dx)?/);
+        if (mathMatch) return mathMatch[0];
+        if (raw && !raw.startsWith('✦') && !raw.startsWith('Step') && !raw.startsWith('Welcome') && !raw.startsWith('Follow') && !raw.startsWith('1.') && !raw.startsWith('2.') && !raw.startsWith('3.') && !raw.startsWith('✏')) {
+          return raw;
+        }
+      }
+    }
+  } catch (e) {}
+  return '';
+}
+
 function handleCircleGesture(pts) {
   // Closed loop gesture check
   var totalLen = 0;
@@ -3248,12 +3996,11 @@ function handleCircleGesture(pts) {
 
   // Bounding box with 12px padding
   var pad = 12;
-  var rPaper = paper.getBoundingClientRect();
   var box = {
     x: Math.max(0, minX - pad),
     y: Math.max(0, minY - pad),
-    w: Math.min(rPaper.width, w + pad * 2),
-    h: Math.min(rPaper.height, h + pad * 2)
+    w: w + pad * 2,
+    h: h + pad * 2
   };
   currentCircleBox = box;
   recordPerfMark('circle_finished');
@@ -3276,6 +4023,11 @@ function handleCircleGesture(pts) {
   });
 
   if (insideStrokes.length === 0) {
+    var circledText = getNoteTextInBox(box);
+    if (circledText) {
+      showConfirmPanel(circledText, box);
+      return;
+    }
     ring.classList.remove('on');
     currentCircleBox = null;
     toast('Nothing written inside that circle');
@@ -3835,16 +4587,9 @@ $('#solve').onclick = function() {
     $('#cp-solve').click();
     return;
   }
-  if (cur === 8 && !currentCircleBox) {
-    var qq = $('#qq');
-    if (qq) {
-      runSolvePipeline('Q3. Differentiate y = sin(3x²)', null);
-      return;
-    }
-  }
   setTool('circle');
-  toast('Circle a question');
-  say('Circle a question on the page');
+  toast('Circle a question on the page');
+  say('Circle a question on the page to solve');
 };
 
 // Hint Button Click in Header
@@ -3852,10 +4597,6 @@ $('#hint-btn').onclick = function() {
   if (busy) return;
   if (confirmPanel.style.display === 'flex') {
     $('#cp-hint').click();
-    return;
-  }
-  if (cur === 8) {
-    runHintLadder('Q3. Differentiate y = sin(3x²)', null);
     return;
   }
   setTool('circle');
@@ -3866,21 +4607,9 @@ $('#hint-btn').onclick = function() {
 // Scripted Demo Fallback (callable via console: window.runScriptedDemo())
 window.runScriptedDemo = async function() {
   if (busy) return;
-  go(8);
+  go(6);
   await wait(300);
-  var q = $('#qq');
-  if (!q) return;
-  var a = paper.getBoundingClientRect(), b = q.getBoundingClientRect();
-  var box = {
-    x: b.left - a.left - 14,
-    y: b.top - a.top + 2,
-    w: b.width + 28,
-    h: b.height - 4
-  };
-  currentCircleBox = box;
-  ring.style.cssText = 'left:' + box.x + 'px;top:' + box.y + 'px;width:' + box.w + 'px;height:' + box.h + 'px';
-  ring.classList.add('on');
-  runSolvePipeline('Differentiate y = sin(3x^2)', box);
+  runSolvePipeline('∫ sin(x) dx', null);
 };
 
 if (innerWidth <= 820) app.classList.remove('open');

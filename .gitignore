@@ -50,3 +50,4 @@ browser/
 .cache/
 backend/.cache/
 .vercel/
+tools/out*/
