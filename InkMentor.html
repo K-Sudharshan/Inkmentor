@@ -2672,12 +2672,15 @@ var VoiceArbiter = (function() {
     sharedAudio.onended = function() {
       arbiterState = 'ended';
       currentProvider = 'none';
+      try {
+        sharedAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+      } catch (e) {}
       var chip = $('#chip');
       if (chip) chip.classList.remove('on');
     };
     sharedAudio.onerror = function() {
-      // Ignore empty src, unassigned src, or page URL assignments
-      if (!sharedAudio.src || sharedAudio.src === '' || sharedAudio.src === window.location.href) {
+      // Ignore empty src, unassigned src, page URL assignments, or silent WAV resets
+      if (!sharedAudio.src || sharedAudio.src === '' || sharedAudio.src === window.location.href || sharedAudio.src.indexOf('data:audio/wav') !== -1) {
         return;
       }
       arbiterState = 'failed';
@@ -2711,7 +2714,7 @@ var VoiceArbiter = (function() {
     try {
       sharedAudio.pause();
       sharedAudio.currentTime = 0;
-      // Do NOT set sharedAudio.src = '' because it dispatches MediaError code 4
+      sharedAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
     } catch (e) {}
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       try { window.speechSynthesis.cancel(); } catch (e) {}
@@ -2950,11 +2953,11 @@ var VoiceArbiter = (function() {
 
   function unlock() {
     try {
-      if (!sharedAudio.src || sharedAudio.src === '' || sharedAudio.src === window.location.href) {
+      if (arbiterState !== 'playing') {
         sharedAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+        var p = sharedAudio.play();
+        if (p && p.catch) p.catch(function() {});
       }
-      var p = sharedAudio.play();
-      if (p && p.catch) p.catch(function() {});
     } catch (e) {}
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       try {
@@ -3814,6 +3817,9 @@ async function runSolvePipeline(questionText, box) {
       setBusy(false);
       solveInProgressSeqId = null;
       solveInProgressPage = null;
+      if (typeof VoiceArbiter !== 'undefined' && VoiceArbiter.stop) {
+        VoiceArbiter.stop();
+      }
     }
   }
 }
