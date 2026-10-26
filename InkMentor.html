@@ -2539,24 +2539,26 @@ var ttsPrefetchMap = {};
 var audioUnlocked = false;
 
 function unlockAudio() {
-  if (audioUnlocked) return;
   audioUnlocked = true;
   try {
     var silent = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA');
-    silent.play().catch(function() {});
+    var p = silent.play();
+    if (p && p.catch) p.catch(function() {});
   } catch (e) {}
   if (typeof VoiceArbiter !== 'undefined' && VoiceArbiter.unlock) {
     VoiceArbiter.unlock();
   }
 }
-window.addEventListener('pointerdown', unlockAudio, { once: true });
-window.addEventListener('keydown', unlockAudio, { once: true });
+window.addEventListener('pointerdown', unlockAudio, { passive: true });
+window.addEventListener('keydown', unlockAudio, { passive: true });
 
 function showTapToEnableVoiceNotice() {
   toast('Tap to enable voice');
   var tapHandler = function() {
     unlockAudio();
-    window.removeEventListener('pointerdown', tapHandler);
+    if (typeof VoiceArbiter !== 'undefined' && VoiceArbiter.unlock) {
+      VoiceArbiter.unlock();
+    }
   };
   window.addEventListener('pointerdown', tapHandler, { once: true });
 }
@@ -2663,6 +2665,7 @@ var VoiceArbiter = (function() {
   var lastSolveSeq = -1;
   var safetyTimer = null;
   var budgetTimer = null;
+  var hardWatchdogTimer = null;
   var invariantInterval = null;
 
   function init() {
@@ -2673,6 +2676,10 @@ var VoiceArbiter = (function() {
       if (chip) chip.classList.remove('on');
     };
     sharedAudio.onerror = function() {
+      // Ignore empty src, unassigned src, or page URL assignments
+      if (!sharedAudio.src || sharedAudio.src === '' || sharedAudio.src === window.location.href) {
+        return;
+      }
       arbiterState = 'failed';
       currentProvider = 'none';
       var chip = $('#chip');
@@ -2700,10 +2707,11 @@ var VoiceArbiter = (function() {
     currentProvider = 'none';
     if (safetyTimer) { clearTimeout(safetyTimer); safetyTimer = null; }
     if (budgetTimer) { clearTimeout(budgetTimer); budgetTimer = null; }
+    if (hardWatchdogTimer) { clearTimeout(hardWatchdogTimer); hardWatchdogTimer = null; }
     try {
       sharedAudio.pause();
       sharedAudio.currentTime = 0;
-      sharedAudio.src = '';
+      // Do NOT set sharedAudio.src = '' because it dispatches MediaError code 4
     } catch (e) {}
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       try { window.speechSynthesis.cancel(); } catch (e) {}
@@ -2730,7 +2738,6 @@ var VoiceArbiter = (function() {
     try {
       sharedAudio.pause();
       sharedAudio.currentTime = 0;
-      sharedAudio.src = '';
     } catch (e) {}
 
     arbiterState = 'playing';
@@ -2761,7 +2768,7 @@ var VoiceArbiter = (function() {
       if (chosenVoice) u.voice = chosenVoice;
       u.onend = function() { window._activeUtterance = null; settle(true); };
       u.onerror = function() { window._activeUtterance = null; settle(false); };
-      safetyTimer = setTimeout(function() { settle(true); }, (estimatedDur || 2000) + 2500);
+      safetyTimer = setTimeout(function() { settle(true); }, (estimatedDur || 2000) + 1200);
       recordPerfMark('first_audio_started');
       if (window.speechSynthesis.paused) {
         window.speechSynthesis.resume();
@@ -2809,8 +2816,30 @@ var VoiceArbiter = (function() {
     }
 
     return new Promise(function(resolve) {
+      var promiseSettled = false;
+      function settlePromise(res) {
+        if (promiseSettled) return;
+        promiseSettled = true;
+        if (hardWatchdogTimer) { clearTimeout(hardWatchdogTimer); hardWatchdogTimer = null; }
+        if (safetyTimer) { clearTimeout(safetyTimer); safetyTimer = null; }
+        if (budgetTimer) { clearTimeout(budgetTimer); budgetTimer = null; }
+        resolve(res);
+      }
+
+      // Hard safety watchdog: speak MUST ALWAYS resolve within bounded time
+      var maxWatchdogMs = Math.max(estimatedDur || 2000, 2000) + 4000;
+      hardWatchdogTimer = setTimeout(function() {
+        if (myToken === currentToken && !promiseSettled) {
+          console.warn('[Voice Arbiter] Hard watchdog fired (' + maxWatchdogMs + 'ms), forcing resolve.');
+          if (chip) chip.classList.remove('on');
+          arbiterState = 'ended';
+          currentProvider = 'none';
+          settlePromise({ provider: 'none', durationMs: 0, endedNaturally: false });
+        }
+      }, maxWatchdogMs);
+
       if (TTS_MODE !== 'cloud' || lastDowngradedProvider === 'browser') {
-        playBrowserUtterance(clean, estimatedDur, myToken, resolve);
+        playBrowserUtterance(clean, estimatedDur, myToken, settlePromise);
         return;
       }
 
@@ -2819,10 +2848,10 @@ var VoiceArbiter = (function() {
       var cloudStarted = false;
 
       budgetTimer = setTimeout(function() {
-        if (!cloudStarted && myToken === currentToken && arbiterState === 'loading') {
+        if (!cloudStarted && myToken === currentToken && (arbiterState === 'loading' || arbiterState === 'idle')) {
           console.warn('[Voice Arbiter] Audio budget expired (' + budgetMs + 'ms), falling back to browser voice');
           lastDowngradedProvider = 'browser';
-          playBrowserUtterance(clean, estimatedDur, myToken, resolve);
+          playBrowserUtterance(clean, estimatedDur, myToken, settlePromise);
         }
       }, budgetMs);
 
@@ -2845,7 +2874,7 @@ var VoiceArbiter = (function() {
         if (!audioItem || !audioItem.url) {
           throw new Error('No audio payload');
         }
-        if (arbiterState !== 'loading') {
+        if (arbiterState !== 'loading' && arbiterState !== 'idle') {
           return;
         }
 
@@ -2881,7 +2910,7 @@ var VoiceArbiter = (function() {
             if (chip) chip.classList.remove('on');
           }
           var durMs = (audioItem.duration || (estimatedDur / 1000)) * 1000;
-          resolve({ provider: prov, durationMs: durMs, endedNaturally: natural !== false });
+          settlePromise({ provider: prov, durationMs: durMs, endedNaturally: natural !== false });
         }
 
         sharedAudio.onended = function() { settle(true); };
@@ -2889,12 +2918,12 @@ var VoiceArbiter = (function() {
           if (!settled && myToken === currentToken) {
             console.warn('[Voice Arbiter] sharedAudio playback error; falling back to browser voice');
             lastDowngradedProvider = 'browser';
-            playBrowserUtterance(clean, estimatedDur, myToken, resolve);
+            playBrowserUtterance(clean, estimatedDur, myToken, settlePromise);
           }
         };
 
         var durSec = (audioItem.duration || (estimatedDur / 1000)) / rate;
-        safetyTimer = setTimeout(function() { settle(true); }, Math.round(durSec * 1000) + 2000);
+        safetyTimer = setTimeout(function() { settle(true); }, Math.round(durSec * 1000) + 1500);
 
         recordPerfMark('first_audio_started');
         sharedAudio.play().catch(function(playErr) {
@@ -2904,16 +2933,16 @@ var VoiceArbiter = (function() {
           }
           if (myToken === currentToken) {
             lastDowngradedProvider = 'browser';
-            playBrowserUtterance(clean, estimatedDur, myToken, resolve);
+            playBrowserUtterance(clean, estimatedDur, myToken, settlePromise);
           }
         });
       }).catch(function(err) {
         if (myToken !== currentToken) return;
-        if (arbiterState === 'loading') {
+        if (arbiterState === 'loading' || arbiterState === 'idle') {
           if (budgetTimer) { clearTimeout(budgetTimer); budgetTimer = null; }
           console.warn('[Voice Arbiter] Cloud fetch failed (' + err.message + '); falling back to browser voice');
           lastDowngradedProvider = 'browser';
-          playBrowserUtterance(clean, estimatedDur, myToken, resolve);
+          playBrowserUtterance(clean, estimatedDur, myToken, settlePromise);
         }
       });
     });
@@ -2921,7 +2950,7 @@ var VoiceArbiter = (function() {
 
   function unlock() {
     try {
-      if (!sharedAudio.src || sharedAudio.src === '') {
+      if (!sharedAudio.src || sharedAudio.src === '' || sharedAudio.src === window.location.href) {
         sharedAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
       }
       var p = sharedAudio.play();
@@ -3733,6 +3762,9 @@ async function runSolvePipeline(questionText, box) {
       var drawPromise = lineObj ? animateLineWriting(lineObj, stepDuration) : Promise.resolve();
 
       await Promise.all([speechPromise, drawPromise]);
+      if (lineObj && lineObj.textEl) {
+        lineObj.textEl.style.clipPath = 'none';
+      }
 
 
       if (currentSolveSeqId !== activeSolveSeqId) {
