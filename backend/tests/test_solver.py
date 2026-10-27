@@ -514,3 +514,163 @@ def test_16_validate_llm_steps_direct_identical_consecutive():
     assert ok is None
 
 
+def test_17_definite_integral_verification():
+    """Definite integral verification with bounds."""
+    # Correct
+    v1, err1, truth1 = verify("definite_integrate", "x, 0, 3", "x**2", "9")
+    assert v1 is True
+    assert err1 is None
+    assert truth1 == "9"
+
+    # With separate bounds
+    v2, err2, _ = verify("definite_integrate", "x", "x**2", "9", bounds="0, 3")
+    assert v2 is True
+
+    # Wrong answer fails
+    v3, err3, _ = verify("definite_integrate", "x, 0, 3", "x**2", "8")
+    assert v3 is False
+    assert "mismatch" in str(err3).lower()
+
+
+def test_18_double_integral_verification():
+    """Double integral verification for both definite and indefinite."""
+    # Definite: int_0^1 int_0^2 x*y dy dx = 1
+    v1, err1, _ = verify("double_integrate", "(x, 0, 1), (y, 0, 2)", "x*y", "1")
+    assert v1 is True
+    assert err1 is None
+
+    # Definite wrong
+    v2, err2, _ = verify("double_integrate", "(x, 0, 1), (y, 0, 2)", "x*y", "2")
+    assert v2 is False
+    assert "mismatch" in str(err2).lower()
+
+    # Indefinite: iint x*y dx dy = x^2 * y^2 / 4
+    v3, err3, _ = verify("double_integrate", "x, y", "x*y", "x**2 * y**2 / 4")
+    assert v3 is True
+    assert err3 is None
+
+
+def test_19_triple_integral_verification():
+    """Triple integral verification for both definite and indefinite."""
+    # Definite: int_0^1 int_0^2 int_0^3 x*y*z dz dy dx = 9/2
+    v1, err1, truth1 = verify("triple_integrate", "(x, 0, 1), (y, 0, 2), (z, 0, 3)", "x*y*z", "9/2")
+    assert v1 is True
+    assert err1 is None
+    assert truth1 == "9/2"
+
+    # Definite wrong
+    v2, err2, _ = verify("triple_integrate", "(x, 0, 1), (y, 0, 2), (z, 0, 3)", "x*y*z", "5")
+    assert v2 is False
+
+    # Indefinite: iiint x*y*z dx dy dz = x^2 * y^2 * z^2 / 8
+    v3, err3, _ = verify("triple_integrate", "x, y, z", "x*y*z", "x**2 * y**2 * z**2 / 8")
+    assert v3 is True
+    assert err3 is None
+
+
+def test_20_jacobian_verification():
+    """Jacobian determinant and matrix verification."""
+    # Determinant of u = x^2 + y, v = x*y
+    v1, err1, truth1 = verify("jacobian", "x, y", "x**2 + y, x*y", "2*x**2 - y")
+    assert v1 is True
+    assert err1 is None
+    assert truth1 == "2*x**2 - y"
+
+    # Wrong determinant fails
+    v2, err2, _ = verify("jacobian", "x, y", "x**2 + y, x*y", "2*x")
+    assert v2 is False
+    assert "mismatch" in str(err2).lower()
+
+    # Polar coordinates Jacobian: x = r*cos(theta), y = r*sin(theta) -> det = r
+    v3, err3, truth3 = verify("jacobian", "r, theta", "r*cos(theta), r*sin(theta)", "r")
+    assert v3 is True
+    assert truth3 == "r"
+
+    # Matrix output format
+    v4, err4, _ = verify("jacobian", "x, y", "x**2 + y, x*y", "Matrix(((2*x, 1), (y, x)))")
+    assert v4 is True
+
+
+def test_21_solve_problem_double_integral_end_to_end():
+    """Full solver pipeline for double integral question."""
+    mock_payload = {
+        "task_type": "double_integrate",
+        "variable": "(x, 0, 1), (y, 0, 2)",
+        "expression_sympy": "x*y",
+        "steps": [
+            {
+                "latex": "\\int_0^1 \\int_0^2 xy \\, dy \\, dx",
+                "write": "int(0,1) int(0,2) xy dy dx",
+                "narration": "Alright, let's evaluate our iterated double integral starting with the inner dy.",
+            },
+            {
+                "latex": "\\int_0^1 x [y^2/2]_0^2 dx = \\int_0^1 2x \\, dx",
+                "write": "int(0,1) 2x dx",
+                "narration": "Integrating y gives two x, which simplifies our outer integral beautifully.",
+            },
+            {
+                "latex": "[x^2]_0^1 = 1",
+                "write": "(x^2) = 1",
+                "narration": "And integrating two x leaves us with our final neat answer of one!",
+            },
+        ],
+        "final_answer_latex": "1",
+        "final_answer_sympy": "1",
+        "cites_pages": [],
+    }
+
+    mock_llm = MagicMock(return_value=json.dumps(mock_payload))
+    req = SolveRequest(question="Evaluate the double integral of x*y for x from 0 to 1 and y from 0 to 2")
+    resp = solve_problem(req, llm_func=mock_llm)
+
+    assert resp.verified is True
+    assert resp.attempts == 1
+    assert resp.final_answer_sympy == "1"
+    assert len(resp.steps) == 3
+    for s in resp.steps:
+        assert len(s.write) <= 40
+        assert s.write.isascii()
+
+
+def test_22_solve_problem_jacobian_end_to_end():
+    """Full solver pipeline for Jacobian question."""
+    mock_payload = {
+        "task_type": "jacobian",
+        "variable": "x, y",
+        "expression_sympy": "x**2 + y, x*y",
+        "steps": [
+            {
+                "latex": "J = \\begin{pmatrix} 2x & 1 \\\\ y & x \\end{pmatrix}",
+                "write": "J = Matrix(((2x, 1), (y, x)))",
+                "narration": "Let's set up the Jacobian matrix by taking the partial derivatives of our functions.",
+            },
+            {
+                "latex": "\\det(J) = (2x)(x) - (1)(y)",
+                "write": "det(J) = (2x)(x) - (1)(y)",
+                "narration": "Multiplying diagonals gives two x squared minus y for the determinant.",
+            },
+            {
+                "latex": "\\det(J) = 2x^2 - y",
+                "write": "det(J) = 2x^2 - y",
+                "narration": "And that is our finished Jacobian determinant, wrapping up the solution!",
+            },
+        ],
+        "final_answer_latex": "2x^2 - y",
+        "final_answer_sympy": "2*x**2 - y",
+        "cites_pages": [],
+    }
+
+    mock_llm = MagicMock(return_value=json.dumps(mock_payload))
+    req = SolveRequest(question="Find the Jacobian of u = x^2 + y and v = x*y with respect to x and y")
+    resp = solve_problem(req, llm_func=mock_llm)
+
+    assert resp.verified is True
+    assert resp.attempts == 1
+    assert resp.final_answer_sympy == "2*x**2 - y"
+    assert len(resp.steps) == 3
+    for s in resp.steps:
+        assert len(s.write) <= 40
+        assert s.write.isascii()
+
+
+

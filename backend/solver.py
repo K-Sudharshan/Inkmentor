@@ -36,7 +36,7 @@ def _invoke_llm(func: Callable[..., Any], system: str, user: str) -> Tuple[str, 
     return str(res), meta
 
 
-WRITE_ALLOWED_PATTERN = re.compile(r"^[A-Za-z0-9\s+\-*\/^=().,]+$")
+WRITE_ALLOWED_PATTERN = re.compile(r"^[A-Za-z0-9\s+\-*\/^=().,_\[\]:|<~!]+$")
 NARRATION_FORBIDDEN_PATTERN = re.compile(r"[\^_\$\\\{\}]")
 NARRATION_STEP_PREFIX_PATTERN = re.compile(r"^\s*step\s*\d+", re.IGNORECASE)
 
@@ -59,10 +59,15 @@ def validate_llm_steps(steps: List[Step]) -> Optional[str]:
     for idx, s in enumerate(steps, start=1):
         if not s.write or not s.write.strip():
             return f"Step {idx} 'write' field is empty"
+        s.write = re.sub(r"\s+", " ", s.write.strip())
         if len(s.write) > 40:
-            return f"Step {idx} 'write' exceeds 40 characters limit ({len(s.write)} chars)"
+            compacted = re.sub(r"\s*([+\-*\/=,:\(\)\[\]])\s*", r"\1", s.write)
+            if len(compacted) <= 40:
+                s.write = compacted
+            else:
+                return f"Step {idx} 'write' exceeds 40 characters limit ({len(s.write)} chars)"
         if not WRITE_ALLOWED_PATTERN.match(s.write):
-            return f"Step {idx} 'write' contains forbidden characters (only letters, numbers, spaces, and + - * / ^ = ( ) . , allowed)"
+            return f"Step {idx} 'write' contains forbidden characters"
         if "\\" in s.write:
             return f"Step {idx} 'write' contains forbidden backslash"
 
@@ -78,7 +83,13 @@ def validate_llm_steps(steps: List[Step]) -> Optional[str]:
 
         first_word = s.narration.strip().split()[0].lower().strip(".,;:!?\"'()")
         if first_word in seen_first_words:
-            return f"Step {idx} 'narration' begins with repeated opening word '{first_word}'. Every step's narration must start with a different word."
+            # Vary opening word gracefully to prevent throwing away verified solutions
+            for pfx in ["Next, ", "Then, ", "Now, ", "Also, "]:
+                cand = pfx.strip().lower().strip(".,;:!?\"'()")
+                if cand not in seen_first_words:
+                    s.narration = pfx + s.narration[0].lower() + s.narration[1:]
+                    first_word = cand
+                    break
         seen_first_words.add(first_word)
 
     for idx in range(1, len(steps)):
@@ -144,12 +155,14 @@ def solve_problem(
             task_type=output_1.task_type,
             variable=output_1.variable,
             expression_sympy=output_1.expression_sympy,
+            bounds=getattr(output_1, "bounds", None),
         )
         is_verified_1, verify_err_1, ground_truth_1, t_ver_1 = verify_with_timing(
             task_type=output_1.task_type,
             variable=output_1.variable,
             expression_sympy=output_1.expression_sympy,
             final_answer_sympy=output_1.final_answer_sympy,
+            bounds=getattr(output_1, "bounds", None),
         )
         sympy_total_ms += t_ver_1["total_ms"]
         sympy_startup_ms += t_ver_1["startup_import_ms"]
@@ -245,6 +258,7 @@ def solve_problem(
         task_type=output_2.task_type,
         variable=output_2.variable,
         expression_sympy=output_2.expression_sympy,
+        bounds=getattr(output_2, "bounds", None),
     )
 
     is_verified_2, verify_err_2, _, t_ver_2 = verify_with_timing(
@@ -252,6 +266,7 @@ def solve_problem(
         variable=output_2.variable,
         expression_sympy=output_2.expression_sympy,
         final_answer_sympy=output_2.final_answer_sympy,
+        bounds=getattr(output_2, "bounds", None),
     )
     sympy_total_ms += t_ver_2["total_ms"]
     sympy_startup_ms += t_ver_2["startup_import_ms"]

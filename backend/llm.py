@@ -11,9 +11,9 @@ def _get_required_env(var_name: str) -> str:
         return (os.environ.get("LLM_PROVIDER") or "gemini").strip()
     if var_name == "LLM_MODEL":
         val = (os.environ.get("LLM_MODEL") or "gemini-3.5-flash-lite").strip()
-        # Automatically map deprecated models to active gemini-3.5-flash-lite
+        # Automatically map deprecated models to active gemini-3-flash-preview
         if val in ("gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash", "gemini-2.5-flash-lite") or "2.5-flash" in val or "2.0-flash" in val:
-            return "gemini-3.5-flash-lite"
+            return "gemini-3-flash-preview"
         return val
     if var_name == "LLM_API_KEY":
         val = os.environ.get("LLM_API_KEY") or os.environ.get("GEMINI_API_KEY")
@@ -44,7 +44,7 @@ _cached_client: Optional[genai.Client] = None
 _cached_api_key: Optional[str] = None
 
 USE_OPTIMIZED_LLM_CONFIG = os.getenv("USE_OPTIMIZED_LLM_CONFIG", "true").lower() in ("true", "1", "yes")
-LLM_MAX_OUTPUT_TOKENS = int(os.getenv("LLM_MAX_OUTPUT_TOKENS", "1024"))
+LLM_MAX_OUTPUT_TOKENS = int(os.getenv("LLM_MAX_OUTPUT_TOKENS", "2048"))
 
 
 def get_genai_client(api_key: str) -> genai.Client:
@@ -97,7 +97,27 @@ def call_llm_with_meta(system: str, user: str) -> Tuple[str, Dict[str, Any]]:
             )
         except Exception as api_err:
             err_str = str(api_err).lower()
-            if model_name != "gemini-3.5-flash-lite" and ("404" in err_str or "not found" in err_str or "no longer available" in err_str):
+            if "thinking" in err_str or "budget" in err_str or "invalid_argument" in err_str or "400" in err_str:
+                # Fallback without thinking_config if model rejects thinking settings
+                fallback_config = types.GenerateContentConfig(
+                    system_instruction=system,
+                    temperature=0.0,
+                    max_output_tokens=LLM_MAX_OUTPUT_TOKENS,
+                )
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=user,
+                    config=fallback_config,
+                )
+            elif model_name != "gemini-3.5-flash-lite" and (
+                "404" in err_str
+                or "not found" in err_str
+                or "no longer available" in err_str
+                or "429" in err_str
+                or "quota" in err_str
+                or "resource_exhausted" in err_str
+                or "503" in err_str
+            ):
                 response = client.models.generate_content(
                     model="gemini-3.5-flash-lite",
                     contents=user,
@@ -177,7 +197,25 @@ def call_vision_llm_with_meta(
             )
         except Exception as api_err:
             err_str = str(api_err).lower()
-            if model_name != "gemini-3.5-flash-lite" and ("404" in err_str or "not found" in err_str or "no longer available" in err_str):
+            if "thinking" in err_str or "budget" in err_str or "invalid_argument" in err_str or "400" in err_str:
+                fallback_config = types.GenerateContentConfig(
+                    temperature=0.0,
+                    max_output_tokens=LLM_MAX_OUTPUT_TOKENS,
+                )
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=[prompt, part],
+                    config=fallback_config,
+                )
+            elif model_name != "gemini-3.5-flash-lite" and (
+                "404" in err_str
+                or "not found" in err_str
+                or "no longer available" in err_str
+                or "429" in err_str
+                or "quota" in err_str
+                or "resource_exhausted" in err_str
+                or "503" in err_str
+            ):
                 response = client.models.generate_content(
                     model="gemini-3.5-flash-lite",
                     contents=[prompt, part],

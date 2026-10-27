@@ -1,7 +1,18 @@
 from typing import Any, Dict, List, Literal, Optional
 from pydantic import BaseModel, Field
 
-TaskType = Literal["differentiate", "integrate", "solve", "simplify", "factor", "expand"]
+TaskType = Literal[
+    "differentiate",
+    "integrate",
+    "solve",
+    "simplify",
+    "factor",
+    "expand",
+    "definite_integrate",
+    "double_integrate",
+    "triple_integrate",
+    "jacobian",
+]
 
 
 class ContextPage(BaseModel):
@@ -24,6 +35,7 @@ class ProblemInterpretation(BaseModel):
     task_type: TaskType
     variable: str = "x"
     expression_sympy: str
+    bounds: Optional[str] = None
 
 
 class LLMOutput(BaseModel):
@@ -34,6 +46,7 @@ class LLMOutput(BaseModel):
     final_answer_latex: str
     final_answer_sympy: str
     cites_pages: List[int] = Field(default_factory=list)
+    bounds: Optional[str] = None
 
 
 class SolveResponse(BaseModel):

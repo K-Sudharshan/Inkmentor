@@ -94,7 +94,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-off
 #paper::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,0.32)}
 #cv{position:absolute;top:0;left:0;width:100%;height:100%;display:block;touch-action:none;cursor:crosshair;z-index:1}
 #ov{position:absolute;top:0;left:0;width:100%;height:100%;display:block;touch-action:none;pointer-events:none;z-index:2}
-#notes{position:relative;width:100%;min-height:100%;padding:calc(var(--g)*1.8) var(--g) calc(var(--g)*8);display:flex;flex-direction:column;align-items:flex-start;pointer-events:none;font:400 var(--ai-font-size)/var(--ai-line-height) var(--ai-font);font-family:var(--ai-font);z-index:3}
+#notes{position:relative;width:100%;min-height:100%;padding:calc(var(--g)*1.8) var(--g) calc(var(--g)*8);display:flex;flex-direction:column;align-items:flex-start;pointer-events:none;font:400 var(--ai-font-size)/var(--ai-line-height) var(--ai-font);font-family:var(--ai-font);z-index:3}#ai-question,.q-hdr{display:none !important}
 .ln{max-width:100%;font-family:var(--ai-font);user-select:none;-webkit-user-select:none;transition:background .15s}
 .ln[contenteditable="true"]{user-select:text;-webkit-user-select:text;cursor:text}
 .sp{height:calc(var(--g)*0.45);flex:none}
@@ -283,6 +283,48 @@ body.app-loading #app {
   transform: scale(0.98);
   pointer-events: none;
 }
+/* --- Settings Modal Styles --- */
+#settings-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:88;opacity:0;pointer-events:none;transition:opacity .25s ease}
+#settings-backdrop.show{opacity:1;pointer-events:auto}
+#settings-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.96);width:min(520px,calc(100% - 28px));max-height:86vh;z-index:89;padding:22px 24px;border-radius:24px;display:flex;flex-direction:column;gap:18px;box-shadow:var(--sh),0 16px 48px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s cubic-bezier(.16,1,.3,1),transform .25s cubic-bezier(.16,1,.3,1);overflow:hidden}
+#settings-modal.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.sm-hdr{display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.sm-title-wrap{display:flex;align-items:center;gap:10px}
+.sm-title-wrap h2{margin:0;font-size:18px;font-weight:700;color:var(--tx);letter-spacing:-.01em}
+.sm-close-btn{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:15px;color:var(--tx2);background:var(--line);transition:background .2s,color .2s}
+.sm-close-btn:hover{background:color-mix(in srgb,var(--tx) 15%,transparent);color:var(--tx)}
+.sm-body{display:flex;flex-direction:column;gap:20px;overflow-y:auto;padding-right:4px;margin-right:-4px;max-height:calc(86vh - 90px);scrollbar-width:thin}
+.sm-section{display:flex;flex-direction:column;gap:12px}
+.sm-sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ac)}
+.sm-row{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:6px 0}
+.sm-label-col{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+.sm-label{font-size:13.5px;font-weight:600;color:var(--tx)}
+.sm-desc{font-size:12px;color:var(--tx2);line-height:1.3}
+.sm-seg{display:inline-flex;padding:3px;border-radius:12px;background:var(--line);gap:2px;flex:none}
+.sm-seg-btn{padding:5px 12px;border-radius:9px;font-size:12px;font-weight:600;color:var(--tx2);transition:background .15s,color .15s}
+.sm-seg-btn.on{background:var(--glass);color:var(--tx);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.sm-select{padding:6px 12px;border-radius:12px;border:1px solid var(--line);background:var(--line);color:var(--tx);font:inherit;font-size:12.5px;outline:none;cursor:pointer}
+.sm-select:focus{border-color:var(--ac)}
+.sm-toggle{position:relative;display:inline-block;width:42px;height:24px;flex:none;cursor:pointer}
+.sm-toggle input{opacity:0;width:0;height:0}
+.sm-slider{position:absolute;inset:0;background:var(--line);border-radius:24px;transition:.25s}
+.sm-slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:.25s}
+.sm-toggle input:checked + .sm-slider{background:linear-gradient(90deg,#FFB347,#FF5E7E)}
+.sm-toggle input:checked + .sm-slider:before{transform:translateX(18px)}
+.sm-colors{display:flex;align-items:center;gap:6px}
+.sm-actions-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sm-action-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 12px;border-radius:12px;background:var(--line);color:var(--tx);font-size:12.5px;font-weight:600;transition:background .2s,filter .2s}
+.sm-action-btn:hover{filter:brightness(1.08)}
+.sm-action-btn.danger{grid-column:1/-1;color:#ff5e7e;background:rgba(255,94,126,.1)}
+.sm-action-btn.danger:hover{background:rgba(255,94,126,.18)}
+/* Paper Style Classes */
+#paper.paper-ruled{background-image:linear-gradient(rgba(0,0,0,.18) 1px,transparent 1px)}
+#paper.paper-blank{background-image:none}
+:root[data-theme="dark"] #paper, @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) #paper{background:#111116;color:#f5f5f7}}
+:root[data-theme="dark"] #paper{background:#111116;color:#f5f5f7}
+:root[data-theme="dark"] #paper.paper-grid{background-image:linear-gradient(rgba(255,255,255,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.10) 1px,transparent 1px)}
+:root[data-theme="dark"] #paper.paper-ruled{background-image:linear-gradient(rgba(255,255,255,.09) 1px,transparent 1px)}
+:root[data-theme="dark"] #paper.paper-blank{background-image:none}
 </style>
 </head>
 <body class="app-loading">
@@ -363,7 +405,7 @@ body.app-loading #app {
 <div id="pl"></div>
 <button id="add-page" aria-label="Add new page"><svg class="i"><use href="#pls"/></svg>+ New page</button>
 <div class="mem"><i></i><span><b>Notebook memory</b><small id="mem-count">8 pages indexed</small></span></div>
-<button class="st"><svg class="i"><use href="#set"/></svg>Settings</button>
+<button class="st" id="settings-btn" aria-label="Settings"><svg class="i"><use href="#set"/></svg>Settings</button>
 </aside>
 <div id="scrim"></div>
 <main id="mn">
@@ -409,6 +451,143 @@ body.app-loading #app {
 </div>
 <div id="toast" class="glass" role="status"></div>
 <div id="server-wakeup-toast" class="glass" role="status"><span style="display:inline-block;width:12px;height:12px;border:2px solid rgba(255,162,58,.3);border-top-color:#FFA23A;border-radius:50%;animation:ai-spin 1s linear infinite"></span><span>Waking up the server…</span></div>
+<div id="settings-backdrop" style="display:none;" aria-hidden="true"></div>
+<div id="settings-modal" class="glass" role="dialog" aria-modal="true" aria-labelledby="settings-title" style="display:none;">
+  <div class="sm-hdr">
+    <div class="sm-title-wrap">
+      <svg class="i" style="width:20px;height:20px;color:var(--ac);"><use href="#set"/></svg>
+      <h2 id="settings-title">Settings</h2>
+    </div>
+    <button id="sm-close" class="sm-close-btn" aria-label="Close Settings">✕</button>
+  </div>
+  <div class="sm-body">
+    <!-- SECTION 1: APPEARANCE -->
+    <div class="sm-section">
+      <div class="sm-sec-title">Appearance & Canvas</div>
+      <div class="sm-row">
+        <div class="sm-label-col">
+          <span class="sm-label">Theme Mode</span>
+          <span class="sm-desc">Choose dark, light, or follow system theme</span>
+        </div>
+        <div class="sm-seg" id="setting-theme-seg">
+          <button data-val="auto" class="sm-seg-btn on">Auto</button>
+          <button data-val="light" class="sm-seg-btn">Light</button>
+          <button data-val="dark" class="sm-seg-btn">Dark</button>
+        </div>
+      </div>
+      <div class="sm-row">
+        <div class="sm-label-col">
+          <span class="sm-label">Paper Style</span>
+          <span class="sm-desc">Grid graph paper, lined notebook, or blank canvas</span>
+        </div>
+        <div class="sm-seg" id="setting-paper-seg">
+          <button data-val="grid" class="sm-seg-btn on">Grid</button>
+          <button data-val="ruled" class="sm-seg-btn">Ruled</button>
+          <button data-val="blank" class="sm-seg-btn">Blank</button>
+        </div>
+      </div>
+      <div class="sm-row">
+        <div class="sm-label-col">
+          <span class="sm-label">Grid Spacing</span>
+          <span class="sm-desc">Row line height on paper notes</span>
+        </div>
+        <div class="sm-seg" id="setting-grid-seg">
+          <button data-val="28px" class="sm-seg-btn">28px</button>
+          <button data-val="32px" class="sm-seg-btn on">32px</button>
+          <button data-val="36px" class="sm-seg-btn">36px</button>
+        </div>
+      </div>
+    </div>
+    <!-- SECTION 2: VOICE & AUDIO -->
+    <div class="sm-section">
+      <div class="sm-sec-title">Voice & Narration (Ink)</div>
+      <div class="sm-row">
+        <div class="sm-label-col">
+          <span class="sm-label">Voice Narration</span>
+          <span class="sm-desc">Spoken problem breakdown and step commentary</span>
+        </div>
+        <label class="sm-toggle">
+          <input type="checkbox" id="setting-voice-toggle" checked>
+          <span class="sm-slider"></span>
+        </label>
+      </div>
+      <div class="sm-row">
+        <div class="sm-label-col">
+          <span class="sm-label">Narration Language</span>
+          <span class="sm-desc">Language used by Ink during solving</span>
+        </div>
+        <select id="setting-voice-lang" class="sm-select">
+          <option value="0">English (US)</option>
+          <option value="1">Tamil / Tanglish (ta-IN)</option>
+          <option value="2">Hindi (hi-IN)</option>
+        </select>
+      </div>
+      <div class="sm-row">
+        <div class="sm-label-col">
+          <span class="sm-label">Speech Engine</span>
+          <span class="sm-desc">Neural cloud voice vs native browser speech</span>
+        </div>
+        <div class="sm-seg" id="setting-tts-mode-seg">
+          <button data-val="cloud" class="sm-seg-btn on">Cloud (HD)</button>
+          <button data-val="browser" class="sm-seg-btn">Browser</button>
+        </div>
+      </div>
+      <div class="sm-row">
+        <div class="sm-label-col">
+          <span class="sm-label">Speech Speed</span>
+          <span class="sm-desc">Voice playback pacing</span>
+        </div>
+        <div class="sm-seg" id="setting-speech-rate-seg">
+          <button data-val="0.9" class="sm-seg-btn">0.9x</button>
+          <button data-val="1.05" class="sm-seg-btn on">1.0x</button>
+          <button data-val="1.25" class="sm-seg-btn">1.25x</button>
+        </div>
+      </div>
+    </div>
+    <!-- SECTION 3: SOLVER & WORKFLOW -->
+    <div class="sm-section">
+      <div class="sm-sec-title">AI Solver & Workflow</div>
+      <div class="sm-row">
+        <div class="sm-label-col">
+          <span class="sm-label">Confirm Recognized Question</span>
+          <span class="sm-desc">Show edit dialog before solving circled math</span>
+        </div>
+        <label class="sm-toggle">
+          <input type="checkbox" id="setting-confirm-toggle" checked>
+          <span class="sm-slider"></span>
+        </label>
+      </div>
+      <div class="sm-row">
+        <div class="sm-label-col">
+          <span class="sm-label">Default Ink Color</span>
+          <span class="sm-desc">Starting color for handwriting strokes</span>
+        </div>
+        <div class="sm-colors" id="setting-color-picker">
+          <button class="dot on" data-c="#111118" style="--c:#111118;background:#111118" aria-label="Black"></button>
+          <button class="dot" data-c="#7C5CFF" style="--c:#7C5CFF;background:#7C5CFF" aria-label="Violet"></button>
+          <button class="dot" data-c="#FF5E7E" style="--c:#FF5E7E;background:#FF5E7E" aria-label="Coral"></button>
+        </div>
+      </div>
+    </div>
+    <!-- SECTION 4: ACTIONS & RESET -->
+    <div class="sm-section">
+      <div class="sm-sec-title">Page & Data Actions</div>
+      <div class="sm-actions-grid">
+        <button id="sm-clear-solution-btn" class="sm-action-btn">
+          <svg class="i" style="width:16px;height:16px;"><use href="#era"/></svg>
+          Clear AI Solution
+        </button>
+        <button id="sm-clear-strokes-btn" class="sm-action-btn">
+          <svg class="i" style="width:16px;height:16px;"><use href="#und"/></svg>
+          Clear My Ink Strokes
+        </button>
+        <button id="sm-reset-btn" class="sm-action-btn danger">
+          Reset All Settings to Defaults
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
 // --- Motion Graphics App Loader ---
 (function initAppLoader() {
@@ -2411,7 +2590,42 @@ window.setStrokes = setStrokes;
 
 loadPersistedData();
 
-// --- Geometry Helpers for Distance & Stroke Intersection ---
+// --- Geometry Helpers for Distance, Stroke Intersection & Placement ---
+function getGridSize() {
+  try {
+    var raw = getComputedStyle(document.documentElement).getPropertyValue('--g');
+    var val = parseFloat(raw);
+    if (val && !isNaN(val)) return val;
+  } catch (e) {}
+  return 32;
+}
+
+function getQuestionBottom(b) {
+  if (b && typeof b.y === 'number' && typeof b.h === 'number' && b.h > 0) {
+    return b.y + b.h;
+  }
+  try {
+    var strokes = getStrokes(cur);
+    if (strokes && strokes.length > 0) {
+      var maxY = 0;
+      for (var i = 0; i < strokes.length; i++) {
+        var pts = strokes[i].points || [];
+        for (var j = 0; j < pts.length; j++) {
+          if (pts[j].y > maxY) maxY = pts[j].y;
+        }
+      }
+      if (maxY > 0) return maxY;
+    }
+  } catch (e) {}
+  return 0;
+}
+
+function calculateAiTopPad(b) {
+  var qBottom = getQuestionBottom(b);
+  var g = getGridSize();
+  return qBottom > 0 ? Math.max(g * 1.8, Math.ceil((qBottom + 24) / g) * g) : (g * 1.8);
+}
+
 function distToSegment(px, py, x1, y1, x2, y2) {
   var dx = x2 - x1, dy = y2 - y1;
   var l2 = dx * dx + dy * dy;
@@ -2952,6 +3166,7 @@ if (clearSolBtn) {
       delete pageAiOutput[cur];
       clearedPages[cur] = true;
       savePersistedAiOutput();
+      notes.style.paddingTop = '';
       render();
       toast('AI solution cleared. Click Undo to restore.');
     }
@@ -3006,17 +3221,15 @@ function render(opt) {
 
   if (ai && ((ai.steps && ai.steps.length > 0) || ai.question)) {
     notes.innerHTML = '';
+    var topPad = ai.topPad || calculateAiTopPad(ai.box);
+    notes.style.paddingTop = topPad + 'px';
     if (ai.question) {
       var qDiv = document.createElement('div');
       qDiv.className = 'ln q-hdr';
       qDiv.id = 'ai-question';
-      qDiv.style.cssText = 'font-weight:600;font-size:calc(var(--g)*1.15);color:var(--tx2);margin-bottom:calc(var(--g)*0.3);';
+      qDiv.style.display = 'none';
       qDiv.textContent = ai.question;
       notes.appendChild(qDiv);
-
-      var spDiv = document.createElement('div');
-      spDiv.className = 'sp';
-      notes.appendChild(spDiv);
     }
 
     if (ai.steps && ai.steps.length > 0) {
@@ -3040,7 +3253,9 @@ function render(opt) {
       mkBtn.textContent = '← your Page ' + ai.cited + ', again';
       notes.appendChild(mkBtn);
     }
-  } else if (p && p.l) {
+  } else {
+    notes.style.paddingTop = '';
+    if (p && p.l) {
     var titleColor = p.c || 'var(--tx)';
     notes.innerHTML = p.l.map(function(s, i) {
       if (s === '' || s.trim() === '') {
@@ -3066,6 +3281,7 @@ function render(opt) {
   } else {
     notes.innerHTML = '';
   }
+}
 
   updateClearSolBtn();
   $('#chip').classList.remove('on');
@@ -4123,8 +4339,12 @@ async function sendRecognizeRequest(b64) {
     } else {
       var recognizedQ = (data.question_text || data.latex || '').trim();
       startSpeculativeSolve(recognizedQ);
-      say('Question recognized. Confirm or edit to solve.');
-      showConfirmPanel(recognizedQ, data.note || '');
+      if (window.CONFIRM_BEFORE_SOLVE === false) {
+        runSolveWithQuestion(recognizedQ, currentCircleBox);
+      } else {
+        say('Question recognized. Confirm or edit to solve.');
+        showConfirmPanel(recognizedQ, data.note || '');
+      }
     }
   } catch (err) {
     clearTimeout(timer);
@@ -4212,11 +4432,14 @@ async function runHintLadder(questionText, box) {
   var hData = hintCache[questionText];
   hData.level = (hData.level || 0) + 1;
 
+  var topPad = calculateAiTopPad(box);
+  notes.style.paddingTop = topPad + 'px';
+
   if (hData.level === 1) {
     var cleanNudge = cleanNarrationText(hData.nudge);
     toast('Hint 1/3 (Nudge): ' + cleanNudge);
     say(cleanNudge);
-    var mkHtml = '<div class="ln" style="font-weight:600;font-size:calc(var(--g)*1.15);color:var(--tx2);margin-bottom:calc(var(--g)*0.3);">' + escapeHtml(questionText) + '</div><div class="sp"></div><div class="ln" style="font-size:calc(var(--g)*1.2);color:var(--tx2);font-style:italic;">💡 Nudge: ' + escapeHtml(cleanNudge) + '</div>';
+    var mkHtml = '<div class="ln q-hdr" id="ai-question" style="display:none;">' + escapeHtml(questionText) + '</div><div class="ln" style="font-size:calc(var(--g)*1.2);color:var(--tx2);font-style:italic;">💡 Nudge: ' + escapeHtml(cleanNudge) + '</div>';
     if (hData.cited) {
       mkHtml += '<button class="mk show" id="mk" data-p="' + hData.cited + '">← your Page ' + hData.cited + ', again</button>';
     }
@@ -4233,13 +4456,9 @@ async function runHintLadder(questionText, box) {
     var qH = document.createElement('div');
     qH.className = 'ln q-hdr';
     qH.id = 'ai-question';
-    qH.style.cssText = 'font-weight:600;font-size:calc(var(--g)*1.15);color:var(--tx2);margin-bottom:calc(var(--g)*0.3);';
+    qH.style.display = 'none';
     qH.textContent = questionText || '';
     notes.appendChild(qH);
-
-    var spH = document.createElement('div');
-    spH.className = 'sp';
-    notes.appendChild(spH);
 
     var stepH = document.createElement('div');
     stepH.className = 'ln ai';
@@ -4294,18 +4513,17 @@ async function runSolvePipeline(questionText, box) {
   setBusy(true);
   recordPerfMark('solve_clicked');
 
-  // Clear previous notes and render static problem prompt immediately
+  // Clear previous notes and position AI solution container below question
   notes.innerHTML = '';
+  var topPad = calculateAiTopPad(box);
+  notes.style.paddingTop = topPad + 'px';
+
   var qEl = document.createElement('div');
   qEl.className = 'ln q-hdr';
   qEl.id = 'ai-question';
-  qEl.style.cssText = 'font-weight:600;font-size:calc(var(--g)*1.15);color:var(--tx2);margin-bottom:calc(var(--g)*0.3);';
+  qEl.style.display = 'none';
   qEl.textContent = questionText || '';
   notes.appendChild(qEl);
-
-  var spEl = document.createElement('div');
-  spEl.className = 'sp';
-  notes.appendChild(spEl);
 
   var solvingInd = document.createElement('div');
   solvingInd.id = 'ai-solving-indicator';
@@ -4435,7 +4653,8 @@ async function runSolvePipeline(questionText, box) {
     question: questionText,
     steps: data.steps,
     cited: cited,
-    box: box
+    box: box,
+    topPad: topPad
   };
   savePersistedAiOutput();
 
@@ -4456,16 +4675,13 @@ async function runSolvePipeline(questionText, box) {
     // Ensure prompt header exists and remove any stray steps
     if (!document.getElementById('ai-question')) {
       notes.innerHTML = '';
+      notes.style.paddingTop = topPad + 'px';
       var qElSync = document.createElement('div');
       qElSync.className = 'ln q-hdr';
       qElSync.id = 'ai-question';
-      qElSync.style.cssText = 'font-weight:600;font-size:calc(var(--g)*1.15);color:var(--tx2);margin-bottom:calc(var(--g)*0.3);';
+      qElSync.style.display = 'none';
       qElSync.textContent = questionText || '';
       notes.appendChild(qElSync);
-
-      var spElSync = document.createElement('div');
-      spElSync.className = 'sp';
-      notes.appendChild(spElSync);
       updateClearSolBtn();
     } else {
       var straySteps = notes.querySelectorAll('.ln.ai[id^="step-"], #mk');
@@ -4578,6 +4794,7 @@ async function runSolvePipeline(questionText, box) {
 window.runSolvePipeline = runSolvePipeline;
 window.render = render;
 window.go = go;
+window.pageAiOutput = pageAiOutput;
 
 // Solve Button Click in Header
 $('#solve').onclick = function() {
@@ -4611,6 +4828,284 @@ window.runScriptedDemo = async function() {
   await wait(300);
   runSolvePipeline('∫ sin(x) dx', null);
 };
+
+// --- Settings Manager ---
+function initSettings() {
+  var $$ = function(s, el) { return Array.from((el || document).querySelectorAll(s)); };
+  var settingsBtn = document.getElementById('settings-btn') || $('#settings-btn');
+  var settingsModal = document.getElementById('settings-modal') || $('#settings-modal');
+  var settingsBackdrop = document.getElementById('settings-backdrop') || $('#settings-backdrop');
+  var settingsClose = document.getElementById('sm-close') || $('#sm-close');
+  if (!settingsBtn || !settingsModal) return;
+
+  function openSettings() {
+    settingsBackdrop.style.display = 'block';
+    settingsModal.style.display = 'flex';
+    settingsBackdrop.classList.add('show');
+    settingsModal.classList.add('show');
+  }
+
+  function closeSettings() {
+    settingsBackdrop.classList.remove('show');
+    settingsModal.classList.remove('show');
+    settingsBackdrop.style.display = 'none';
+    settingsModal.style.display = 'none';
+  }
+
+  window.openSettings = openSettings;
+  window.closeSettings = closeSettings;
+
+  settingsBtn.onclick = openSettings;
+  if (settingsClose) settingsClose.onclick = closeSettings;
+  if (settingsBackdrop) settingsBackdrop.onclick = closeSettings;
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && settingsModal.classList.contains('show')) {
+      closeSettings();
+    }
+  });
+
+  // Settings State & Persistence
+  var theme = localStorage.getItem('inkmentor_theme') || 'auto';
+  var paperStyle = localStorage.getItem('inkmentor_paper_style') || 'grid';
+  var gridSize = localStorage.getItem('inkmentor_grid_size') || '32px';
+  var voiceEnabled = localStorage.getItem('inkmentor_voice_enabled') !== 'false';
+  var voiceLang = localStorage.getItem('inkmentor_voice_lang') || '0';
+  var ttsEngine = localStorage.getItem('inkmentor_tts_mode') || 'cloud';
+  var speechSpeed = localStorage.getItem('inkmentor_speech_rate') || '1.05';
+  var confirmBeforeSolve = localStorage.getItem('inkmentor_confirm_solve') !== 'false';
+  var defaultCol = localStorage.getItem('inkmentor_default_color') || '#111118';
+
+  // Apply Theme
+  function applyTheme(t) {
+    theme = t;
+    localStorage.setItem('inkmentor_theme', t);
+    if (t === 'auto') {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', t);
+    }
+    $$('#setting-theme-seg .sm-seg-btn').forEach(function(btn) {
+      btn.classList.toggle('on', btn.dataset.val === t);
+    });
+  }
+
+  // Apply Paper Style
+  function applyPaperStyle(ps) {
+    paperStyle = ps;
+    localStorage.setItem('inkmentor_paper_style', ps);
+    var p = $('#paper');
+    if (p) {
+      p.classList.remove('paper-grid', 'paper-ruled', 'paper-blank');
+      p.classList.add('paper-' + ps);
+    }
+    $$('#setting-paper-seg .sm-seg-btn').forEach(function(btn) {
+      btn.classList.toggle('on', btn.dataset.val === ps);
+    });
+  }
+
+  // Apply Grid Size
+  function applyGridSize(gs) {
+    gridSize = gs;
+    localStorage.setItem('inkmentor_grid_size', gs);
+    document.documentElement.style.setProperty('--g', gs);
+    $$('#setting-grid-seg .sm-seg-btn').forEach(function(btn) {
+      btn.classList.toggle('on', btn.dataset.val === gs);
+    });
+    if (typeof size === 'function') size();
+    if (typeof render === 'function') render();
+  }
+
+  // Apply Voice Audio
+  function applyVoiceAudio(v) {
+    voiceEnabled = v;
+    voice = v;
+    localStorage.setItem('inkmentor_voice_enabled', v ? 'true' : 'false');
+    var voBtn = $('#vo');
+    if (voBtn) voBtn.classList.toggle('on', v);
+    var toggle = $('#setting-voice-toggle');
+    if (toggle) toggle.checked = v;
+    if (!v && typeof stopVoiceAndAnimation === 'function') stopVoiceAndAnimation();
+  }
+
+  // Apply Voice Language
+  function applyVoiceLang(idx) {
+    voiceLangIdx = parseInt(idx, 10);
+    localStorage.setItem('inkmentor_voice_lang', idx);
+    var sel = $('#setting-voice-lang');
+    if (sel) sel.value = idx;
+    var voBtn = $('#vo');
+    if (voBtn && VOICE_LANGS && VOICE_LANGS[voiceLangIdx]) {
+      voBtn.title = 'Voice narration (' + VOICE_LANGS[voiceLangIdx].name + ')';
+    }
+  }
+
+  // Apply TTS Engine Mode
+  function applyTtsEngine(m) {
+    ttsEngine = m;
+    TTS_MODE = m;
+    window.TTS_MODE = m;
+    localStorage.setItem('inkmentor_tts_mode', m);
+    $$('#setting-tts-mode-seg .sm-seg-btn').forEach(function(btn) {
+      btn.classList.toggle('on', btn.dataset.val === m);
+    });
+  }
+
+  // Apply Speech Speed
+  function applySpeechSpeed(spd) {
+    speechSpeed = spd;
+    var num = parseFloat(spd);
+    TTS_PLAYBACK_RATE = num;
+    VOICE_RATE = num;
+    window.TTS_PLAYBACK_RATE = num;
+    window.VOICE_RATE = num;
+    localStorage.setItem('inkmentor_speech_rate', spd);
+    $$('#setting-speech-rate-seg .sm-seg-btn').forEach(function(btn) {
+      btn.classList.toggle('on', btn.dataset.val === spd);
+    });
+  }
+
+  // Apply Confirm Before Solve
+  function applyConfirmBeforeSolve(c) {
+    confirmBeforeSolve = c;
+    window.CONFIRM_BEFORE_SOLVE = c;
+    localStorage.setItem('inkmentor_confirm_solve', c ? 'true' : 'false');
+    var toggle = $('#setting-confirm-toggle');
+    if (toggle) toggle.checked = c;
+  }
+
+  // Apply Default Color
+  function applyDefaultColor(c) {
+    defaultCol = c;
+    col = c;
+    localStorage.setItem('inkmentor_default_color', c);
+    $$('#setting-color-picker .dot').forEach(function(d) {
+      d.classList.toggle('on', d.dataset.c === c);
+    });
+    $$('.tb .dot').forEach(function(d) {
+      d.classList.toggle('on', d.dataset.c === c);
+    });
+  }
+
+  // Attach Segment Click Listeners
+  $$('#setting-theme-seg .sm-seg-btn').forEach(function(b) {
+    b.onclick = function() { applyTheme(this.dataset.val); toast('Theme: ' + this.textContent); };
+  });
+
+  $$('#setting-paper-seg .sm-seg-btn').forEach(function(b) {
+    b.onclick = function() { applyPaperStyle(this.dataset.val); toast('Paper: ' + this.textContent); };
+  });
+
+  $$('#setting-grid-seg .sm-seg-btn').forEach(function(b) {
+    b.onclick = function() { applyGridSize(this.dataset.val); toast('Grid spacing: ' + this.textContent); };
+  });
+
+  var voiceToggle = $('#setting-voice-toggle');
+  if (voiceToggle) {
+    voiceToggle.onchange = function() {
+      applyVoiceAudio(this.checked);
+      toast(this.checked ? 'Voice enabled' : 'Voice muted');
+    };
+  }
+
+  var voiceLangSel = $('#setting-voice-lang');
+  if (voiceLangSel) {
+    voiceLangSel.onchange = function() {
+      applyVoiceLang(this.value);
+      var langName = (VOICE_LANGS && VOICE_LANGS[voiceLangIdx]) ? VOICE_LANGS[voiceLangIdx].name : 'Selected';
+      toast('Language: ' + langName);
+      if (voice && typeof say === 'function') say('Language switched to ' + langName);
+    };
+  }
+
+  $$('#setting-tts-mode-seg .sm-seg-btn').forEach(function(b) {
+    b.onclick = function() { applyTtsEngine(this.dataset.val); toast('Engine: ' + this.textContent); };
+  });
+
+  $$('#setting-speech-rate-seg .sm-seg-btn').forEach(function(b) {
+    b.onclick = function() { applySpeechSpeed(this.dataset.val); toast('Speed: ' + this.textContent); };
+  });
+
+  var confirmToggle = $('#setting-confirm-toggle');
+  if (confirmToggle) {
+    confirmToggle.onchange = function() {
+      applyConfirmBeforeSolve(this.checked);
+      toast(this.checked ? 'Question confirmation enabled' : 'Direct solve mode enabled');
+    };
+  }
+
+  $$('#setting-color-picker .dot').forEach(function(d) {
+    d.onclick = function() { applyDefaultColor(this.dataset.c); toast('Ink color updated'); };
+  });
+
+  // Action Buttons
+  var clearSolBtn = $('#sm-clear-solution-btn');
+  if (clearSolBtn) {
+    clearSolBtn.onclick = function() {
+      closeSettings();
+      var cBtn = $('#clear-sol-btn');
+      if (cBtn && cBtn.style.display !== 'none') {
+        cBtn.click();
+      } else {
+        toast('No AI solution on current page');
+      }
+    };
+  }
+
+  var clearStrokesBtn = $('#sm-clear-strokes-btn');
+  if (clearStrokesBtn) {
+    clearStrokesBtn.onclick = function() {
+      if (busy) return;
+      if (confirm('Clear all handwriting strokes on Page ' + cur + '?')) {
+        closeSettings();
+        if (pageStrokes && pageStrokes[cur] && pageStrokes[cur].length > 0) {
+          pushUndo({ type: 'strokes', strokes: JSON.parse(JSON.stringify(pageStrokes[cur])) });
+          pageStrokes[cur] = [];
+          savePersistedStrokes();
+          if (cx && cv) cx.clearRect(0, 0, cv.width, cv.height);
+          toast('Strokes cleared. Click Undo to restore.');
+        } else {
+          toast('Page is already clear of ink');
+        }
+      }
+    };
+  }
+
+  var resetBtn = $('#sm-reset-btn');
+  if (resetBtn) {
+    resetBtn.onclick = function() {
+      if (confirm('Reset all settings to default?')) {
+        applyTheme('auto');
+        applyPaperStyle('grid');
+        applyGridSize('32px');
+        applyVoiceAudio(true);
+        applyVoiceLang('0');
+        applyTtsEngine('cloud');
+        applySpeechSpeed('1.05');
+        applyConfirmBeforeSolve(true);
+        applyDefaultColor('#111118');
+        toast('All settings reset to defaults');
+      }
+    };
+  }
+
+  // Initialize from persisted values on start
+  applyTheme(theme);
+  applyPaperStyle(paperStyle);
+  if (gridSize !== '32px') applyGridSize(gridSize);
+  applyVoiceAudio(voiceEnabled);
+  applyVoiceLang(voiceLang);
+  applyTtsEngine(ttsEngine);
+  applySpeechSpeed(speechSpeed);
+  applyConfirmBeforeSolve(confirmBeforeSolve);
+  if (defaultCol !== '#111118') applyDefaultColor(defaultCol);
+}
+window.initSettings = initSettings;
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initSettings);
+} else {
+  initSettings();
+}
 
 if (innerWidth <= 820) app.classList.remove('open');
 ensureFontLoaded().then(function() {

@@ -42,7 +42,8 @@ from sympy.parsing.sympy_parser import (
 )
 
 # Explicit symbol and function allowlist
-x, y, z, t, n = symbols("x y z t n")
+x, y, z, t, n, u, v, w, r, theta, phi = symbols("x y z t n u v w r theta phi")
+Matrix = sympy.Matrix
 
 LOCAL_DICT = {
     "x": x,
@@ -50,6 +51,13 @@ LOCAL_DICT = {
     "z": z,
     "t": t,
     "n": n,
+    "u": u,
+    "v": v,
+    "w": w,
+    "r": r,
+    "theta": theta,
+    "phi": phi,
+    "Matrix": Matrix,
     "sin": sin,
     "cos": cos,
     "tan": tan,
@@ -78,6 +86,13 @@ ALLOWED_IDENTIFIERS: Set[str] = {
     "z",
     "t",
     "n",
+    "u",
+    "v",
+    "w",
+    "r",
+    "theta",
+    "phi",
+    "Matrix",
     "sin",
     "cos",
     "tan",
@@ -194,7 +209,57 @@ def is_expanded(expr: Any) -> bool:
     return True
 
 
-def run_verification_logic(task_type: str, variable: str, expression_sympy: str, final_answer_sympy: str) -> Tuple[bool, Optional[str], Optional[str]]:
+def _split_top_level_commas(s: str) -> List[str]:
+    parts, current, depth = [], [], 0
+    for ch in s:
+        if ch in "([":
+            depth += 1
+            current.append(ch)
+        elif ch in ")]":
+            depth -= 1
+            current.append(ch)
+        elif ch == "," and depth == 0:
+            part = "".join(current).strip()
+            if part:
+                parts.append(part)
+            current = []
+        else:
+            current.append(ch)
+    if current:
+        part = "".join(current).strip()
+        if part:
+            parts.append(part)
+    return parts
+
+
+def _parse_integration_specs(task_type: str, variable_str: str, bounds_str: Optional[str] = None) -> List[Tuple[Any, Optional[Any], Optional[Any]]]:
+    raw = (bounds_str or "").strip() or (variable_str or "").strip()
+    tuple_matches = re.findall(r"\(\s*([a-zA-Z_]\w*)\s*,\s*([^,]+)\s*,\s*([^)]+)\s*\)", raw)
+    if tuple_matches:
+        return [(LOCAL_DICT.get(v, Symbol(v)), safe_parse(l.strip()), safe_parse(u.strip())) for v, l, u in tuple_matches]
+
+    parts = _split_top_level_commas(variable_str)
+    if task_type == "definite_integrate":
+        if bounds_str and bounds_str.strip():
+            b_parts = _split_top_level_commas(bounds_str)
+            if len(b_parts) == 2:
+                v_sym = LOCAL_DICT.get(variable_str.strip(), Symbol(variable_str.strip()))
+                return [(v_sym, safe_parse(b_parts[0]), safe_parse(b_parts[1]))]
+        if len(parts) == 3:
+            v_sym = LOCAL_DICT.get(parts[0], Symbol(parts[0]))
+            return [(v_sym, safe_parse(parts[1]), safe_parse(parts[2]))]
+        return [(LOCAL_DICT.get(variable_str.strip(), Symbol(variable_str.strip())), None, None)]
+
+    return [(LOCAL_DICT.get(p, Symbol(p)), None, None) for p in parts]
+
+
+def run_verification_logic(
+    task_type: str,
+    variable: str,
+    expression_sympy: str,
+    final_answer_sympy: str,
+    bounds: Optional[str] = None,
+) -> Tuple[bool, Optional[str], Optional[str]]:
     """Core verification logic without timeout wrapper."""
     try:
         var_sym = LOCAL_DICT.get(variable, Symbol(variable))
@@ -241,6 +306,87 @@ def run_verification_logic(task_type: str, variable: str, expression_sympy: str,
                 return True, None, str(llm_answer)
             truth = sympy.integrate(expr, var_sym)
             return False, f"Integral mismatch", str(truth)
+
+        elif task_type == "definite_integrate":
+            specs = _parse_integration_specs("definite_integrate", variable, bounds)
+            if not specs or specs[0][1] is None or specs[0][2] is None:
+                return False, "Definite integral requires variable and bounds (e.g. 'x, 0, 3')", None
+            var_target, lower, upper = specs[0]
+            truth = sympy.integrate(expr, (var_target, lower, upper))
+            if equivalent(llm_answer, truth):
+                return True, None, str(truth)
+            return False, "Definite integral mismatch", str(truth)
+
+        elif task_type == "double_integrate":
+            specs = _parse_integration_specs("double_integrate", variable, bounds)
+            if len(specs) < 2:
+                specs = [(x, None, None), (y, None, None)]
+
+            if specs[0][1] is not None and specs[1][1] is not None:
+                truth = sympy.integrate(
+                    expr,
+                    (specs[0][0], specs[0][1], specs[0][2]),
+                    (specs[1][0], specs[1][1], specs[1][2]),
+                )
+                if equivalent(llm_answer, truth):
+                    return True, None, str(truth)
+                return False, "Double integral mismatch", str(truth)
+            else:
+                v1, v2 = specs[0][0], specs[1][0]
+                diff2 = diff(diff(llm_answer, v2), v1)
+                if equivalent(diff2, expr):
+                    return True, None, str(llm_answer)
+                truth = sympy.integrate(expr, v1, v2)
+                if equivalent(llm_answer, truth):
+                    return True, None, str(truth)
+                return False, "Double integral mismatch", str(truth)
+
+        elif task_type == "triple_integrate":
+            specs = _parse_integration_specs("triple_integrate", variable, bounds)
+            if len(specs) < 3:
+                specs = [(x, None, None), (y, None, None), (z, None, None)]
+
+            if specs[0][1] is not None and specs[1][1] is not None and specs[2][1] is not None:
+                truth = sympy.integrate(
+                    expr,
+                    (specs[0][0], specs[0][1], specs[0][2]),
+                    (specs[1][0], specs[1][1], specs[1][2]),
+                    (specs[2][0], specs[2][1], specs[2][2]),
+                )
+                if equivalent(llm_answer, truth):
+                    return True, None, str(truth)
+                return False, "Triple integral mismatch", str(truth)
+            else:
+                v1, v2, v3 = specs[0][0], specs[1][0], specs[2][0]
+                diff3 = diff(diff(diff(llm_answer, v3), v2), v1)
+                if equivalent(diff3, expr):
+                    return True, None, str(llm_answer)
+                truth = sympy.integrate(expr, v1, v2, v3)
+                if equivalent(llm_answer, truth):
+                    return True, None, str(truth)
+                return False, "Triple integral mismatch", str(truth)
+
+        elif task_type == "jacobian":
+            funcs_parsed = safe_parse(expression_sympy)
+            funcs_list = list(funcs_parsed) if isinstance(funcs_parsed, tuple) else [funcs_parsed]
+            vars_parsed = safe_parse(variable)
+            vars_list = list(vars_parsed) if isinstance(vars_parsed, tuple) else [vars_parsed]
+            if not funcs_list or not vars_list:
+                return False, "Jacobian requires at least one function and variable", None
+
+            J = Matrix(funcs_list).jacobian(vars_list)
+            det_J = sympy.simplify(J.det())
+
+            # Check if LLM answered the determinant (scalar)
+            if equivalent(llm_answer, det_J):
+                return True, None, str(det_J)
+
+            # Check if LLM answered the Matrix
+            if isinstance(llm_answer, Matrix) and llm_answer.shape == J.shape:
+                if all(equivalent(llm_answer[i, j], J[i, j]) for i in range(J.rows) for j in range(J.cols)):
+                    return True, None, str(J)
+
+            return False, "Jacobian mismatch", str(det_J)
 
         elif task_type == "simplify":
             if equivalent(llm_answer, expr):
@@ -401,6 +547,7 @@ def verify_in_process(
     variable: str,
     expression_sympy: str,
     final_answer_sympy: str,
+    bounds: Optional[str] = None,
     timeout_seconds: float = 10.0,
 ) -> Tuple[bool, Optional[str], Optional[str], Dict[str, float]]:
     """Runs SymPy verification directly in-process with a thread timeout for serverless environments."""
@@ -414,6 +561,7 @@ def verify_in_process(
                 variable=variable,
                 expression_sympy=expression_sympy,
                 final_answer_sympy=final_answer_sympy,
+                bounds=bounds,
             )
             verified, error, truth = future.result(timeout=timeout_seconds)
             total_ms = round((time.time() - t0) * 1000.0, 2)
@@ -435,6 +583,7 @@ def verify_with_timing(
     variable: str,
     expression_sympy: str,
     final_answer_sympy: str,
+    bounds: Optional[str] = None,
     timeout_seconds: float = 10.0,
 ) -> Tuple[bool, Optional[str], Optional[str], Dict[str, float]]:
     """Runs verification with execution stage timing in ms.
@@ -447,6 +596,7 @@ def verify_with_timing(
             variable=variable,
             expression_sympy=expression_sympy,
             final_answer_sympy=final_answer_sympy,
+            bounds=bounds,
             timeout_seconds=timeout_seconds,
         )
 
@@ -455,6 +605,7 @@ def verify_with_timing(
         "variable": variable,
         "expression_sympy": expression_sympy,
         "final_answer_sympy": final_answer_sympy,
+        "bounds": bounds,
     }
     t0 = time.time()
     timing: Dict[str, float] = {"total_ms": 0.0, "startup_import_ms": 0.0, "calc_ms": 0.0}
@@ -501,6 +652,7 @@ def verify_with_timing(
                 variable=variable,
                 expression_sympy=expression_sympy,
                 final_answer_sympy=final_answer_sympy,
+                bounds=bounds,
                 timeout_seconds=max(1.0, timeout_seconds - (time.time() - t0)),
             )
 
@@ -520,6 +672,7 @@ def verify_with_timing(
             variable=variable,
             expression_sympy=expression_sympy,
             final_answer_sympy=final_answer_sympy,
+            bounds=bounds,
             timeout_seconds=max(1.0, timeout_seconds - (time.time() - t0)),
         )
 
@@ -529,6 +682,7 @@ def verify(
     variable: str,
     expression_sympy: str,
     final_answer_sympy: str,
+    bounds: Optional[str] = None,
     timeout_seconds: float = 10.0,
 ) -> Tuple[bool, Optional[str], Optional[str]]:
     """Runs verification with a hard cross-platform timeout."""
@@ -537,6 +691,7 @@ def verify(
         variable=variable,
         expression_sympy=expression_sympy,
         final_answer_sympy=final_answer_sympy,
+        bounds=bounds,
         timeout_seconds=timeout_seconds,
     )
     return verified, err, truth
@@ -561,6 +716,7 @@ if __name__ == "__main__":
                     variable=data.get("variable", "x"),
                     expression_sympy=data["expression_sympy"],
                     final_answer_sympy=data["final_answer_sympy"],
+                    bounds=data.get("bounds"),
                 )
                 t_calc_end = time.time()
                 calc_ms = round((t_calc_end - t_calc_start) * 1000.0, 2)
@@ -590,6 +746,7 @@ if __name__ == "__main__":
                 variable=data.get("variable", "x"),
                 expression_sympy=data["expression_sympy"],
                 final_answer_sympy=data["final_answer_sympy"],
+                bounds=data.get("bounds"),
             )
             t_calc_end = time.time()
             calc_ms = round((t_calc_end - t_calc_start) * 1000.0, 2)

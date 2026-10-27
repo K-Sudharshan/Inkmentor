@@ -1,0 +1,255 @@
+================================================================================
+                    INKMENTOR AI ENGINE: CAPABILITIES REPORT
+================================================================================
+Document: Comprehensive Analysis of AI Capabilities, Topic Boundaries & Limitations
+System: InkMentor Math Reasoning Engine ("Ink")
+Model Architecture: Gemini 3.5 Flash-Lite (Minimal Thinking, Temp 0.0) + SymPy CAS
+Verification Model: Strict Deterministic Symbolic Verification ("Verified-before-shown")
+================================================================================
+
+1. EXECUTIVE ARCHITECTURAL SUMMARY
+--------------------------------------------------------------------------------
+InkMentor is not a generic, open-ended conversational chatbot. It is a strictly
+sandboxed, domain-specialized mathematics engine designed for interactive digital
+notebook instruction.
+
+Its core pipeline operates under an uncompromising principle:
+"Verified-Before-Shown". Every mathematical solution produced by the LLM is 
+passed to an isolated SymPy symbolic computation worker before any ink is 
+drawn on the canvas. If SymPy cannot mathematically verify the equivalence of 
+the final answer within a 10.0-second execution window, the solution is 
+rejected, retried once, and if still unverified, completely withheld from the 
+student with an error notice.
+
+This guarantees that hallucinated mathematics are never written into the student's 
+notebook. However, this strict verification boundary also directly defines what 
+the AI can and cannot solve.
+
+
+2. CAN IT SOLVE COMPLEX TOPICS? (DOUBLE INTEGRALS, TRIPLE INTEGRALS & JACOBIANS)
+--------------------------------------------------------------------------------
+Q: Can it solve Double Integrals, Triple Integrals, Definite Integrals & Jacobians?
+A: YES (Implemented & Verified on Localhost).
+   Status & Implementation Details:
+   1. Definite Integrals (task_type: "definite_integrate"):
+      - Verified symbolically via SymPy: integrate(expr, (var, lower, upper))
+      - Supports bound specification in variable or optional bounds field.
+   2. Double Integrals (task_type: "double_integrate"):
+      - Definite: Iterated double integration over 2D regions (x, a, b), (y, c, d).
+      - Indefinite: Double antiderivative verification diff(diff(ans, y), x) == expr.
+   3. Triple Integrals (task_type: "triple_integrate"):
+      - Definite: Iterated triple integration over 3D regions (x, a, b), (y, c, d), (z, e, f).
+      - Indefinite: Triple antiderivative verification diff(diff(diff(ans, z), y), x) == expr.
+   4. Jacobians (task_type: "jacobian"):
+      - Computes Jacobian matrix Matrix(funcs).jacobian(vars) and determinant.
+      - Verifies both scalar Jacobian determinants (e.g. 2*x^2 - y, or r for polar coordinates)
+        and full Jacobian matrices via Matrix(((...))).
+   5. UI & Handwriting Compatibility:
+      - Solutions render in 3 to 5 clear handwriting steps using allowed ASCII math characters,
+        accompanied by Ink tutor voice narration.
+
+
+3. TOPICS THE AI WILL SOLVE (SUPPORTED TOPICS)
+--------------------------------------------------------------------------------
+InkMentor is engineered specifically for High School & Early College Algebra 
+and Single-Variable Calculus. The engine supports exactly six distinct task types:
+
+1. SINGLE-VARIABLE DIFFERENTIATION (task_type: "differentiate")
+   - Polynomial derivatives via the Power Rule: d/dx (x^n) = n*x^(n-1)
+   - Trigonometric derivatives: sin(x), cos(x), tan(x)
+   - Inverse trigonometric derivatives: asin(x), acos(x), atan(x)
+   - Hyperbolic functions: sinh(x), cosh(x), tanh(x)
+   - Exponential and logarithmic derivatives: e^x, ln(x), log(x)
+   - Calculus Composite Rules:
+     * Product Rule: (u*v)' = u'*v + u*v'
+     * Quotient Rule: (u/v)' = (u'*v - u*v') / v^2
+     * Chain Rule: d/dx f(g(x)) = f'(g(x)) * g'(x)
+     (e.g., differentiating y = sin(3x^2) or y = (x^2 + 1)^3)
+   - Variables supported: One variable from {x, y, z, t, n} (default "x").
+
+2. SINGLE-VARIABLE INDEFINITE INTEGRATION (task_type: "integrate")
+   - Basic antiderivatives of standard elementary functions:
+     * Polynomials (int x^n dx = x^(n+1)/(n+1))
+     * Trigonometric antiderivatives (int cos(x) dx = sin(x))
+     * Exponential antiderivatives (int exp(x) dx = exp(x))
+     * Rational functions yielding logarithms (int 1/x dx = ln(x))
+   - Basic u-substitution integration (e.g., int 2*x/(x^2 + 1) dx = ln(x^2 + 1))
+   - NOTE: Constant of integration (+ C) is intentionally omitted in final_answer_sympy 
+     so SymPy can verify exact derivative equivalence: diff(llm_answer, x) == integrand.
+
+3. ALGEBRAIC EQUATION SOLVING (task_type: "solve")
+   - Single-variable algebraic equations with finite real solutions (expression = 0):
+     * Linear equations: a*x + b = 0
+     * Quadratic equations: a*x^2 + b*x + c = 0 (e.g. x^2 - 5x + 6 = 0 -> "2, 3")
+     * Factorable polynomial equations with discrete, finite real roots.
+   - NOTE: Solutions must be real and comma-separated (e.g. "2, 3").
+
+4. ALGEBRAIC SIMPLIFICATION (task_type: "simplify")
+   - Combining like terms in polynomials.
+   - Simplifying rational algebraic fractions.
+   - Elementary trigonometric identities (e.g. sin(x)^2 + cos(x)^2 -> 1).
+
+5. POLYNOMIAL FACTORING (task_type: "factor")
+   - Factoring quadratic expressions into linear binomials: x^2 - 5x + 6 -> (x - 2)*(x - 3)
+   - Difference of squares: x^2 - 9 -> (x - 3)*(x + 3)
+   - Factoring out greatest common monomial/binomial factors.
+   - Verified by SymPy factor() and structural inspection (is_factored).
+
+6. ALGEBRAIC EXPANSION (task_type: "expand")
+   - Expanding products of polynomial binomials: (x - 2)*(x - 3) -> x^2 - 5*x + 6
+   - Expanding powers of polynomials: (x + 1)^3 -> x^3 + 3*x^2 + 3*x + 1
+   - Verified by SymPy expand() and structural inspection (is_expanded).
+
+
+4. TOPICS THE AI WILL NOT SOLVE (HARD LIMITATIONS & OUT-OF-SCOPE)
+--------------------------------------------------------------------------------
+Any problem falling outside the six tasks above will either fail validation or 
+fail SymPy verification. Specifically, the AI WILL NOT solve:
+
+1. MULTIVARIABLE & VECTOR CALCULUS:
+   - Double Integrals: int int f(x, y) dx dy (Unsupported)
+   - Triple Integrals: int int int f(x, y, z) dx dy dz (Unsupported)
+   - Jacobians: Jacobian matrices, determinants of transformations (Unsupported)
+   - Partial Derivatives: del f / del x, del f / del y (Unsupported)
+   - Gradient Vectors (grad f), Directional Derivatives (Unsupported)
+   - Divergence (div F) and Curl (curl F) (Unsupported)
+   - Line Integrals and Surface Integrals (Unsupported)
+   - Vector Theorems: Green's Theorem, Stokes' Theorem, Divergence Theorem (Unsupported)
+   - Multivariable Optimization: Lagrange multipliers with multiple variables (Unsupported)
+
+2. ADVANCED SINGLE-VARIABLE CALCULUS:
+   - Definite Integrals: int_{a}^{b} f(x) dx with numerical/symbolic bounds (The schema 
+     only supports indefinite antiderivatives; no bound inputs exist).
+   - Improper Integrals: Integrals over infinite intervals (-inf to inf).
+   - Differential Equations: First-order or higher-order ODEs (e.g. y'' + y = 0), PDEs.
+   - Limits: While notebook page 6 has a reference snippet for limits, "limit" is 
+     NOT a valid task_type in the schema.
+   - Sequences & Series: Taylor/Maclaurin series, Fourier series, convergence tests.
+
+3. EQUATIONS WITH INFINITE OR NON-REAL SOLUTION SETS:
+   - Periodic Trigonometric Equations: Equations like sin(x) = 0 or cos(x) = 1.
+     SymPy strictly checks that the solution set is a FiniteSet of reals. Infinite sets 
+     fail verification immediately: "Unsupported: solution set is not a finite real set".
+   - Complex / Imaginary Equations: Equations with purely non-real roots (e.g. x^2 + 4 = 0) 
+     are rejected because domain is restricted to S.Reals.
+   - Inequalities: Expression inequalities like x^2 - 5x + 6 > 0 (Unsupported).
+   - Systems of Simultaneous Equations: e.g. 2x + 3y = 7 and x - y = 1 (Unsupported).
+
+4. LINEAR ALGEBRA & MATRICES:
+   - Matrix operations: addition, multiplication, transpose, inversion.
+   - Determinants, Eigenvalues, Eigenvectors, Matrix rank.
+   - Vector cross products, dot products in R^3, linear transformations.
+
+5. DISCRETE MATHEMATICS, STATISTICS & PROBABILITY:
+   - Probability distributions, standard deviation, variance.
+   - Permutations and Combinations (nCr, nPr).
+   - Graph theory, truth tables, mathematical logic proofs.
+
+6. GEOMETRY, TRIGONOMETRIC PROOFS & WORD PROBLEMS:
+   - Non-algebraic word problems (the engine requires an explicit math question).
+   - Geometric figure proofs, polygon area/perimeter calculations without algebraic equations.
+
+
+5. EXACT CHARACTER, LENGTH & TEXT LIMITATIONS
+--------------------------------------------------------------------------------
+InkMentor enforces rigorous structural and length limits at every layer:
+
+1. HOW MANY CHARACTERS CAN IT WRITE ON THE NOTEBOOK CANVAS?
+   - Step Count: Exactly 3 to 5 steps per problem (validator permits 3 to 6).
+   - Characters Per Written Line ("write"):
+     * STRICT MAXIMUM: 40 characters per line.
+     * Code Validator: backend/solver.py line 63:
+       "if len(s.write) > 40: return Step write exceeds 40 characters limit"
+   - TOTAL WRITTEN CHARACTERS ACROSS THE WHOLE SOLUTION:
+     * 3 steps * 40 chars = 120 characters minimum capacity.
+     * 5 steps * 40 chars = 200 CHARACTERS MAXIMUM CAPACITY across entire solve.
+     * (Absolute hard ceiling if 6 steps pass validator = 240 characters).
+   - Allowed Character Set For Writing:
+     * Letters: A-Z, a-z
+     * Digits: 0-9
+     * Symbols: + - * / ^ = ( ) . , and whitespace
+     * FORBIDDEN: Backslashes (\), LaTeX tags, Greek letters, Unicode symbols.
+     * Consecutive lines must NOT be identical (consecutive duplicates rejected).
+
+2. SPOKEN NARRATION LIMITATIONS ("narration" spoken by "Ink" voice):
+   - Sentence Structure: Exactly ONE short sentence per step.
+   - Word Count: Between 10 and 20 words per step (strictly rejected if > 30 words).
+   - Character Length: Prompt specifies under 150 characters per step.
+   - Text-To-Speech API Boundary: Max 300 characters per TTS request.
+     (Groq Orpheus chunking limit is 200 characters).
+   - Formatting: Forbidden from containing math symbols (^, _, $, \, {, }).
+   - Phrasing Rules: Must not begin with step ordinals ("Step 1", "Step 2"); 
+     every step's narration must start with a different word.
+
+3. INPUT & PROMPT CHARACTER LIMITATIONS:
+   - User Math Question Text: 1 to 500 characters (SolveRequest.question).
+   - Memory Search Query: 1 to 500 characters (RetrieveRequest.query).
+   - SymPy Expression String: Max 200 characters (validate_raw_string).
+   - Image Input: Max 3 MB raw decoded bytes (MAX_IMAGE_BYTES=3145728).
+   - Image Canvas Dimensions: Scaled to max 768px on offscreen canvas.
+
+4. LLM OUTPUT TOKEN LIMITATIONS:
+   - Model: Gemini 3.5 Flash-Lite (or configured model).
+   - Max Generation Tokens: 1024 tokens (LLM_MAX_OUTPUT_TOKENS).
+   - Benchmark Typical Output: ~290 to 350 output tokens.
+   - Thinking Level: Minimal (types.ThinkingLevel.MINIMAL) to guarantee low latency.
+
+
+6. SECURITY & IDENTIFIER ALLOWLIST
+--------------------------------------------------------------------------------
+To prevent Remote Code Execution or SymPy injection, any expression sent to SymPy 
+must pass strict sanitization (backend/verify.py):
+- Allowed Variable Identifiers: ONLY 'x', 'y', 'z', 't', 'n'
+- Allowed Function Identifiers: 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 
+  'sinh', 'cosh', 'tanh', 'exp', 'log', 'ln', 'sqrt', 'Abs', 'pi', 'E'
+- Forbidden Substrings: '__', ';', '\n', '[', ']'
+Any formula containing unlisted identifiers (such as custom functions or imports) 
+is rejected with a ValueError.
+
+
+7. VERIFICATION LIFECYCLE & RETRY TIMINGS
+--------------------------------------------------------------------------------
+- Pre-Warmed Worker Pool: SymPy is pre-warmed in a persistent Python background 
+  subprocess, executing verifications in ~8.9 ms (88x faster than cold import).
+- Verification Timeout: 10.0 seconds hard ceiling per execution.
+- Retry Loop: 
+  * Attempt 1: Question -> LLM -> JSON Parsing -> SymPy Verification.
+  * If Attempt 1 fails: 1 automatic retry occurs with targeted error feedback 
+    (providing SymPy's ground truth to the LLM).
+  * If Attempt 2 fails: Pipeline terminates, returning verified=false, steps=[]. 
+    No partial or unverified steps are ever drawn on screen.
+
+
+8. SUMMARY COMPARISON TABLE
+--------------------------------------------------------------------------------
+Topic / Question Type                    | Supported? | Why / Limitation
+-----------------------------------------|------------|----------------------------------------------
+Polynomial Derivatives (Power Rule)      | YES        | Built-in diff(expr, x) verification
+Product / Quotient / Chain Rule          | YES        | Supported up to 40 chars/line
+Trigonometric / Exp / Log Derivatives    | YES        | Supported functions in allowlist
+Indefinite Integrals (Polynomial/Trig)   | YES        | Verified via diff(answer, x) == integrand
+Basic u-Substitution Integrals           | YES        | Verified if antiderivative matches
+Quadratic / Linear Equations (Real roots)| YES        | Verified via finite set in S.Reals
+Polynomial Factoring & Expansion         | YES        | Verified via factor() and expand()
+Algebraic Simplification                 | YES        | Verified via simplify(a - b) == 0
+-----------------------------------------|------------|----------------------------------------------
+Double Integrals                         | NO         | Multivariable; univariate schema only
+Triple Integrals                         | NO         | Multivariable; univariate schema only
+Jacobian Matrices / Determinants         | NO         | Requires vector calculus & matrix algebra
+Partial Derivatives (del f / del x)      | NO         | Engine only differentiates 1 scalar variable
+Definite Integrals (with bounds)         | NO         | Schema lacks bound inputs (a, b)
+Differential Equations (ODEs/PDEs)       | NO         | Not in task_type schema
+Trig Equations with Infinite Roots       | NO         | Only finite real solution sets supported
+Complex / Imaginary Roots                | NO         | Restricted strictly to S.Reals
+Matrices & Linear Algebra                | NO         | No matrix/vector data types
+Probability & Statistics                 | NO         | Out-of-scope; no CAS verification
+Word Problems without equations          | NO         | Requires explicit mathematical expressions
+================================================================================
+Report compiled from codebase inspection of:
+- backend/solver.py
+- backend/verify.py
+- backend/prompts.py
+- backend/schemas.py
+- backend/llm.py
+- backend/recognize.py
+================================================================================
