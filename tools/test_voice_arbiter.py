@@ -71,13 +71,14 @@ async def run_voice_tests():
             req_id = 1
             await cdp_call(ws, req_id, "Page.enable"); req_id += 1
             await cdp_call(ws, req_id, "Runtime.enable"); req_id += 1
+            await cdp_call(ws, req_id, "Page.navigate", {"url": "http://127.0.0.1:8000/"}); req_id += 1
 
             # Wait for app ready
-            for _ in range(30):
+            for _ in range(50):
+                await asyncio.sleep(0.3)
                 ready = await evaluate(ws, req_id, "typeof VoiceArbiter !== 'undefined'"); req_id += 1
                 if ready:
                     break
-                await asyncio.sleep(0.2)
 
             print("[VOICE TEST] Connected to InkMentor. Running Test 1-8...")
 

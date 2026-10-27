@@ -587,8 +587,9 @@ def synthesize_speech_gemini(
             except Exception as exc:
                 last_exc = exc
                 err_msg = str(exc)
-                if "429" in err_msg or "RESOURCE_EXHAUSTED" in err_msg:
-                    raise
+                logger.warning(
+                    f"Gemini model {current_model} call failed ({err_msg}). Trying next fallback model if available..."
+                )
                 continue
 
         if response.candidates and response.candidates[0].content and response.candidates[0].content.parts:
@@ -612,8 +613,12 @@ def synthesize_speech_chain(
     """Executes strict TTS provider chain: Gemini -> Groq -> fallback to browser.
     Enforces per-provider timeouts, total request budget, and circuit breaker."""
     order_env = os.environ.get("TTS_PROVIDER_ORDER", "").strip().lower()
+    single_provider = os.environ.get("TTS_PROVIDER", "").strip().lower()
     if order_env:
         providers = [p.strip() for p in order_env.split(",") if p.strip()]
+    elif single_provider in ("groq", "gemini"):
+        other = "gemini" if single_provider == "groq" else "groq"
+        providers = [single_provider, other]
     else:
         providers = ["gemini", "groq"]
 
