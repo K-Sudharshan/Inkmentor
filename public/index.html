@@ -111,6 +111,13 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-off
 .mk{pointer-events:auto;margin:calc(var(--g)*.5) 0 0 calc(var(--g)*1.5);font:inherit;color:#e8446a;opacity:0;transform:translateX(-8px);transition:.5s;visibility:hidden;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px}
 .mk.show{opacity:1;transform:none;visibility:visible}
 .math-sup{font-size:.58em;vertical-align:.44em;line-height:0;display:inline-block;font-weight:400;margin-right:.16em;-webkit-text-fill-color:transparent}
+.math-sub{font-size:.58em;vertical-align:-.26em;line-height:0;display:inline-block;font-weight:400;margin-right:.12em;-webkit-text-fill-color:transparent}
+.math-integral-wrap{display:inline-flex;align-items:center;position:relative;vertical-align:-0.32em;margin-right:0.06em;margin-left:0.04em}
+.math-limits{display:inline-flex;flex-direction:column;justify-content:space-between;height:1.65em;font-size:0.52em;line-height:1;margin-left:0.02em;margin-right:0.12em;vertical-align:middle;-webkit-text-fill-color:transparent}
+.math-limit-sup{align-self:flex-start;margin-bottom:0.35em;font-weight:500;line-height:1}
+.math-limit-sub{align-self:flex-start;margin-top:auto;font-weight:500;line-height:1}
+.math-eval-limits{display:inline-flex;flex-direction:column;justify-content:space-between;height:1.25em;font-size:0.52em;line-height:0.9;vertical-align:-0.18em;margin-left:0.04em;margin-right:0.12em}.math-eval-limits .math-limit-sup{margin-bottom:0;line-height:1}.math-eval-limits .math-limit-sub{margin-top:auto;line-height:1}
+.math-cdot{display:inline-block;margin:0 0.16em;vertical-align:0.08em;font-size:1.1em;line-height:0;-webkit-text-fill-color:transparent}
 .math-svg{display:inline-block;vertical-align:-0.30em;height:1.50em;width:auto;overflow:visible;fill:none;stroke:url(#ai-ink-grad);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;-webkit-text-fill-color:initial;filter:var(--ai-glow)}
 .ai .math-svg{stroke:url(#ai-ink-grad)}
 .math-diff{display:inline-block;margin-left:.24em}
@@ -2316,8 +2323,9 @@ function createSvgSymbol(type, opt) {
   svg.setAttribute('role', 'img');
   svg.setAttribute('aria-label', type);
 
-  var strokeW = (type === 'int') ? (window.INTEGRAL_STROKE_WIDTH || 3.2) :
+  var strokeW = (type === 'int' || type === 'iint' || type === 'iiint' || type === 'oint') ? (window.INTEGRAL_STROKE_WIDTH || 3.2) :
                 (type === 'sqrt') ? (window.SQRT_STROKE_WIDTH || 2.8) :
+                (type === 'partial') ? 2.8 :
                 (window.PI_STROKE_WIDTH || 3.0);
   path.setAttribute('stroke-width', strokeW);
   path.setAttribute('stroke-linecap', 'round');
@@ -2332,6 +2340,37 @@ function createSvgSymbol(type, opt) {
     svg.style.marginLeft = (window.INTEGRAL_LEFT_GAP || '0.08em');
     svg.style.marginRight = (window.INTEGRAL_RIGHT_GAP || '0.18em');
     path.setAttribute('d', 'M 12 4 C 10 1.5, 6 2, 5 5 C 4 9, 7 18, 7 24 C 7 32, 4 39, 3 41 C 2 43, 4 43.5, 6 42');
+  } else if (type === 'iint') {
+    svg.setAttribute('viewBox', '0 0 24 44');
+    var intScale = (window.INTEGRAL_SCALE || 1.50);
+    svg.style.height = intScale + 'em';
+    svg.style.verticalAlign = (window.INTEGRAL_VERTICAL_ALIGN || '-0.30em');
+    svg.style.marginLeft = (window.INTEGRAL_LEFT_GAP || '0.08em');
+    svg.style.marginRight = (window.INTEGRAL_RIGHT_GAP || '0.18em');
+    path.setAttribute('d', 'M 9 4 C 7.5 1.5, 4.5 2, 3.8 5 C 3 9, 5.2 18, 5.2 24 C 5.2 32, 3 39, 2.2 41 C 1.5 43, 3 43.5, 4.5 42 M 19 4 C 17.5 1.5, 14.5 2, 13.8 5 C 13 9, 15.2 18, 15.2 24 C 15.2 32, 13 39, 12.2 41 C 11.5 43, 13 43.5, 14.5 42');
+  } else if (type === 'iiint') {
+    svg.setAttribute('viewBox', '0 0 34 44');
+    var intScale = (window.INTEGRAL_SCALE || 1.50);
+    svg.style.height = intScale + 'em';
+    svg.style.verticalAlign = (window.INTEGRAL_VERTICAL_ALIGN || '-0.30em');
+    svg.style.marginLeft = (window.INTEGRAL_LEFT_GAP || '0.08em');
+    svg.style.marginRight = (window.INTEGRAL_RIGHT_GAP || '0.18em');
+    path.setAttribute('d', 'M 9 4 C 7.5 1.5, 4.5 2, 3.8 5 C 3 9, 5.2 18, 5.2 24 C 5.2 32, 3 39, 2.2 41 C 1.5 43, 3 43.5, 4.5 42 M 19 4 C 17.5 1.5, 14.5 2, 13.8 5 C 13 9, 15.2 18, 15.2 24 C 15.2 32, 13 39, 12.2 41 C 11.5 43, 13 43.5, 14.5 42 M 29 4 C 27.5 1.5, 24.5 2, 23.8 5 C 23 9, 25.2 18, 25.2 24 C 25.2 32, 23 39, 22.2 41 C 21.5 43, 23 43.5, 24.5 42');
+  } else if (type === 'oint') {
+    svg.setAttribute('viewBox', '0 0 20 44');
+    var intScale = (window.INTEGRAL_SCALE || 1.50);
+    svg.style.height = intScale + 'em';
+    svg.style.verticalAlign = (window.INTEGRAL_VERTICAL_ALIGN || '-0.30em');
+    svg.style.marginLeft = '0.08em';
+    svg.style.marginRight = '0.18em';
+    path.setAttribute('d', 'M 14 4 C 12 1.5, 8 2, 7 5 C 6 9, 9 18, 9 24 C 9 32, 6 39, 5 41 C 4 43, 6 43.5, 8 42 M 4 24 C 4 20, 14 20, 14 24 C 14 28, 4 28, 4 24');
+  } else if (type === 'partial') {
+    svg.setAttribute('viewBox', '0 0 18 36');
+    svg.style.height = '1.20em';
+    svg.style.verticalAlign = '-0.20em';
+    svg.style.marginLeft = '0.04em';
+    svg.style.marginRight = '0.04em';
+    path.setAttribute('d', 'M 14 6 C 10 2, 5 4, 4 9 C 3 14, 5 19, 7 23 C 9 26, 12 26, 14 23 C 15 20, 15 15, 11 15 C 6 15, 4 19, 4 23 C 4 28, 7 30, 13 30');
   } else if (type === 'sqrt') {
     var barW = (typeof opt === 'number') ? opt : (opt && opt.width ? opt.width : 16);
     var totalW = Math.max(22, 16 + barW);
@@ -2351,6 +2390,86 @@ function createSvgSymbol(type, opt) {
   return svg;
 }
 window.createSvgSymbol = createSvgSymbol;
+
+function createIntegralWithLimits(type, lowerBound, upperBound) {
+  var wrap = document.createElement('span');
+  wrap.className = 'math-integral-wrap';
+  var svg = createSvgSymbol(type || 'int');
+  wrap.appendChild(svg);
+
+  if (lowerBound || upperBound) {
+    var limits = document.createElement('span');
+    limits.className = 'math-limits';
+
+    var supEl = document.createElement('span');
+    supEl.className = 'math-limit-sup';
+    if (upperBound) supEl.appendChild(formatMathLine(upperBound));
+    limits.appendChild(supEl);
+
+    var subEl = document.createElement('span');
+    subEl.className = 'math-limit-sub';
+    if (lowerBound) subEl.appendChild(formatMathLine(lowerBound));
+    limits.appendChild(subEl);
+
+    wrap.appendChild(limits);
+  }
+  return wrap;
+}
+window.createIntegralWithLimits = createIntegralWithLimits;
+
+function createEvalBracketWithLimits(bracketChar, lowerBound, upperBound) {
+  var wrap = document.createElement('span');
+  wrap.className = 'math-integral-wrap';
+
+  var svgNS = 'http://www.w3.org/2000/svg';
+  var svg = document.createElementNS(svgNS, 'svg');
+  var path = document.createElementNS(svgNS, 'path');
+  svg.setAttribute('class', 'math-svg math-eval-bracket');
+  svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', bracketChar);
+  path.setAttribute('stroke-width', '2.8');
+  path.setAttribute('stroke-linecap', 'round');
+  path.setAttribute('stroke-linejoin', 'round');
+  path.setAttribute('fill', 'none');
+
+  if (bracketChar === ']') {
+    svg.setAttribute('viewBox', '0 0 10 44');
+    svg.style.height = '1.45em';
+    svg.style.verticalAlign = '-0.30em';
+    svg.style.marginLeft = '0.04em';
+    svg.style.marginRight = '0.04em';
+    path.setAttribute('d', 'M 2 5 L 7 5 L 7 39 L 2 39');
+  } else {
+    // vertical bar |
+    svg.setAttribute('viewBox', '0 0 8 44');
+    svg.style.height = '1.45em';
+    svg.style.verticalAlign = '-0.30em';
+    svg.style.marginLeft = '0.04em';
+    svg.style.marginRight = '0.04em';
+    path.setAttribute('d', 'M 4 4 L 4 40');
+  }
+  svg.appendChild(path);
+  wrap.appendChild(svg);
+
+  if (lowerBound || upperBound) {
+    var limits = document.createElement('span');
+    limits.className = 'math-limits';
+
+    var supEl = document.createElement('span');
+    supEl.className = 'math-limit-sup';
+    if (upperBound) supEl.appendChild(formatMathLine(upperBound));
+    limits.appendChild(supEl);
+
+    var subEl = document.createElement('span');
+    subEl.className = 'math-limit-sub';
+    if (lowerBound) subEl.appendChild(formatMathLine(lowerBound));
+    limits.appendChild(subEl);
+
+    wrap.appendChild(limits);
+  }
+  return wrap;
+}
+window.createEvalBracketWithLimits = createEvalBracketWithLimits;
 
 // Helper to format text chunks and constrain '/', '(', ')' for Caveat
 function formatTextChunk(text) {
@@ -2384,7 +2503,7 @@ function formatMathLine(raw) {
   if (!str) return frag;
 
   try {
-    var re = /(\^{2,})|(\bint\b\s*)|(sqrt\()|(\bpi\b)|(\^\(([^)]+)\))|(\^(?:(-\d+)|\b(\d+)\b|([a-zA-Z])(?![a-zA-Z0-9])))|(\s+\b(d[xyzut])\b(?!\/))/g;
+    var re = /(\^{2,})|((?:\\?(?:iiint|iint|int|oint))|[∫∬∭∮])(?:(?:_\{([^}]+)\}|_([a-zA-Z0-9.\-]+))(?:\^\{([^}]+)\}|\^([a-zA-Z0-9.\-]+))?|(?:\^\{([^}]+)\}|\^([a-zA-Z0-9.\-]+))(?:_\{([^}]+)\}|_([a-zA-Z0-9.\-]+))?|(?:\^\{([^}]+)\}|\^([a-zA-Z0-9.\-]+)))?|([\]|])(?:(?:_\{([^}]+)\}|_([a-zA-Z0-9.\-]+))(?:\^\{([^}]+)\}|\^([a-zA-Z0-9.\-]+))|(?:\^\{([^}]+)\}|\^([a-zA-Z0-9.\-]+))(?:_\{([^}]+)\}|_([a-zA-Z0-9.\-]+)))|(\\?sqrt[\({])|(\b(?:del|partial)\b|\\partial|∂)|(\bpi\b|\\pi|π)|(\s*\*\s*)|(\^\{([^}]+)\}|\^\(([^)]+)\)|\^(?:(-\d+)|(\d+)|([a-zA-Z])(?![a-zA-Z0-9])))|(_\{([^}]+)\}|_\(([^)]+)\)|_(?:(-\d+)|(\d+)|([a-zA-Z])(?![a-zA-Z0-9])))|(\s+\b(d[xyzut\u03b8\u03c6])\b(?!\/))|([±≠≤≥∞×·])/g;
     var lastIdx = 0;
     var match;
 
@@ -2395,15 +2514,27 @@ function formatMathLine(raw) {
       if (match[1]) {
         frag.appendChild(formatTextChunk(match[1]));
       } else if (match[2]) {
-        frag.appendChild(createSvgSymbol('int'));
-      } else if (match[3]) {
-        // Find matching closing parenthesis for sqrt(...)
-        var openIdx = match.index + 4;
+        var sym = match[2];
+        var lower = match[3] || match[4] || match[9] || match[10];
+        var upper = match[5] || match[6] || match[7] || match[8] || match[11] || match[12];
+        var intType = (sym.indexOf('iiint') !== -1 || sym === '∭') ? 'iiint' :
+                      (sym.indexOf('iint') !== -1 || sym === '∬') ? 'iint' :
+                      (sym.indexOf('oint') !== -1 || sym === '∮') ? 'oint' : 'int';
+        frag.appendChild(createIntegralWithLimits(intType, lower, upper));
+      } else if (match[13]) {
+        var bChar = match[13];
+        var bLower = match[14] || match[15] || match[20] || match[21];
+        var bUpper = match[16] || match[17] || match[18] || match[19];
+        frag.appendChild(createEvalBracketWithLimits(bChar, bLower, bUpper));
+      } else if (match[22]) {
+        var openChar = match[22].slice(-1);
+        var closeChar = (openChar === '{') ? '}' : ')';
+        var openIdx = match.index + match[22].length - 1;
         var depth = 1;
         var closeIdx = -1;
         for (var k = openIdx + 1; k < str.length; k++) {
-          if (str[k] === '(') depth++;
-          else if (str[k] === ')') {
+          if (str[k] === openChar) depth++;
+          else if (str[k] === closeChar) {
             depth--;
             if (depth === 0) { closeIdx = k; break; }
           }
@@ -2467,33 +2598,39 @@ function formatMathLine(raw) {
           frag.appendChild(sqrtWrap);
         } else {
           frag.appendChild(createSvgSymbol('sqrt'));
-          frag.appendChild(formatTextChunk('('));
+          frag.appendChild(formatTextChunk(openChar));
         }
-      } else if (match[4]) {
+      } else if (match[23]) {
+        frag.appendChild(createSvgSymbol('partial'));
+      } else if (match[24]) {
         frag.appendChild(createSvgSymbol('pi'));
-      } else if (match[5]) {
+      } else if (match[25]) {
+        var dotSpan = document.createElement('span');
+        dotSpan.className = 'math-cdot';
+        dotSpan.textContent = '·';
+        frag.appendChild(dotSpan);
+      } else if (match[26]) {
+        var supVal = match[27] || match[28] || match[29] || match[30] || match[31];
         var supEl = document.createElement('span');
         supEl.className = 'math-sup';
-        supEl.style.fontSize = (window.EXPONENT_SCALE || 0.58) + 'em';
-        supEl.style.verticalAlign = (window.EXPONENT_SHIFT || '0.44em');
-        supEl.style.marginRight = (window.EXPONENT_RIGHT_GAP || '0.16em');
-        supEl.appendChild(formatMathLine(match[6]));
+        supEl.appendChild(formatMathLine(supVal));
         frag.appendChild(supEl);
-      } else if (match[7]) {
-        var expVal = match[8] || match[9] || match[10];
-        var sEl = document.createElement('span');
-        sEl.className = 'math-sup';
-        sEl.style.fontSize = (window.EXPONENT_SCALE || 0.58) + 'em';
-        sEl.style.verticalAlign = (window.EXPONENT_SHIFT || '0.44em');
-        sEl.style.marginRight = (window.EXPONENT_RIGHT_GAP || '0.16em');
-        sEl.appendChild(formatTextChunk(expVal));
-        frag.appendChild(sEl);
-      } else if (match[11]) {
+      } else if (match[32]) {
+        var subVal = match[33] || match[34] || match[35] || match[36] || match[37];
+        var subEl = document.createElement('span');
+        subEl.className = 'math-sub';
+        subEl.appendChild(formatMathLine(subVal));
+        frag.appendChild(subEl);
+      } else if (match[38]) {
         var diffSpan = document.createElement('span');
         diffSpan.className = 'math-diff';
-        diffSpan.style.marginLeft = (window.DIFFERENTIAL_GAP || '0.24em');
-        diffSpan.textContent = match[12];
+        diffSpan.textContent = match[39];
         frag.appendChild(diffSpan);
+      } else if (match[40]) {
+        var opSpan = document.createElement('span');
+        opSpan.className = 'math-delim';
+        opSpan.textContent = match[40];
+        frag.appendChild(opSpan);
       }
       lastIdx = re.lastIndex;
     }

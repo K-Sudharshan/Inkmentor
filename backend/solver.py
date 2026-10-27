@@ -36,7 +36,7 @@ def _invoke_llm(func: Callable[..., Any], system: str, user: str) -> Tuple[str, 
     return str(res), meta
 
 
-WRITE_ALLOWED_PATTERN = re.compile(r"^[A-Za-z0-9\s+\-*\/^=().,_\[\]:|<~!]+$")
+WRITE_ALLOWED_PATTERN = re.compile(r"^[A-Za-z0-9\s+\-*\/^=().,_\[\]:|<~!∫∬∭∮∂√π·×±≠≤≥\\]+$")
 NARRATION_FORBIDDEN_PATTERN = re.compile(r"[\^_\$\\\{\}]")
 NARRATION_STEP_PREFIX_PATTERN = re.compile(r"^\s*step\s*\d+", re.IGNORECASE)
 

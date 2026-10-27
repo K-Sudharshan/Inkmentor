@@ -40,9 +40,11 @@ STEP & TEXT CONSTRAINTS:
 1. Include between 3 and 5 steps in "steps" (never exceed 5 steps).
 2. The last step's "write" MUST express the final answer as a new line that states the result and must not repeat the previous line.
 3. "write" rules:
-   - Must contain ONLY ASCII letters, digits, spaces, and the characters: + - * / ^ = ( ) . , _ [ ] : |
+   - Must contain ONLY ASCII letters, digits, spaces, and the characters: + - * / ^ = ( ) . , _ [ ] : | (math symbols like int, iint, del, sqrt are automatically rendered into handwritten mathematical symbols on paper).
    - Maximum 40 characters per line.
-   - NO LaTeX commands, no backslashes, no unicode symbols.
+   - For integrals, write "int_a^b" (definite), "iint_D" (double), "iiint_V" (triple), or "int" (indefinite), e.g. "int_0^1 x^2 [y^2 / 2]_0^2 dx".
+   - For evaluation bounds of antiderivatives, write "[expression]_lower^upper", e.g. "[y^2 / 2]_0^2" or "[2 * x^3 / 3]_0^1".
+   - For partial derivatives or Jacobians, write "del(u,v)/del(x,y)" or "del u / del x".
    - Write powers and fractions inline (e.g., "dy/dx = 6x cos(3x^2)").
 4. NEVER rewrite, restate, or repeat the question or original problem statement in Step 1. The user already wrote the question on their paper. Begin Step 1 immediately with the first mathematical transformation, formula application, substitution, derivative, integral, or factoring step.
 5. "narration" rules (Ink persona):
