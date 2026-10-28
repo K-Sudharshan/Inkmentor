@@ -28,7 +28,7 @@ def _find_seeds_path() -> Optional[str]:
 
 
 def get_seed_pages() -> List[Dict[str, Any]]:
-    """Loads and caches the 7 precomputed seeded page embeddings."""
+    """Loads and caches the 6 precomputed seeded page embeddings."""
     global _SEEDED_PAGES_CACHE
     if _SEEDED_PAGES_CACHE is None:
         target_path = _find_seeds_path()

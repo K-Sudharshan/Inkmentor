@@ -27,29 +27,27 @@ def test_cosine_similarity_edge_cases():
 
 def test_seed_pages_loaded():
     seeds = get_seed_pages()
-    assert len(seeds) == 7
+    assert len(seeds) == 6
     page_numbers = [s["page"] for s in seeds]
-    assert page_numbers == [1, 2, 3, 4, 5, 6, 7]
-    assert seeds[0]["title"] == "Chain rule"
-    assert seeds[3]["title"] == "Trig derivatives"
+    assert page_numbers == [1, 2, 3, 4, 5, 6]
+    assert seeds[0]["title"] == "InkMentor · AI Math Notebook Guide"
+    assert seeds[2]["title"] == "Partial Derivatives & Tangent Planes"
+    assert seeds[4]["title"] == "Double & Iterated Integrals"
     assert len(seeds[0]["embedding"]) == 3072
 
 
-def test_retrieve_page8_question_top_match_is_page1_acceptance():
-    """Acceptance Criterion from Section 16 Task 3:
-    Accept when the Page 8 question retrieves Page 1 (chain rule) as the top result above threshold.
+def test_retrieve_tangent_plane_top_match_is_page3():
+    """Acceptance Criterion:
+    When asking about tangent planes or partial derivatives, Page 3 is retrieved as top match.
     """
     seeds = get_seed_pages()
-    page1_vec = seeds[0]["embedding"]
+    page3_vec = seeds[2]["embedding"]
 
-    # Provide a mock embedder returning the exact query embedding or close to Page 1
-    # First test: query embedding aligned with Page 1
     def mock_embed(text: str):
-        # Return Page 1 vector with minor jitter
-        return page1_vec
+        return page3_vec
 
     res = retrieve_context(
-        query="Q3. Differentiate y = sin(3x²)",
+        query="Find the tangent plane to z = x^2 y at (2, 1)",
         threshold=0.65,
         top_k=3,
         embed_func=mock_embed,
@@ -57,8 +55,8 @@ def test_retrieve_page8_question_top_match_is_page1_acceptance():
 
     assert len(res.matches) >= 1
     assert res.top_match is not None
-    assert res.top_match.page == 1
-    assert res.top_match.title == "Chain rule"
+    assert res.top_match.page == 3
+    assert res.top_match.title == "Partial Derivatives & Tangent Planes"
     assert res.top_match.similarity >= 0.65
 
 
@@ -126,4 +124,4 @@ def test_retrieve_api_endpoint_validation():
     # Valid call using mock/real seed data
     # When TEST_MODE=true or using seeds
     seeds = get_seed_pages()
-    assert len(seeds) == 7
+    assert len(seeds) == 6
