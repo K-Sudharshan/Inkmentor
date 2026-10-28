@@ -3,7 +3,11 @@
                          The Notebook That Writes Back
 ================================================================================
 
-A handwriting-first digital mathematics notebook powered by AI and symbolic verification.
+The first zero-hallucination math notebook that mathematically proves its own work
+with SymPy before writing a single line on paper.
+
+A handwriting-first digital mathematics notebook uniting multimodal AI vision,
+deterministic symbolic verification, and episodic notebook memory.
 
 Stack:
 - Python 3.11+ / FastAPI 0.115
@@ -15,20 +19,55 @@ Stack:
 
 
 ================================================================================
-THE PITCH
+THE PITCH: BEYOND CHATBOTS & CALCULATORS
 ================================================================================
 
-A handwriting-first digital mathematics notebook powered by AI and symbolic verification.
+A handwriting-first digital mathematics notebook powered by AI vision and
+deterministic symbolic verification.
 
-Instead of forcing students out of their natural working environment into sterile
-chat boxes, InkMentor functions first and foremost as an authentic digital notebook.
-Students write with a stylus or mouse across authentic grid paper using handcrafted
-stationery tools. When they hit a roadblock, they draw a circle around their
-handwritten problem to summon an on-demand AI tutor.
+Every student knows the fatal flaw of modern AI: Large Language Models hallucinate
+mathematics. They drop negative signs, invent false trig identities, and present
+incorrect steps with total confidence. Meanwhile, chatbots force students to leave
+their notebooks, break their flow, and copy-paste text out of context.
 
-Every single algebraic transformation is symbolically verified by SymPy before it
-appears on the screen, authored directly onto the notebook page stroke by stroke
-in warm glowing ink, and explained through real-time voice mentorship.
+InkMentor changes the paradigm:
+1. The Canvas is the Interface: Students work naturally with digital ink across
+   lined stationery paper. No typing, no prompt engineering, and no chat boxes.
+2. Circle-to-Solve Gesture: Simply draw a loop around any handwritten problem to
+   summon an on-demand AI tutor.
+3. Verified-Before-Shown (Zero Hallucination): Every single algebraic transformation
+   is proved and verified by a sandboxed Computer Algebra System (SymPy) before a
+   single stroke touches the paper.
+4. Episodic Notebook Memory: Explanations cite the student's own earlier notes
+   ("← your Page 2, again"), building long-term understanding.
+5. Living Ink & Voice Mentorship: Step-by-step derivations are authored directly
+   onto the page in glowing ink, synchronized with an upbeat, real-time voice
+   tutor named "Ink".
+
+
+================================================================================
+WHY INKMENTOR: HOW IT COMPARES
+================================================================================
+
++-----------------------+-------------------------+-------------------------+---------------------------+-----------------------------------------------+
+| Capability            | Photo Solvers           | Apple Math Notes        | Chatbots                  | INKMENTOR                                     |
+|                       | (Photomath, etc.)       | (iPadOS 18)             | (ChatGPT / Claude)        |                                               |
++-----------------------+-------------------------+-------------------------+---------------------------+-----------------------------------------------+
+| Mathematical          | Static database lookup  | Basic arithmetic        | Statistical guesses       | 100% Symbolically Proven                      |
+| Reliability           |                         | evaluation              | (hallucinates signs/rules)| (SymPy CAS)                                   |
++-----------------------+-------------------------+-------------------------+---------------------------+-----------------------------------------------+
+| Pedagogy vs.          | Dumps final answer      | Evaluates inline        | Dumps walls of            | 3-Tier Hint Ladder                            |
+| Spoilers              | immediately             | immediately (= 42)      | typed text                | (Nudge -> Next Step -> Solution)              |
++-----------------------+-------------------------+-------------------------+---------------------------+-----------------------------------------------+
+| Curriculum            | Zero context            | Zero context            | Zero context              | Episodic Memory                               |
+| Context               | (isolated query)        | (isolated expression)   | from your notes           | (Cites earlier notebook pages)                |
++-----------------------+-------------------------+-------------------------+---------------------------+-----------------------------------------------+
+| Interaction           | Phone camera            | Stylus expression       | Typing / prompt           | Circle-to-Solve gesture                       |
+| Model                 | snapshot                | evaluator               | engineering               | on authentic paper canvas                     |
++-----------------------+-------------------------+-------------------------+---------------------------+-----------------------------------------------+
+| Explanation           | Static printed          | None                    | Typed bullet              | Stroke-by-stroke living ink                   |
+| Delivery              | text                    | (answer only)           | points                    | + synchronized voice tutor                    |
++-----------------------+-------------------------+-------------------------+---------------------------+-----------------------------------------------+
 
 
 ================================================================================
@@ -60,53 +99,14 @@ THE DEMO STORY: HOW IT WORKS
    on lined paper using authentic pens or pencils.
 2. Circles to solve: Switch to the Circle tool and loop around the problem.
    Multimodal AI vision instantly extracts the mathematics.
-3. Retrieves earlier notes: Episodic notebook memory searches previous pages to
-   find related theorems, lemmas, or substitution rules.
-4. Verifies with SymPy: A sandboxed Computer Algebra System (CAS) verifies the
-   candidate mathematical solution before anything is rendered.
-5. Writes stroke by stroke: InkMentor writes out the complete derivation line
+3. Retrieves earlier notes: Episodic notebook memory searches previous pages
+   (via 3072-dimensional vector embeddings) to find related lemmas or substitution rules.
+4. Verifies with SymPy: A pre-warmed CAS worker proves the candidate mathematical
+   solution before anything is rendered.
+5. Writes stroke by stroke: InkMentor authors the complete derivation line
    by line in realistic handwriting.
 6. Voice explains the intuition: An upbeat voice study buddy named "Ink"
    synchronously explains the reasoning out loud in real time.
-
-
-================================================================================
-WHY IT MATTERS: THE PROBLEM WITH MATH AI
-================================================================================
-
-When students struggle with complex calculus or algebra, they typically leave
-their notes and open conversational chatbots. This workflow breaks learning:
-
-- The Hallucination Trap: Pure Large Language Models are statistical token
-  predictors. In mathematics, they drop negative signs, misapply rules, and
-  invent plausible-looking algebraic steps that are factually wrong.
-- Complete Loss of Curriculum Context: External solvers treat every query in
-  isolation. They have zero memory of the student's textbook, teacher's
-  definitions, or earlier notebook pages.
-- Passive Copying vs. Procedural Learning: Chatbots dump static blocks of typed
-  text or LaTeX. Students copy-paste without processing procedural intuition.
-- Workflow Fragmentation: Switching between notebooks, camera apps, and browser
-  tabs breaks cognitive focus and study momentum.
-
-
-================================================================================
-WHAT MAKES INKMENTOR UNIQUE
-================================================================================
-
-- Notebook-First Interface: The notebook canvas is the interface. The AI is a
-  quiet companion that appears only when explicitly summoned. It never interrupts,
-  autocompletes unprompted, or crowds the page.
-- Circle-to-Solve Natural Gesture: No prompt engineering, typing, or LaTeX entry.
-  Simply draw a loop around your handwriting.
-- Verified-Before-Shown (Zero Hallucination): No mathematical step or solution is
-  ever drawn on the page unless an independent symbolic computation engine (SymPy)
-  has evaluated and confirmed its truth.
-- Episodic Notebook Memory: Explanations cite the student’s own earlier pages
-  ("← your Page 2, again"). Tapping the margin portal smoothly flips back to
-  the original theorem.
-- Synchronized Living Ink & Voice: Step handwriting animations and voice narration
-  are speech-clock locked, guiding the student through each step at a calm,
-  conversational pace.
 
 
 ================================================================================
@@ -153,10 +153,32 @@ SYSTEM ARCHITECTURE
 Headline Engineering Benchmarks:
 - 8.9 ms SymPy Verification (88x faster): Pre-warmed background worker pool
   eliminates Python cold-import penalties.
-- ~0.1 s Confirm-to-First-Stroke: Speculative solve execution buffers verified
+- ~0.1 s Confirm-to-First-Stroke: Speculative solve pipeline buffers verified
   steps while the student reviews transcription.
+- Security Sandboxing: Python AST allowlist parsing blocks arbitrary code injection;
+  10.0s hard subprocess killswitches prevent CPU starvation.
 - 69/69 Automated Tests Passing: Comprehensive test suite covering AST
   sandboxing, magic-byte guards, and CAS equivalence.
+
+
+================================================================================
+MATHEMATICAL SCOPE & TOPIC BOUNDARIES
+================================================================================
+
+InkMentor is purposefully specialized for high school and undergraduate mathematics
+where symbolic proof is mathematically rigorous:
+
+- Single-Variable Calculus: Derivatives (chain, product, quotient rules),
+  indefinite & definite integrals, limits, and substitutions.
+- Multivariable Calculus: Partial derivatives (∂f/∂x, ∂f/∂y), tangent planes,
+  surface normals, gradient vectors (∇f), directional derivatives (D_u f),
+  double & iterated integrals (∬_R f dA), polar transformations (r dr dθ),
+  and the Jacobian determinant (J(u, v)).
+- Algebra & Equations: Real root polynomial solving, factoring, expansion, and
+  rational simplification.
+
+(Non-algebraic word problems and open-ended proofs are safely boundary-checked to
+uphold the zero-hallucination guarantee).
 
 
 ================================================================================
@@ -170,7 +192,7 @@ CORE FEATURES AT A GLANCE
 - Persistent AI Action Capsule: High-priority Circle-to-Solve, Hint, and Voice
   controls remain permanently accessible at the top right.
 - 3-Tier Pedagogical Hint Ladder:
-  * Level 1 (Nudge): Conceptual reminder of the governing theorem.
+  * Level 1 (Nudge): Conceptual reminder of the governing theorem without revealing calculations.
   * Level 2 (Next Step): Sets up the initial algebraic substitution.
   * Level 3 (Full Solution): Verified step-by-step derivation written on paper.
 - Canvas-Preserved Dark Mode: UI chrome and modals switch to dark slate, while
@@ -217,17 +239,25 @@ QUICK START (RUN LOCALLY IN 2 MINUTES)
 
 
 ================================================================================
-DEMO WALKTHROUGH
+EVALUATOR QUICK WALKTHROUGH
 ================================================================================
+
+[!] Pro-Tip for Evaluators:
+1. Turn your audio on! The synchronized voice tutor is a core pillar of the experience.
+2. Skip mouse handwriting if on a trackpad: Flip to Page 1 or Page 6 (Practice Workshop)
+   and simply circle the prebuilt calculus expressions with the Circle tool (◯)
+   to experience the full verified derivation and voice mentorship instantly!
 
 1. Explore the Prebuilt Chapter: Flip through Pages 2 to 6 using the bottom
    navigation bar to review 3D surfaces, partial derivatives, and double integrals.
 2. Solve a Problem: Flip to Page 6 (Practice Workshop) or Page 1.
-3. Write Math: Use the Pen tool to write a calculus expression (e.g. ∫ 2x dx).
-4. Circle & Solve: Select the Circle tool and loop around your handwriting.
+3. Circle & Solve: Select the Circle tool (◯) and loop around any math expression.
    Click "Solve" in the confirmation modal.
-5. Watch the Magic: InkMentor writes the derivation line by line in glowing ink
+4. Watch the Magic: InkMentor writes the derivation line by line in glowing ink
    while "Ink" explains the intuition out loud!
+5. Test the Memory Portal: When a solution references an earlier topic (e.g. Page 2
+   or Page 3), click the margin badge ("← your Page X, again") to jump right back
+   to the original notes.
 
 
 ================================================================================
