@@ -225,6 +225,7 @@ async def test_mv_and_theme():
                 var btn = document.getElementById('settings-btn');
                 btn.click();
 
+                var autoBtn = document.querySelector('#setting-theme-seg .sm-seg-btn[data-val="auto"]');
                 var darkBtn = document.querySelector('#setting-theme-seg .sm-seg-btn[data-val="dark"]');
                 var lightBtn = document.querySelector('#setting-theme-seg .sm-seg-btn[data-val="light"]');
 
@@ -233,23 +234,29 @@ async def test_mv_and_theme():
                 var darkAttr = document.documentElement.getAttribute('data-theme');
                 var bodyBgDark = getComputedStyle(document.body).backgroundColor;
                 var paperBgDark = getComputedStyle(document.getElementById('paper')).backgroundColor;
+                var paperBgImageDark = getComputedStyle(document.getElementById('paper')).backgroundImage;
 
                 // Close settings
                 var close = document.getElementById('sm-close');
                 close.click();
 
                 return {
+                    hasAutoBtn: !!autoBtn,
                     darkWorked: darkAttr === 'dark',
                     bodyBgDark: bodyBgDark,
-                    paperBgDark: paperBgDark
+                    paperBgDark: paperBgDark,
+                    paperBgImageDark: paperBgImageDark
                 };
             })()
             """); req_id += 1
             print(f"   Dark Theme Check: {settings_theme_test}")
+            assert settings_theme_test.get("hasAutoBtn") is False, "Auto button must be removed from settings"
             assert settings_theme_test.get("darkWorked") is True
             # Canvas must stay white in dark mode
             assert "rgb(255, 255, 255)" in settings_theme_test.get("paperBgDark", ""), f"Paper canvas should be white, got {settings_theme_test.get('paperBgDark')}"
-            print("   -> PASS: Paper canvas stays white in Dark Mode!")
+            # Canvas must have visible grid lines in dark mode
+            assert "linear-gradient" in settings_theme_test.get("paperBgImageDark", ""), f"Paper canvas should have grid linear-gradient, got {settings_theme_test.get('paperBgImageDark')}"
+            print("   -> PASS: Auto option removed, Paper canvas stays white, and Grid is clearly visible in Dark Mode!")
 
             # Capture Dark Mode Screenshot with crisp white paper
             await asyncio.sleep(0.5)

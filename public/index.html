@@ -40,7 +40,6 @@
 }
 :root{--bg:#f2f2f7;--glass:rgba(255,255,255,.66);--gb:rgba(255,255,255,.8);--line:rgba(0,0,0,.07);--tx:#1c1c1e;--tx2:#6e6e73;--ac:#6b4ef0;--sh:0 12px 44px rgba(0,0,0,.10);--g:32px;--ai-font:'Caveat','Reenie Beanie',cursive;--ai-font-size:calc(var(--g)*1.45);--ai-line-height:calc(var(--g)*1.65);--ai-glow:drop-shadow(0 0 3.5px rgba(255,94,126,0.28));--ai-dot-size:8px;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 :root[data-theme="dark"]{--bg:#0a0a0f;--glass:rgba(32,32,40,.62);--gb:rgba(255,255,255,.09);--line:rgba(255,255,255,.09);--tx:#f5f5f7;--tx2:#9a9aa3;--ac:#a99bff;--sh:0 12px 44px rgba(0,0,0,.55)}
-@media(prefers-color-scheme:dark){:root[data-theme="auto"]{--bg:#0a0a0f;--glass:rgba(32,32,40,.62);--gb:rgba(255,255,255,.09);--line:rgba(255,255,255,.09);--tx:#f5f5f7;--tx2:#9a9aa3;--ac:#a99bff;--sh:0 12px 44px rgba(0,0,0,.55)}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;margin:0;background:var(--bg);color:var(--tx);font:400 14px/1.4 -apple-system,'Inter',system-ui,sans-serif;overflow:hidden}
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
@@ -365,17 +364,18 @@ body.app-loading #app {
 .sm-action-btn.danger{grid-column:1/-1;color:#ff5e7e;background:rgba(255,94,126,.1)}
 .sm-action-btn.danger:hover{background:rgba(255,94,126,.18)}
 /* Paper Style Classes */
-#paper.paper-ruled{background-image:linear-gradient(rgba(0,0,0,.18) 1px,transparent 1px)}
-#paper.paper-blank{background-image:none}
-/* Keep paper canvas light & natural in all themes so ink, handwriting, and diagrams are always high-contrast & authentic */
+#paper{background-color:#fff !important;color:#0b0b14 !important}
+#paper,
+#paper.paper-grid{background-image:linear-gradient(rgba(0,0,0,.18) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.18) 1px,transparent 1px) !important;background-size:var(--g) var(--g) !important;background-attachment:local !important}
+#paper.paper-ruled{background-image:linear-gradient(rgba(0,0,0,.18) 1px,transparent 1px) !important;background-size:var(--g) var(--g) !important;background-attachment:local !important}
+#paper.paper-blank{background-image:none !important}
+
+/* Keep paper canvas light & natural in Dark Theme with crisp visible grid & deep container shadow */
+:root[data-theme="dark"] #paper{background-color:#fff !important;color:#0b0b14 !important;box-shadow:0 16px 48px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.1) !important}
 :root[data-theme="dark"] #paper,
-:root[data-theme="auto"] #paper{background:#fff !important;color:#0b0b14 !important;box-shadow:0 16px 48px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.1)}
-:root[data-theme="dark"] #paper.paper-grid,
-:root[data-theme="auto"] #paper.paper-grid{background-image:linear-gradient(rgba(0,0,0,.2) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.2) 1px,transparent 1px) !important}
-:root[data-theme="dark"] #paper.paper-ruled,
-:root[data-theme="auto"] #paper.paper-ruled{background-image:linear-gradient(rgba(0,0,0,.18) 1px,transparent 1px) !important}
-:root[data-theme="dark"] #paper.paper-blank,
-:root[data-theme="auto"] #paper.paper-blank{background-image:none !important}
+:root[data-theme="dark"] #paper.paper-grid{background-image:linear-gradient(rgba(0,0,0,.18) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.18) 1px,transparent 1px) !important;background-size:var(--g) var(--g) !important;background-attachment:local !important}
+:root[data-theme="dark"] #paper.paper-ruled{background-image:linear-gradient(rgba(0,0,0,.18) 1px,transparent 1px) !important;background-size:var(--g) var(--g) !important;background-attachment:local !important}
+:root[data-theme="dark"] #paper.paper-blank{background-image:none !important}
 </style>
 </head>
 <body class="app-loading">
@@ -519,7 +519,7 @@ body.app-loading #app {
   <button class="sv" id="solve" title="Solve circled problem or whole page" aria-label="Solve"><svg class="i"><use href="#spk"/></svg><span>Solve</span></button>
 </div>
 </header>
-<section id="paper">
+<section id="paper" class="paper-grid">
 <div id="acrylic-ruler" class="acrylic-ruler-widget" style="display:none;" aria-label="Interactive Scale">
   <svg class="ar-scale-ticks" viewBox="0 0 440 24" width="100%" height="24">
     <!-- Centimeter and millimeter calibrations -->
@@ -582,12 +582,11 @@ body.app-loading #app {
       <div class="sm-row">
         <div class="sm-label-col">
           <span class="sm-label">Theme Mode</span>
-          <span class="sm-desc">Choose dark, light, or follow system theme</span>
+          <span class="sm-desc">Choose light or dark theme</span>
         </div>
         <div class="sm-seg" id="setting-theme-seg">
           <button data-val="light" class="sm-seg-btn on">Light</button>
           <button data-val="dark" class="sm-seg-btn">Dark</button>
-          <button data-val="auto" class="sm-seg-btn">Auto</button>
         </div>
       </div>
       <div class="sm-row">
@@ -6885,6 +6884,7 @@ function initSettings() {
 
   // Settings State & Persistence
   var theme = localStorage.getItem('inkmentor_theme') || 'light';
+  if (theme !== 'dark') theme = 'light';
   var paperStyle = localStorage.getItem('inkmentor_paper_style') || 'grid';
   var gridSize = localStorage.getItem('inkmentor_grid_size') || '32px';
   var voiceEnabled = localStorage.getItem('inkmentor_voice_enabled') !== 'false';
@@ -6896,6 +6896,7 @@ function initSettings() {
 
   // Apply Theme
   function applyTheme(t) {
+    if (t !== 'dark') t = 'light';
     theme = t;
     localStorage.setItem('inkmentor_theme', t);
     document.documentElement.setAttribute('data-theme', t);
