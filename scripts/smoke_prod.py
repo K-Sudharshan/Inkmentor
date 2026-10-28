@@ -95,21 +95,7 @@ def main():
     except Exception as e:
         record("Font Asset (/fonts/Caveat-Regular.ttf)", False, 0.0, str(e))
 
-    # 3. Static Centerlines JSON
-    try:
-        code, body, hdrs, dur = make_request(f"{base_url}/reenie_centerlines.json")
-        passed = code == 200 and len(body) > 1000
-        record("Static Asset (/reenie_centerlines.json)", passed, dur, f"HTTP {code}, {len(body)} bytes")
-    except Exception as e:
-        record("Static Asset (/reenie_centerlines.json)", False, 0.0, str(e))
 
-    # 4. Static Hershey Glyphs JSON
-    try:
-        code, body, hdrs, dur = make_request(f"{base_url}/hershey_glyphs.json")
-        passed = code == 200 and len(body) > 1000
-        record("Static Asset (/hershey_glyphs.json)", passed, dur, f"HTTP {code}, {len(body)} bytes")
-    except Exception as e:
-        record("Static Asset (/hershey_glyphs.json)", False, 0.0, str(e))
 
     # 5. Fast Health Endpoint "/api/health"
     try:

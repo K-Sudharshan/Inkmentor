@@ -16,12 +16,12 @@ This guide provides step-by-step instructions for deploying InkMentor on the **V
           ┌───────────────────┴─────────────────┐    ┌───────┴───────────────┐
           │ public/                             │    │ api/index.py          │
           │  ├── index.html                     │    │ (FastAPI App)         │
-          │  ├── reenie_centerlines.json        │    │  ├── /api/solve       │
-          │  ├── hershey_glyphs.json            │    │  ├── /api/recognize   │
-          │  ├── seed_embeddings.json           │    │  ├── /api/retrieve    │
-          │  └── fonts/Caveat-Regular.ttf       │    │  ├── /api/tts         │
-          └─────────────────────────────────────┘    │  └── /api/health      │
-                                                     └───────────────────────┘
+          │  ├── seed_embeddings.json           │    │  ├── /api/solve       │
+          │  └── fonts/Caveat-Regular.ttf       │    │  ├── /api/recognize   │
+          │                                     │    │  ├── /api/retrieve    │
+          │                                     │    │  ├── /api/tts         │
+          │                                     │    │  └── /api/health      │
+          └─────────────────────────────────────┘    └───────────────────────┘
 ```
 
 - **Static Frontend**: Edge CDN serves `public/index.html`, fonts, and glyph JSON assets globally with 0ms serverless function invocation cost.

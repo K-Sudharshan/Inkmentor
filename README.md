@@ -461,8 +461,8 @@ InkMentor is architected for zero-maintenance serverless deployment on **Vercel*
           │ public/                             │    │ api/index.py          │
           │  ├── index.html                     │    │ (FastAPI Serverless)  │
           │  ├── fonts/Caveat-Regular.ttf       │    │  ├── /api/solve       │
-          │  ├── reenie_centerlines.json        │    │  ├── /api/recognize   │
-          │  └── hershey_glyphs.json            │    │  └── /api/tts         │
+          │  └── seed_embeddings.json           │    │  ├── /api/recognize   │
+          │                                     │    │  └── /api/tts         │
           └─────────────────────────────────────┘    └───────────────────────┘
 ```
 
