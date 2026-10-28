@@ -1,6 +1,6 @@
 ================================================================================
                                    INKMENTOR
-                         The Notebook That Writes Back
+                     Ink that writes, talks and guides you
 ================================================================================
 
 The first zero-hallucination math notebook that mathematically proves its own work
@@ -279,4 +279,4 @@ LICENSE
 Licensed under the MIT License.
 Handwriting fonts (Caveat and Reenie Beanie) licensed under SIL Open Font License 1.1.
 
-InkMentor • The Notebook That Writes Back • Built with precision, care, and mathematical rigor.
+InkMentor • Ink that writes, talks and guides you • Built with precision, care, and mathematical rigor.

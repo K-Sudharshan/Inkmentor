@@ -8,7 +8,7 @@ InkMentor is a **handwriting-first digital notebook** with iPad-style grid pages
 
 Its signature mechanism is **notebook memory**: the agent is grounded in the student's own earlier pages, so it can say, by voice and in the margin, *"you derived this on Page 1."* Existing solvers are stateless and answer only the problem in front of them; InkMentor solves it using the student's own learning history.
 
-**Tagline:** The notebook that writes back.
+**Tagline:** Ink that writes, talks and guides you.
 
 ## 2. How the idea evolved
 

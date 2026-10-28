@@ -1,6 +1,6 @@
 # InkMentor
 
-> **The notebook that writes back.**  
+> **Ink that writes, talks and guides you.**  
 > **The first zero-hallucination math notebook that mathematically proves its own work with SymPy before writing a single line on paper.**
 
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org/)
@@ -230,5 +230,5 @@ Handwriting fonts (`Caveat` and `Reenie Beanie`) are licensed under the **SIL Op
 ---
 
 <div align="center">
-  <sub>InkMentor • The Notebook That Writes Back • Built with precision, care, and mathematical rigor.</sub>
+  <sub>InkMentor • Ink that writes, talks and guides you • Built with precision, care, and mathematical rigor.</sub>
 </div>
