@@ -163,6 +163,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-off
 .math-delim{display:inline-block;font-size:0.94em;vertical-align:0.02em}
 #ring{position:absolute;border:2.5px solid var(--ac);border-radius:18px;opacity:0;transform:scale(1.04);transition:.4s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 24px color-mix(in srgb,var(--ac) 45%,transparent);pointer-events:none;z-index:4}
 #ring.on{opacity:1;transform:none}
+#ring.recognizing{animation:ringGlow 1.1s ease-in-out infinite alternate}
+@keyframes ringGlow{0%{box-shadow:0 0 10px color-mix(in srgb,var(--ac) 40%,transparent);border-color:var(--ac)}100%{box-shadow:0 0 28px color-mix(in srgb,var(--ac) 95%,transparent);border-color:color-mix(in srgb,var(--ac) 75%,#fff)}}
 #confirm-panel{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);width:min(460px,calc(100% - 32px));z-index:50;padding:16px;border-radius:20px;display:none;flex-direction:column;gap:10px;box-shadow:var(--sh)}
 .cp-hdr{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.06em}
 .cp-input{width:100%;border:1px solid var(--line);background:var(--line);border-radius:12px;padding:10px 14px;color:var(--tx);font:500 14px -apple-system,'Inter',sans-serif;outline:none;transition:border-color .2s}
@@ -1145,7 +1147,7 @@ window.TTS_PLAYBACK_RATE = TTS_PLAYBACK_RATE;
 window.TTS_MAX_WAIT_MS = TTS_MAX_WAIT_MS;
 
 // Optimization Flags & Latency Tuning Constants
-var RECOGNIZE_MAX_SIDE = 768;
+var RECOGNIZE_MAX_SIDE = 512;
 window.RECOGNIZE_MAX_SIDE = RECOGNIZE_MAX_SIDE;
 var SPECULATIVE_SOLVE = true;
 window.SPECULATIVE_SOLVE = SPECULATIVE_SOLVE;
@@ -6127,6 +6129,7 @@ function showConfirmPanel(questionText, noteText) {
 }
 
 function hideConfirmPanel() {
+  ring.classList.remove('recognizing');
   confirmPanel.style.display = 'none';
   $('#cp-note').style.display = 'none';
 }
@@ -6241,6 +6244,7 @@ function handleCircleGesture(pts) {
   // Position violet ring around the circled area
   ring.style.cssText = 'left:' + box.x + 'px;top:' + box.y + 'px;width:' + box.w + 'px;height:' + box.h + 'px';
   ring.classList.add('on');
+  ring.classList.add('recognizing');
 
   // Find student strokes that intersect the box
   var strokes = getStrokes(cur);
@@ -6342,12 +6346,14 @@ async function sendRecognizeRequest(b64) {
     if (!response.ok) {
       var errData = await response.json().catch(function() { return {}; });
       var msg = errData.detail || ('Server status ' + response.status);
+      ring.classList.remove('recognizing');
       toast('Recognition error: ' + msg);
       say('Could not read question automatically. Type it below.');
       showConfirmPanel('', 'Recognition error: ' + msg + '. Type question manually:');
       return;
     }
 
+    ring.classList.remove('recognizing');
     var data = await response.json();
     recordPerfMark('recognize_received');
     if (data.readable === false) {

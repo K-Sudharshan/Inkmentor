@@ -42,6 +42,11 @@ from typing import Any, Dict, Optional, Tuple
 _client_lock = threading.Lock()
 _cached_client: Optional[genai.Client] = None
 _cached_api_key: Optional[str] = None
+_last_vision_meta = threading.local()
+
+
+def get_last_vision_meta() -> Optional[Dict[str, Any]]:
+    return getattr(_last_vision_meta, "val", None)
 
 USE_OPTIMIZED_LLM_CONFIG = os.getenv("USE_OPTIMIZED_LLM_CONFIG", "true").lower() in ("true", "1", "yes")
 LLM_MAX_OUTPUT_TOKENS = int(os.getenv("LLM_MAX_OUTPUT_TOKENS", "2048"))
@@ -168,26 +173,31 @@ def call_vision_llm_with_meta(
         raise RuntimeError(f"Unsupported LLM_PROVIDER: {provider}. Expected 'gemini'.")
 
     api_key = _get_required_env("LLM_API_KEY")
-    model_name = _get_required_env("LLM_MODEL")
+    model_name = (os.environ.get("LLM_VISION_MODEL") or _get_required_env("LLM_MODEL")).strip()
+    vision_max_tokens = int(os.environ.get("LLM_VISION_MAX_OUTPUT_TOKENS", "300"))
+    is_json = "json" in prompt.lower() or prompt.strip().endswith("}")
 
     t0 = time.time()
     try:
         client = get_genai_client(api_key)
         part = types.Part.from_bytes(data=image_bytes, mime_type=mime_type)
+        gen_kwargs = {
+            "temperature": 0.0,
+            "max_output_tokens": vision_max_tokens,
+        }
+        if is_json:
+            gen_kwargs["response_mime_type"] = "application/json"
+
         if USE_OPTIMIZED_LLM_CONFIG:
             try:
                 config = types.GenerateContentConfig(
-                    temperature=0.0,
-                    max_output_tokens=LLM_MAX_OUTPUT_TOKENS,
+                    **gen_kwargs,
                     thinking_config=types.ThinkingConfig(thinking_level=types.ThinkingLevel.MINIMAL),
                 )
             except Exception:
-                config = types.GenerateContentConfig(
-                    temperature=0.0,
-                    max_output_tokens=LLM_MAX_OUTPUT_TOKENS,
-                )
+                config = types.GenerateContentConfig(**gen_kwargs)
         else:
-            config = types.GenerateContentConfig(temperature=0.0)
+            config = types.GenerateContentConfig(**gen_kwargs)
 
         try:
             response = client.models.generate_content(
@@ -198,28 +208,11 @@ def call_vision_llm_with_meta(
         except Exception as api_err:
             err_str = str(api_err).lower()
             if "thinking" in err_str or "budget" in err_str or "invalid_argument" in err_str or "400" in err_str:
-                fallback_config = types.GenerateContentConfig(
-                    temperature=0.0,
-                    max_output_tokens=LLM_MAX_OUTPUT_TOKENS,
-                )
+                fallback_config = types.GenerateContentConfig(**gen_kwargs)
                 response = client.models.generate_content(
                     model=model_name,
                     contents=[prompt, part],
                     config=fallback_config,
-                )
-            elif model_name != "gemini-3.5-flash-lite" and (
-                "404" in err_str
-                or "not found" in err_str
-                or "no longer available" in err_str
-                or "429" in err_str
-                or "quota" in err_str
-                or "resource_exhausted" in err_str
-                or "503" in err_str
-            ):
-                response = client.models.generate_content(
-                    model="gemini-3.5-flash-lite",
-                    contents=[prompt, part],
-                    config=config,
                 )
             else:
                 raise
@@ -240,6 +233,7 @@ def call_vision_llm_with_meta(
             meta["thinking_tokens"] = getattr(response.usage_metadata, "thoughts_token_count", None)
             meta["total_tokens"] = getattr(response.usage_metadata, "total_token_count", None)
 
+        _last_vision_meta.val = meta
         return response.text, meta
     except Exception as exc:
         err_msg = str(exc)
@@ -254,7 +248,8 @@ def call_vision_llm(
     prompt: str = "Transcribe the handwritten math in this image into clean LaTeX. Return ONLY the LaTeX expression without markdown fences or commentary.",
 ) -> str:
     """Calls Gemini vision API to transcribe handwritten math from image bytes."""
-    text, _ = call_vision_llm_with_meta(image_bytes, mime_type=mime_type, prompt=prompt)
+    text, meta = call_vision_llm_with_meta(image_bytes, mime_type=mime_type, prompt=prompt)
+    _last_vision_meta.val = meta
     return text
 
 

@@ -47,6 +47,7 @@ def test_1_valid_tiny_png_returns_full_response():
         )
         assert res.status_code == 200
         data = res.json()
+        timing = data.pop("timing", None)
         assert data == {
             "readable": True,
             "latex": "y = \\sin(3x^2)",
