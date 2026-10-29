@@ -57,11 +57,16 @@ LLM_MAX_OUTPUT_TOKENS = int(os.getenv("LLM_MAX_OUTPUT_TOKENS", "2048"))
 
 
 def get_genai_client(api_key: str) -> genai.Client:
-    """Returns a reused genai.Client instance to avoid rebuilding HTTP transport per request."""
+    """Returns a reused genai.Client instance with single-attempt failover to avoid 30s SDK backoff loops."""
     global _cached_client, _cached_api_key
     with _client_lock:
         if _cached_client is None or _cached_api_key != api_key:
-            _cached_client = genai.Client(api_key=api_key)
+            _cached_client = genai.Client(
+                api_key=api_key,
+                http_options=types.HttpOptions(
+                    retry_options=types.HttpRetryOptions(attempts=1),
+                ),
+            )
             _cached_api_key = api_key
         return _cached_client
 
@@ -302,7 +307,7 @@ def call_embedding(
     target_model = model_name or os.environ.get("LLM_EMBEDDING_MODEL", "gemini-embedding-001")
 
     try:
-        client = genai.Client(api_key=api_key)
+        client = get_genai_client(api_key)
         response = client.models.embed_content(
             model=target_model,
             contents=text,
