@@ -41,7 +41,7 @@ STEP & TEXT CONSTRAINTS:
 2. The last step's "write" MUST express the final answer as a new line that states the result and must not repeat the previous line.
 3. "write" rules:
    - Must contain ONLY ASCII letters, digits, spaces, and the characters: + - * / ^ = ( ) . , _ [ ] : | (math symbols like int, iint, del, sqrt are automatically rendered into handwritten mathematical symbols on paper).
-   - Maximum 40 characters per line.
+   - Maximum 65 characters per line (keep formulas concise and readable on canvas).
    - For integrals, write "int_a^b" (definite), "iint_D" (double), "iiint_V" (triple), or "int" (indefinite), e.g. "int_0^1 x^2 [y^2 / 2]_0^2 dx".
    - For evaluation bounds of antiderivatives, write "[expression]_lower^upper", e.g. "[y^2 / 2]_0^2" or "[2 * x^3 / 3]_0^1".
    - For partial derivatives or Jacobians, write "del(u,v)/del(x,y)" or "del u / del x".

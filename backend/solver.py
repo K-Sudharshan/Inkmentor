@@ -60,12 +60,12 @@ def validate_llm_steps(steps: List[Step]) -> Optional[str]:
         if not s.write or not s.write.strip():
             return f"Step {idx} 'write' field is empty"
         s.write = re.sub(r"\s+", " ", s.write.strip())
-        if len(s.write) > 40:
+        if len(s.write) > 65:
             compacted = re.sub(r"\s*([+\-*\/=,:\(\)\[\]])\s*", r"\1", s.write)
-            if len(compacted) <= 40:
+            if len(compacted) <= 65:
                 s.write = compacted
             else:
-                return f"Step {idx} 'write' exceeds 40 characters limit ({len(s.write)} chars)"
+                return f"Step {idx} 'write' exceeds 65 characters limit ({len(s.write)} chars)"
         if not WRITE_ALLOWED_PATTERN.match(s.write):
             return f"Step {idx} 'write' contains forbidden characters"
         if "\\" in s.write:

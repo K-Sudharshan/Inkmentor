@@ -10,10 +10,10 @@ def _get_required_env(var_name: str) -> str:
     if var_name == "LLM_PROVIDER":
         return (os.environ.get("LLM_PROVIDER") or "gemini").strip()
     if var_name == "LLM_MODEL":
-        val = (os.environ.get("LLM_MODEL") or "gemini-3-flash-preview").strip()
-        # Automatically map overloaded or deprecated models to active gemini-3-flash-preview
-        if val in ("gemini-3.5-flash-lite", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash", "gemini-2.5-flash-lite") or "2.5-flash" in val or "2.0-flash" in val or "3.5-flash" in val:
-            return "gemini-3-flash-preview"
+        val = (os.environ.get("LLM_MODEL") or "gemini-3.5-flash").strip()
+        # Automatically map deprecated or overloaded preview models to active gemini-3.5-flash
+        if val in ("gemini-3.5-flash-lite", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash", "gemini-2.5-flash-lite") or "2.5-flash" in val or "2.0-flash" in val or "3.5-flash-lite" in val:
+            return "gemini-3.5-flash"
         return val
     if var_name == "LLM_API_KEY":
         val = os.environ.get("LLM_API_KEY") or os.environ.get("GEMINI_API_KEY")
@@ -114,7 +114,7 @@ def call_llm_with_meta(system: str, user: str) -> Tuple[str, Dict[str, Any]]:
                     contents=user,
                     config=fallback_config,
                 )
-            elif model_name != "gemini-3-flash-preview" and (
+            elif (
                 "404" in err_str
                 or "not found" in err_str
                 or "no longer available" in err_str
@@ -123,8 +123,9 @@ def call_llm_with_meta(system: str, user: str) -> Tuple[str, Dict[str, Any]]:
                 or "resource_exhausted" in err_str
                 or "503" in err_str
             ):
+                alt_model = "gemini-3.5-flash" if model_name != "gemini-3.5-flash" else "gemini-3.1-flash-lite-preview"
                 response = client.models.generate_content(
-                    model="gemini-3-flash-preview",
+                    model=alt_model,
                     contents=user,
                     config=config,
                 )
@@ -214,7 +215,7 @@ def call_vision_llm_with_meta(
                     contents=[prompt, part],
                     config=fallback_config,
                 )
-            elif model_name != "gemini-3-flash-preview" and (
+            elif (
                 "404" in err_str
                 or "not found" in err_str
                 or "no longer available" in err_str
@@ -223,8 +224,9 @@ def call_vision_llm_with_meta(
                 or "resource_exhausted" in err_str
                 or "503" in err_str
             ):
+                alt_model = "gemini-3.5-flash" if model_name != "gemini-3.5-flash" else "gemini-3.1-flash-lite-preview"
                 response = client.models.generate_content(
-                    model="gemini-3-flash-preview",
+                    model=alt_model,
                     contents=[prompt, part],
                     config=config,
                 )
