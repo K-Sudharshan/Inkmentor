@@ -10,16 +10,14 @@ def _get_required_env(var_name: str) -> str:
     if var_name == "LLM_PROVIDER":
         return (os.environ.get("LLM_PROVIDER") or "gemini").strip()
     if var_name == "LLM_MODEL":
-        val = (os.environ.get("LLM_MODEL") or "gemini-3.5-flash").strip()
-        # Automatically map quota-exhausted preview models to active gemini-3.5-flash
+        val = (os.environ.get("LLM_MODEL") or "gemini-3-flash-preview").strip()
+        # Automatically map deprecated 1.5/2.0/2.5 models to active gemini-3-flash-preview
         if (
-            val in ("gemini-3-flash-preview", "gemini-3-flash", "gemini-3.5-flash-lite", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash", "gemini-2.5-flash-lite")
-            or "3-flash" in val
+            val in ("gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash", "gemini-2.5-flash-lite")
             or "2.5-flash" in val
             or "2.0-flash" in val
-            or "3.5-flash-lite" in val
         ):
-            return "gemini-3.5-flash"
+            return "gemini-3-flash-preview"
         return val
     if var_name == "LLM_API_KEY":
         val = os.environ.get("LLM_API_KEY") or os.environ.get("GEMINI_API_KEY")
