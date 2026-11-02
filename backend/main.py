@@ -3,7 +3,7 @@ import json
 import logging
 import os
 from contextlib import asynccontextmanager
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from dotenv import load_dotenv
 
@@ -11,14 +11,26 @@ from dotenv import load_dotenv
 env_path = os.path.join(os.path.dirname(__file__), ".env")
 load_dotenv(dotenv_path=env_path, override=True)
 
-from fastapi import FastAPI, HTTPException, Request, Response, status
+from fastapi import Depends, FastAPI, Header, HTTPException, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 
+from backend.auth import (
+    create_or_update_google_user,
+    create_session,
+    delete_session,
+    get_current_user,
+    get_optional_user,
+    update_user_profile,
+    verify_google_id_token,
+)
 from backend.llm import validate_llm_env
 from backend.memory import retrieve_context
 from backend.recognize import recognize_image
 from backend.schemas import (
+    AuthResponse,
+    GoogleAuthRequest,
+    ProfileUpdateRequest,
     RecognizeRequest,
     RecognizeResponse,
     RetrieveRequest,
@@ -27,6 +39,7 @@ from backend.schemas import (
     SolveResponse,
     TTSRequest,
     TTSStatusResponse,
+    UserResponse,
 )
 from backend.solver import solve_problem
 from backend.tts import TTSAllProvidersFailed, generate_tts_wav, get_tts_config
@@ -190,6 +203,91 @@ async def get_config() -> Dict[str, Any]:
     return {
         "google_client_id": (os.environ.get("GOOGLE_CLIENT_ID") or "").strip(),
     }
+
+
+# --- Authentication & Session Endpoints ---
+@app.post("/api/auth/google", response_model=AuthResponse)
+@app.post("/auth/google", response_model=AuthResponse)
+async def auth_google(req: GoogleAuthRequest, response: Response):
+    """
+    Verifies a Google OAuth ID token, provisions/updates user account,
+    and returns a persistent session token + secure session cookie.
+    """
+    try:
+        id_info = verify_google_id_token(req.credential)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Invalid Google ID token: {exc}",
+        )
+
+    sub = id_info.get("sub")
+    email = id_info.get("email")
+    if not sub or not email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Google account payload missing required sub or email",
+        )
+
+    name = req.name or id_info.get("name") or email.split("@")[0]
+    picture = id_info.get("picture") or ""
+
+    user, is_new = create_or_update_google_user(
+        google_sub=sub,
+        email=email,
+        name=name,
+        picture=picture,
+        dob=req.dob or "",
+        age=req.age,
+    )
+
+    token = create_session(user["id"])
+    response.set_cookie(
+        key="inkmentor_session",
+        value=token,
+        httponly=True,
+        max_age=30 * 24 * 3600,
+        samesite="lax",
+    )
+    return AuthResponse(token=token, user=UserResponse(**user), is_new=is_new)
+
+
+@app.get("/api/auth/me", response_model=UserResponse)
+@app.get("/auth/me", response_model=UserResponse)
+async def get_me(user: Dict[str, Any] = Depends(get_current_user)):
+    """Protected endpoint: returns the authenticated user's profile."""
+    return UserResponse(**user)
+
+
+@app.post("/api/auth/profile", response_model=UserResponse)
+@app.put("/api/auth/profile", response_model=UserResponse)
+async def update_profile(
+    req: ProfileUpdateRequest,
+    user: Dict[str, Any] = Depends(get_current_user),
+):
+    """Protected endpoint: updates learner profile details (name, DOB, age)."""
+    updated = update_user_profile(user["id"], name=req.name, dob=req.dob, age=req.age)
+    return UserResponse(**updated)
+
+
+@app.post("/api/auth/logout")
+@app.post("/auth/logout")
+async def logout(
+    request: Request,
+    response: Response,
+    authorization: Optional[str] = Header(None),
+):
+    """Revokes the current session token from the database and clears cookies."""
+    token = None
+    if authorization and authorization.lower().startswith("bearer "):
+        token = authorization[7:].strip()
+    if not token:
+        token = request.cookies.get("inkmentor_session")
+    if token:
+        delete_session(token)
+    response.delete_cookie("inkmentor_session")
+    return {"status": "logged_out"}
+
 
 
 @app.get("/api/health/deep")

@@ -116,4 +116,36 @@ class TTSStatusResponse(BaseModel):
     rate_per_min: int = 40
 
 
+# --- Authentication Schemas ---
+class GoogleAuthRequest(BaseModel):
+    credential: str = Field(..., min_length=1, description="Google OAuth ID Token JWT")
+    name: Optional[str] = None
+    dob: Optional[str] = None
+    age: Optional[int] = None
+
+
+class ProfileUpdateRequest(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=100)
+    dob: Optional[str] = Field(None, max_length=20)
+    age: Optional[int] = Field(None, ge=0, le=150)
+
+
+class UserResponse(BaseModel):
+    id: int
+    google_sub: str
+    email: str
+    name: str
+    picture: Optional[str] = ""
+    dob: Optional[str] = ""
+    age: Optional[int] = None
+    created_at: str
+    last_login: str
+
+
+class AuthResponse(BaseModel):
+    token: str
+    user: UserResponse
+    is_new: bool = False
+
+
 

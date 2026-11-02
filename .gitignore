@@ -28,6 +28,11 @@ dist/
 build/
 *.egg-info/
 
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
 # Operating System & Editor Files
 .DS_Store
 .DS_Store?
