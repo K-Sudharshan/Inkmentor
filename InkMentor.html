@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InkMentor</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Reenie+Beanie&display=swap" rel="stylesheet">
 <style>
 @font-face {
@@ -325,11 +326,339 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-off
   transition: opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1), filter 1.8s cubic-bezier(0.16, 1, 0.3, 1), transform 1.8s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, filter, transform;
 }
-body.app-loading #app {
+body.app-loading #app,
+body.app-unauthenticated #app {
   opacity: 0;
   filter: blur(16px);
   transform: scale(0.98);
   pointer-events: none;
+}
+
+/* --- InkMentor Authentication Layer --- */
+#auth-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 86;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: radial-gradient(circle at 50% 35%, rgba(107, 78, 240, 0.16), transparent 70%), var(--bg);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: scale(0.98);
+}
+body.app-unauthenticated #auth-screen {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+body.app-loading #auth-screen {
+  opacity: 0;
+  pointer-events: none;
+}
+.auth-card {
+  width: min(440px, 100%);
+  background: var(--glass);
+  backdrop-filter: blur(36px) saturate(180%);
+  -webkit-backdrop-filter: blur(36px) saturate(180%);
+  border: 1px solid var(--gb);
+  border-radius: 28px;
+  box-shadow: var(--sh), 0 20px 60px rgba(0, 0, 0, 0.25);
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.auth-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.auth-logo-badge {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #FFB347, #FF5E7E);
+  display: grid;
+  place-items: center;
+  color: #2a0f14;
+  box-shadow: 0 8px 24px rgba(255, 94, 126, 0.35);
+  margin-bottom: 4px;
+}
+.auth-title {
+  font: 400 32px 'Instrument Serif', serif;
+  letter-spacing: -0.5px;
+  margin: 0;
+  color: var(--tx);
+}
+.auth-title i {
+  font-style: italic;
+  color: var(--ac);
+}
+.auth-desc {
+  font-size: 13px;
+  color: var(--tx2);
+  line-height: 1.45;
+  margin: 0;
+}
+.auth-step {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: opacity 0.3s ease;
+}
+.auth-subheading {
+  font-size: 13px;
+  color: var(--tx2);
+  text-align: center;
+  line-height: 1.5;
+}
+.auth-gis-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 8px 0;
+}
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+.auth-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--tx2);
+}
+.auth-input {
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--line);
+  color: var(--tx);
+  font: inherit;
+  font-size: 13.5px;
+  transition: border-color 0.2s, background 0.2s;
+  outline: none;
+  width: 100%;
+}
+.auth-input:focus {
+  border-color: var(--ac);
+  background: color-mix(in srgb, var(--ac) 6%, transparent);
+}
+.auth-input[readonly] {
+  opacity: 0.85;
+  cursor: default;
+  background: color-mix(in srgb, var(--tx) 5%, transparent);
+}
+.auth-submit-btn {
+  height: 44px;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #FFB347, #FF5E7E);
+  color: #2a0f14;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: filter 0.2s, transform 0.15s;
+  box-shadow: 0 4px 16px rgba(255, 94, 126, 0.3);
+  margin-top: 6px;
+  cursor: pointer;
+}
+.auth-submit-btn:hover {
+  filter: brightness(1.08);
+}
+.auth-submit-btn:active {
+  transform: scale(0.98);
+}
+.auth-error {
+  color: #ff5e7e;
+  font-size: 12px;
+  font-weight: 500;
+  display: none;
+  text-align: center;
+  background: rgba(255, 94, 126, 0.1);
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+.auth-error.show {
+  display: block;
+}
+
+/* User Account Profile Chip in Header */
+.user-chip-wrap {
+  display: flex;
+  align-items: center;
+  margin-left: 2px;
+  flex-shrink: 0;
+}
+.user-chip-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 3px 12px 3px 4px;
+  border-radius: 999px;
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--gb);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  color: var(--tx);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.user-chip-btn:hover {
+  background: var(--line);
+  transform: translateY(-1px);
+}
+.user-chip-img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.user-chip-initials {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FFB347, #FF5E7E);
+  color: #2a0f14;
+  font-weight: 700;
+  font-size: 12px;
+  display: grid;
+  place-items: center;
+}
+.user-chip-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  max-width: 105px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.user-chip-caret {
+  width: 12px;
+  height: 12px;
+  opacity: 0.6;
+}
+
+/* Profile Modal */
+#profile-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 88;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+#profile-backdrop.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+#profile-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.96);
+  width: min(440px, calc(100% - 28px));
+  max-height: 86vh;
+  z-index: 89;
+  padding: 24px;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: var(--sh), 0 16px 48px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+#profile-modal.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
+}
+.pm-avatar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0 8px;
+}
+.pm-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 3px solid var(--ac);
+  object-fit: cover;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+.pm-initials {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FFB347, #FF5E7E);
+  color: #2a0f14;
+  font-weight: 700;
+  font-size: 24px;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+.pm-email {
+  font-size: 12.5px;
+  color: var(--tx2);
+}
+.pm-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+.pm-save-btn {
+  flex: 1;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--ac);
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  transition: filter 0.2s;
+  cursor: pointer;
+}
+.pm-save-btn:hover {
+  filter: brightness(1.1);
+}
+.pm-logout-btn {
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 12px;
+  background: rgba(255, 94, 126, 0.12);
+  color: #ff5e7e;
+  font-weight: 600;
+  font-size: 13px;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+.pm-logout-btn:hover {
+  background: rgba(255, 94, 126, 0.22);
 }
 /* --- Settings Modal Styles --- */
 #settings-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:88;opacity:0;pointer-events:none;transition:opacity .25s ease}
@@ -454,6 +783,69 @@ body.app-loading #app {
   </div>
   <div class="loader-hint">Click anywhere to enter</div>
 </div>
+<!-- Authentication Gate Screen -->
+<div id="auth-screen" role="dialog" aria-modal="true" aria-labelledby="auth-main-title">
+  <div class="auth-card glass">
+    <div class="auth-header">
+      <div class="auth-logo-badge">
+        <svg class="i" style="width:24px;height:24px;"><use href="#pen"/></svg>
+      </div>
+      <h1 id="auth-main-title" class="auth-title">Ink<i>Mentor</i></h1>
+      <p class="auth-desc">The ink that writes, talks, and guides you.</p>
+    </div>
+
+    <!-- Step 1: Google Sign-In -->
+    <div id="auth-step-login" class="auth-step">
+      <div class="auth-subheading">Sign in with your Google account to access your personalized math notebook, memory, and tutor.</div>
+      
+      <!-- Google GIS Button Container -->
+      <div class="auth-gis-wrap">
+        <div id="google-signin-btn"></div>
+      </div>
+
+      <div id="auth-error-login" class="auth-error"></div>
+    </div>
+
+    <!-- Step 2: Complete Profile (Name, Age, DOB) -->
+    <div id="auth-step-profile" class="auth-step" style="display:none;">
+      <div style="display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:14px;background:var(--line);">
+        <img id="auth-profile-avatar" class="auth-avatar-mini" src="" alt="Google Avatar" style="width:36px;height:36px;border-radius:50%;display:none;" />
+        <div id="auth-profile-initials" class="auth-avatar-mini-initials" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#FFB347,#FF5E7E);color:#2a0f14;font-weight:700;display:grid;place-items:center;">U</div>
+        <div style="flex:1;min-width:0;text-align:left;">
+          <div style="font-size:12px;font-weight:600;color:var(--tx);" id="auth-google-name">Google User</div>
+          <div style="font-size:11px;color:var(--tx2);overflow:hidden;text-overflow:ellipsis;" id="auth-google-email">user@gmail.com</div>
+        </div>
+      </div>
+
+      <div style="font-size:13px;color:var(--tx2);text-align:center;">
+        Please complete your learner profile to personalize your notebook:
+      </div>
+
+      <div class="auth-field">
+        <label class="auth-label" for="auth-name-input">Full Name</label>
+        <input type="text" id="auth-name-input" class="auth-input" placeholder="Your name" autocomplete="name" required />
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="auth-field">
+          <label class="auth-label" for="auth-dob-input">Date of Birth</label>
+          <input type="date" id="auth-dob-input" class="auth-input" required />
+        </div>
+        <div class="auth-field">
+          <label class="auth-label" for="auth-age-input">Age</label>
+          <input type="number" id="auth-age-input" class="auth-input" placeholder="Auto" readonly />
+        </div>
+      </div>
+
+      <div id="auth-error-profile" class="auth-error"></div>
+
+      <button type="button" id="auth-submit-profile-btn" class="auth-submit-btn">
+        <span>Enter Notebook</span>
+        <svg class="i" style="width:16px;height:16px;"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
 <div id="app">
 <aside id="sb" class="glass" aria-label="Notebook sidebar">
 <div class="brand"><span class="logo"><svg class="i"><use href="#pen"/></svg></span><b>Ink<i>Mentor</i></b></div>
@@ -520,6 +912,15 @@ body.app-loading #app {
   <button class="ib on" id="vo" title="Voice narration" aria-label="Voice narration"><svg class="i"><use href="#vol"/></svg></button>
   <button class="sv" id="solve" title="Solve circled problem or whole page" aria-label="Solve"><svg class="i"><use href="#spk"/></svg><span>Solve</span></button>
 </div>
+<!-- User Account Profile Chip -->
+<div class="user-chip-wrap" id="user-chip-wrap">
+  <button class="user-chip-btn" id="user-chip-btn" aria-label="Open learner profile" title="Learner Profile">
+    <img id="user-chip-img" class="user-chip-img" src="" alt="Profile" style="display:none;" />
+    <span id="user-chip-initials" class="user-chip-initials">U</span>
+    <span id="user-chip-name" class="user-chip-name">Student</span>
+    <svg class="i user-chip-caret" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+  </button>
+</div>
 </header>
 <section id="paper" class="paper-grid">
 <div id="acrylic-ruler" class="acrylic-ruler-widget" style="display:none;" aria-label="Interactive Scale">
@@ -568,6 +969,42 @@ body.app-loading #app {
 </div>
 <div id="toast" class="glass" role="status"></div>
 <div id="server-wakeup-toast" class="glass" role="status"><span style="display:inline-block;width:12px;height:12px;border:2px solid rgba(255,162,58,.3);border-top-color:#FFA23A;border-radius:50%;animation:ai-spin 1s linear infinite"></span><span>Waking up the server…</span></div>
+<div id="profile-backdrop" style="display:none;" aria-hidden="true"></div>
+<div id="profile-modal" class="glass" role="dialog" aria-modal="true" aria-labelledby="profile-title" style="display:none;">
+  <div class="sm-hdr">
+    <div class="sm-title-wrap">
+      <svg class="i" style="width:20px;height:20px;color:var(--ac);"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/></svg>
+      <h2 id="profile-title">Learner Profile</h2>
+    </div>
+    <button id="pm-close" class="sm-close-btn" aria-label="Close Profile">✕</button>
+  </div>
+  <div class="sm-body">
+    <div class="pm-avatar-wrap">
+      <img id="pm-avatar-img" class="pm-avatar" src="" alt="User" style="display:none;" />
+      <div id="pm-avatar-initials" class="pm-initials">U</div>
+      <div id="pm-email" class="pm-email">user@gmail.com</div>
+    </div>
+    <div class="auth-field">
+      <label class="auth-label" for="pm-name-input">Full Name</label>
+      <input type="text" id="pm-name-input" class="auth-input" placeholder="Your name" />
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="auth-field">
+        <label class="auth-label" for="pm-dob-input">Date of Birth</label>
+        <input type="date" id="pm-dob-input" class="auth-input" />
+      </div>
+      <div class="auth-field">
+        <label class="auth-label" for="pm-age-input">Age</label>
+        <input type="number" id="pm-age-input" class="auth-input" readonly />
+      </div>
+    </div>
+    <div id="pm-error" class="auth-error"></div>
+    <div class="pm-actions">
+      <button type="button" id="pm-save-btn" class="pm-save-btn">Save Changes</button>
+      <button type="button" id="pm-logout-btn" class="pm-logout-btn" title="Sign out of InkMentor">Sign Out</button>
+    </div>
+  </div>
+</div>
 <div id="settings-backdrop" style="display:none;" aria-hidden="true"></div>
 <div id="settings-modal" class="glass" role="dialog" aria-modal="true" aria-labelledby="settings-title" style="display:none;">
   <div class="sm-hdr">
@@ -747,6 +1184,9 @@ body.app-loading #app {
     if (rafId) cancelAnimationFrame(rafId);
     loader.classList.add('unveil');
     document.body.classList.remove('app-loading');
+    if (window.InkMentorAuth) {
+      window.InkMentorAuth.checkSessionOnLoaderDismiss();
+    }
     setTimeout(function() {
       if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
       if (typeof size === 'function') size();
@@ -822,6 +1262,459 @@ body.app-loading #app {
 
   rafId = requestAnimationFrame(step);
 })();
+
+// --- InkMentor Authentication & Learner Profile Layer ---
+window.InkMentorAuth = (function() {
+  var STORAGE_KEY = 'inkmentor_auth_user';
+  var pendingGooglePayload = null;
+
+  function getClientId() {
+    return (window.GOOGLE_CLIENT_ID || '').trim();
+  }
+
+  function parseJwt(token) {
+    try {
+      var base64Url = token.split('.')[1];
+      var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      return JSON.parse(jsonPayload);
+    } catch (e) {
+      console.error('[InkMentor Auth] Error parsing JWT:', e);
+      return null;
+    }
+  }
+
+  function calculateAge(dobStr) {
+    if (!dobStr) return '';
+    var birth = new Date(dobStr);
+    if (isNaN(birth.getTime())) return '';
+    var today = new Date();
+    if (birth > today) return '';
+    var age = today.getFullYear() - birth.getFullYear();
+    var m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age >= 0 ? age : 0;
+  }
+
+  function getUser() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      var u = JSON.parse(raw);
+      if (u && u.name && u.dob && typeof u.age !== 'undefined' && (u.sub || u.email)) {
+        return u;
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function saveUser(u) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(u));
+    } catch (e) {
+      console.error('[InkMentor Auth] Failed saving user to localStorage:', e);
+    }
+  }
+
+  function isAuthenticated() {
+    return !!getUser();
+  }
+
+  function showAuthScreen() {
+    var screen = document.getElementById('auth-screen');
+    if (screen) {
+      screen.style.opacity = '1';
+      screen.style.pointerEvents = 'auto';
+    }
+    var todayStr = new Date().toISOString().split('T')[0];
+    var dobInput = document.getElementById('auth-dob-input');
+    if (dobInput) dobInput.max = todayStr;
+    var pmDobInput = document.getElementById('pm-dob-input');
+    if (pmDobInput) pmDobInput.max = todayStr;
+
+    initGoogleAuth();
+  }
+
+  function hideAuthScreen() {
+    var screen = document.getElementById('auth-screen');
+    if (screen) {
+      screen.style.opacity = '0';
+      screen.style.pointerEvents = 'none';
+    }
+  }
+
+  function initGoogleAuth() {
+    var cid = getClientId();
+    var btnContainer = document.getElementById('google-signin-btn');
+
+    if (!cid) {
+      fetchBackendConfig();
+      return;
+    }
+
+    if (window.google && window.google.accounts && window.google.accounts.id) {
+      try {
+        google.accounts.id.initialize({
+          client_id: cid,
+          callback: handleCredentialResponse,
+          auto_select: false,
+          cancel_on_tap_outside: true,
+        });
+        if (btnContainer) {
+          btnContainer.innerHTML = '';
+          var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          google.accounts.id.renderButton(btnContainer, {
+            type: 'standard',
+            shape: 'pill',
+            theme: isDark ? 'filled_black' : 'outline',
+            text: 'signin_with',
+            size: 'large',
+            logo_alignment: 'left',
+            width: 280,
+          });
+        }
+      } catch (err) {
+        console.warn('[InkMentor Auth] GIS renderButton warning:', err);
+      }
+    } else {
+      setTimeout(initGoogleAuth, 350);
+    }
+  }
+
+  function handleCredentialResponse(response) {
+    if (!response || !response.credential) {
+      showError('auth-error-login', 'Google Sign-In failed to return credentials.');
+      return;
+    }
+    var payload = parseJwt(response.credential);
+    if (!payload || !payload.sub) {
+      showError('auth-error-login', 'Failed to decode Google account details.');
+      return;
+    }
+    pendingGooglePayload = payload;
+
+    var existing = getUser();
+    if (existing && (existing.sub === payload.sub || existing.email === payload.email) && existing.dob) {
+      existing.picture = payload.picture || existing.picture;
+      saveUser(existing);
+      finishLogin(existing);
+      return;
+    }
+
+    switchToProfileStep(payload);
+  }
+
+  function switchToProfileStep(payload) {
+    var step1 = document.getElementById('auth-step-login');
+    var step2 = document.getElementById('auth-step-profile');
+    if (step1) step1.style.display = 'none';
+    if (step2) step2.style.display = 'flex';
+
+    var nameInput = document.getElementById('auth-name-input');
+    if (nameInput) nameInput.value = payload.name || '';
+
+    var gName = document.getElementById('auth-google-name');
+    if (gName) gName.textContent = payload.name || 'Google Learner';
+
+    var gEmail = document.getElementById('auth-google-email');
+    if (gEmail) gEmail.textContent = payload.email || '';
+
+    var avatarImg = document.getElementById('auth-profile-avatar');
+    var initialsDiv = document.getElementById('auth-profile-initials');
+    if (payload.picture && avatarImg && initialsDiv) {
+      avatarImg.src = payload.picture;
+      avatarImg.style.display = 'block';
+      initialsDiv.style.display = 'none';
+    } else if (initialsDiv) {
+      initialsDiv.textContent = (payload.name || 'U').charAt(0).toUpperCase();
+      if (avatarImg) avatarImg.style.display = 'none';
+      initialsDiv.style.display = 'grid';
+    }
+
+    var dobInput = document.getElementById('auth-dob-input');
+    if (dobInput) dobInput.focus();
+  }
+
+  function submitProfile() {
+    var nameInput = document.getElementById('auth-name-input');
+    var dobInput = document.getElementById('auth-dob-input');
+    var ageInput = document.getElementById('auth-age-input');
+
+    var nameVal = (nameInput ? nameInput.value : '').trim();
+    var dobVal = (dobInput ? dobInput.value : '').trim();
+
+    if (!nameVal) {
+      showError('auth-error-profile', 'Please enter your name.');
+      return;
+    }
+    if (!dobVal) {
+      showError('auth-error-profile', 'Please select your Date of Birth.');
+      return;
+    }
+    var calculated = calculateAge(dobVal);
+    if (calculated === '' || isNaN(calculated) || calculated < 0) {
+      showError('auth-error-profile', 'Please enter a valid past Date of Birth.');
+      return;
+    }
+    var ageVal = calculated;
+
+    var payload = pendingGooglePayload || {};
+    var profile = {
+      sub: payload.sub || 'google_' + Date.now(),
+      email: payload.email || '',
+      name: nameVal,
+      picture: payload.picture || '',
+      dob: dobVal,
+      age: ageVal,
+      loggedInAt: Date.now()
+    };
+
+    saveUser(profile);
+    finishLogin(profile);
+  }
+
+  function finishLogin(user) {
+    document.body.classList.remove('app-unauthenticated');
+    hideAuthScreen();
+    updateHeaderUI();
+    if (typeof toast === 'function') {
+      toast('Welcome to InkMentor, ' + (user.name.split(' ')[0] || user.name) + '!');
+    }
+    if (typeof size === 'function') size();
+    if (typeof render === 'function') render();
+  }
+
+  function updateHeaderUI() {
+    var user = getUser();
+    if (!user) return;
+    var nameSpan = document.getElementById('user-chip-name');
+    var imgEl = document.getElementById('user-chip-img');
+    var initEl = document.getElementById('user-chip-initials');
+
+    if (nameSpan) {
+      var shortName = user.name.split(' ')[0] || user.name;
+      nameSpan.textContent = shortName;
+    }
+    if (user.picture && imgEl && initEl) {
+      imgEl.src = user.picture;
+      imgEl.style.display = 'block';
+      initEl.style.display = 'none';
+      imgEl.onerror = function() {
+        imgEl.style.display = 'none';
+        initEl.style.display = 'grid';
+      };
+    } else if (initEl) {
+      initEl.textContent = (user.name || 'U').charAt(0).toUpperCase();
+      if (imgEl) imgEl.style.display = 'none';
+      initEl.style.display = 'grid';
+    }
+  }
+
+  function openProfileModal() {
+    var user = getUser();
+    if (!user) return;
+    var backdrop = document.getElementById('profile-backdrop');
+    var modal = document.getElementById('profile-modal');
+    if (!modal) return;
+
+    var emailEl = document.getElementById('pm-email');
+    if (emailEl) emailEl.textContent = user.email || 'Google Account';
+
+    var avatarImg = document.getElementById('pm-avatar-img');
+    var initialsEl = document.getElementById('pm-avatar-initials');
+    if (user.picture && avatarImg && initialsEl) {
+      avatarImg.src = user.picture;
+      avatarImg.style.display = 'block';
+      initialsEl.style.display = 'none';
+    } else if (initialsEl) {
+      initialsEl.textContent = (user.name || 'U').charAt(0).toUpperCase();
+      if (avatarImg) avatarImg.style.display = 'none';
+      initialsEl.style.display = 'grid';
+    }
+
+    var nameInput = document.getElementById('pm-name-input');
+    if (nameInput) nameInput.value = user.name || '';
+
+    var dobInput = document.getElementById('pm-dob-input');
+    if (dobInput) {
+      dobInput.value = user.dob || '';
+      dobInput.max = new Date().toISOString().split('T')[0];
+    }
+
+    var ageInput = document.getElementById('pm-age-input');
+    if (ageInput) ageInput.value = (typeof user.age !== 'undefined') ? user.age : calculateAge(user.dob);
+
+    if (backdrop) {
+      backdrop.style.display = 'block';
+      setTimeout(function() { backdrop.classList.add('show'); }, 10);
+    }
+    modal.style.display = 'flex';
+    setTimeout(function() { modal.classList.add('show'); }, 10);
+  }
+
+  function closeProfileModal() {
+    var backdrop = document.getElementById('profile-backdrop');
+    var modal = document.getElementById('profile-modal');
+    if (modal) {
+      modal.classList.remove('show');
+      setTimeout(function() { modal.style.display = 'none'; }, 250);
+    }
+    if (backdrop) {
+      backdrop.classList.remove('show');
+      setTimeout(function() { backdrop.style.display = 'none'; }, 250);
+    }
+  }
+
+  function saveProfileEdits() {
+    var user = getUser();
+    if (!user) return;
+    var nameInput = document.getElementById('pm-name-input');
+    var dobInput = document.getElementById('pm-dob-input');
+
+    var nameVal = (nameInput ? nameInput.value : '').trim();
+    var dobVal = (dobInput ? dobInput.value : '').trim();
+
+    if (!nameVal) {
+      showError('pm-error', 'Name cannot be empty.');
+      return;
+    }
+    if (!dobVal) {
+      showError('pm-error', 'Please provide your Date of Birth.');
+      return;
+    }
+    var ageVal = calculateAge(dobVal);
+    if (ageVal === '' || isNaN(ageVal) || ageVal < 0) {
+      showError('pm-error', 'Please enter a valid past Date of Birth.');
+      return;
+    }
+
+    user.name = nameVal;
+    user.dob = dobVal;
+    user.age = ageVal;
+    saveUser(user);
+    updateHeaderUI();
+    closeProfileModal();
+    if (typeof toast === 'function') toast('Profile updated successfully');
+  }
+
+  function logout() {
+    localStorage.removeItem(STORAGE_KEY);
+    closeProfileModal();
+    document.body.classList.add('app-unauthenticated');
+    var step1 = document.getElementById('auth-step-login');
+    var step2 = document.getElementById('auth-step-profile');
+    if (step1) step1.style.display = 'flex';
+    if (step2) step2.style.display = 'none';
+    pendingGooglePayload = null;
+    showAuthScreen();
+    if (typeof toast === 'function') toast('Signed out of InkMentor');
+  }
+
+  function showError(elId, msg) {
+    var el = document.getElementById(elId);
+    if (el) {
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(function() { el.classList.remove('show'); }, 4000);
+    }
+  }
+
+  function initListeners() {
+    var authDob = document.getElementById('auth-dob-input');
+    var authAge = document.getElementById('auth-age-input');
+    if (authDob && authAge) {
+      var calcHandler = function() {
+        var a = calculateAge(authDob.value);
+        authAge.value = (a !== '' && a >= 0) ? a : '';
+      };
+      authDob.addEventListener('input', calcHandler);
+      authDob.addEventListener('change', calcHandler);
+    }
+
+    var pmDob = document.getElementById('pm-dob-input');
+    var pmAge = document.getElementById('pm-age-input');
+    if (pmDob && pmAge) {
+      var pmCalcHandler = function() {
+        var a = calculateAge(pmDob.value);
+        pmAge.value = (a !== '' && a >= 0) ? a : '';
+      };
+      pmDob.addEventListener('input', pmCalcHandler);
+      pmDob.addEventListener('change', pmCalcHandler);
+    }
+
+    var submitBtn = document.getElementById('auth-submit-profile-btn');
+    if (submitBtn) {
+      submitBtn.addEventListener('click', submitProfile);
+    }
+
+
+
+    var chipBtn = document.getElementById('user-chip-btn');
+    if (chipBtn) {
+      chipBtn.addEventListener('click', openProfileModal);
+    }
+
+    var pmClose = document.getElementById('pm-close');
+    var pmBackdrop = document.getElementById('profile-backdrop');
+    if (pmClose) pmClose.addEventListener('click', closeProfileModal);
+    if (pmBackdrop) pmBackdrop.addEventListener('click', closeProfileModal);
+
+    var pmSave = document.getElementById('pm-save-btn');
+    if (pmSave) pmSave.addEventListener('click', saveProfileEdits);
+
+    var pmLogout = document.getElementById('pm-logout-btn');
+    if (pmLogout) pmLogout.addEventListener('click', logout);
+
+    fetchBackendConfig();
+  }
+
+  function fetchBackendConfig() {
+    try {
+      fetch((window.API_BASE || '') + '/api/config')
+        .then(function(res) {
+          if (res.ok) return res.json();
+          return null;
+        })
+        .then(function(data) {
+          if (data && data.google_client_id) {
+            window.GOOGLE_CLIENT_ID = data.google_client_id;
+            initGoogleAuth();
+          }
+        })
+        .catch(function() {});
+    } catch (e) {}
+  }
+
+  return {
+    isAuthenticated: isAuthenticated,
+    getUser: getUser,
+    saveUser: saveUser,
+    logout: logout,
+    showAuthScreen: showAuthScreen,
+    hideAuthScreen: hideAuthScreen,
+    updateHeaderUI: updateHeaderUI,
+    setClientId: setClientId,
+    getClientId: getClientId,
+    initListeners: initListeners,
+    initGoogleAuth: initGoogleAuth,
+    checkSessionOnLoaderDismiss: function() {
+      if (isAuthenticated()) {
+        document.body.classList.remove('app-unauthenticated');
+        updateHeaderUI();
+      } else {
+        document.body.classList.add('app-unauthenticated');
+        showAuthScreen();
+      }
+    }
+  };
+})();
+
 
 // --- Serverless Wakeup Health Check ---
 (function initServerWakeupCheck() {
@@ -7123,9 +8016,13 @@ function initSettings() {
 }
 window.initSettings = initSettings;
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initSettings);
+  document.addEventListener('DOMContentLoaded', function() {
+    initSettings();
+    if (window.InkMentorAuth) window.InkMentorAuth.initListeners();
+  });
 } else {
   initSettings();
+  if (window.InkMentorAuth) window.InkMentorAuth.initListeners();
 }
 
 if (innerWidth <= 820) app.classList.remove('open');

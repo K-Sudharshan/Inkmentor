@@ -183,6 +183,15 @@ async def health_check(request: Request) -> Dict[str, Any]:
     }
 
 
+@app.get("/api/config")
+@app.get("/config")
+async def get_config() -> Dict[str, Any]:
+    """Returns public client configuration (e.g. Google OAuth Client ID)."""
+    return {
+        "google_client_id": (os.environ.get("GOOGLE_CLIENT_ID") or "").strip(),
+    }
+
+
 @app.get("/api/health/deep")
 @app.get("/health/deep")
 async def deep_health_check() -> Dict[str, Any]:
