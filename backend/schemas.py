@@ -107,13 +107,29 @@ class TTSRequest(BaseModel):
         default="middle",
         description="Position of the narration step: first, middle, or last"
     )
+    lang: Optional[str] = Field(default=None, description="Optional language code override e.g. en-IN, hi-IN")
 
 
 class TTSStatusResponse(BaseModel):
     configured: bool
+    provider: Optional[str] = None
     model: Optional[str] = None
     voice: Optional[str] = None
+    language: Optional[str] = None
     rate_per_min: int = 40
+
+
+# --- Speech-to-Text Schemas (Gnani Prisma) ---
+class STTRequest(BaseModel):
+    audio_base64: Optional[str] = Field(default=None, description="Base64-encoded audio bytes (WAV or WebM)")
+    language: Optional[str] = Field(default="indic-auto", description="Language code (indic-auto, en-IN, hi-IN, etc.)")
+
+
+class STTResponse(BaseModel):
+    transcript: str = Field(..., description="Transcribed question/speech text")
+    language: str = Field(default="indic-auto", description="Detected or requested language code")
+    model: str = Field(default="prisma-v3.0", description="STT Model used")
+    provider: str = Field(default="gnani", description="STT Provider used")
 
 
 # --- Authentication Schemas ---

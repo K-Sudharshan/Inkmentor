@@ -29,6 +29,13 @@ GROQ_SUPPORTED_VOICES = ("autumn", "diana", "hannah", "austin", "daniel", "troy"
 DIRECTION_REGEX = re.compile(r"^[a-z]+( [a-z]+)?$")
 _invalid_directions_warned: Set[str] = set()
 
+# Gnani Timbre & Prisma Constants (The Great Indian AI Internship Challenge)
+DEFAULT_GNANI_TTS_MODEL = "timbre-v3.0"
+DEFAULT_GNANI_VOICE = "Nalini"
+DEFAULT_GNANI_LANG = "en-IN"
+DEFAULT_GNANI_STT_MODEL = "prisma-v3.0"
+GNANI_API_BASE_URL = os.environ.get("GNANI_BASE_URL", "https://api.vachana.ai").strip()
+
 # ponytail: In-memory LRU cache assuming single uvicorn worker process.
 # Ceiling: 200 entries. Upgrade path for multi-worker deployment: shared Redis cache.
 _tts_cache: OrderedDict[str, bytes] = OrderedDict()
@@ -180,8 +187,13 @@ def get_tts_config() -> Tuple[str, str, int, float]:
     if os.path.exists(env_file):
         from dotenv import load_dotenv
         load_dotenv(env_file, override=False)
-    model = os.environ.get("LLM_TTS_MODEL", DEFAULT_TTS_MODEL).strip()
-    voice = (os.environ.get("TTS_VOICE") or os.environ.get("GROQ_TTS_VOICE") or DEFAULT_TTS_VOICE).strip()
+    provider = (os.environ.get("TTS_PROVIDER") or "").strip().lower()
+    if provider == "gnani" and os.environ.get("GNANI_API_KEY", "").strip():
+        model = os.environ.get("GNANI_TTS_MODEL", DEFAULT_GNANI_TTS_MODEL).strip()
+        voice = (os.environ.get("GNANI_TTS_VOICE") or DEFAULT_GNANI_VOICE).strip()
+    else:
+        model = os.environ.get("LLM_TTS_MODEL", DEFAULT_TTS_MODEL).strip()
+        voice = (os.environ.get("TTS_VOICE") or os.environ.get("GROQ_TTS_VOICE") or DEFAULT_TTS_VOICE).strip()
     try:
         rate = int(os.environ.get("TTS_RATE_PER_MIN", DEFAULT_RATE_LIMIT))
     except ValueError:
@@ -395,9 +407,9 @@ except Exception:
     pass
 
 
-def get_cache_key(model: str, voice: str, text: str, direction: str = "") -> str:
+def get_cache_key(model: str, voice: str, text: str, direction: str = "", lang: str = "") -> str:
     h = hashlib.sha256()
-    h.update(f"{model}:{voice}:{direction}:{text}".encode("utf-8"))
+    h.update(f"{model}:{voice}:{lang}:{direction}:{text}".encode("utf-8"))
     return h.hexdigest()
 
 
@@ -516,6 +528,193 @@ def synthesize_speech_groq(text: str, voice_name: str, timeout_sec: float, direc
     return join_wav_bytes(wav_chunks)
 
 
+def format_gnani_timbre_text(text: str, model_name: str) -> str:
+    """Injects expressive pedagogical tags for Gnani Timbre v3.0."""
+    if "timbre-v3" not in (model_name or "").lower():
+        return text
+    if "<pauses>" in text or "<whispers>" in text:
+        return text
+    # Add natural thinking pause between mathematical sentences/derivations
+    return re.sub(r"([.?!])\s+", r"\1 <pauses> ", text)
+
+
+def synthesize_speech_gnani(
+    text: str,
+    model_name: Optional[str] = None,
+    voice_name: Optional[str] = None,
+    language: Optional[str] = None,
+    timeout_sec: float = 5.0,
+) -> bytes:
+    """Synthesizes speech using Gnani.ai's Timbre TTS API (The Great Indian AI Internship Challenge).
+    Base URL: https://api.vachana.ai/api/v1/tts/inference
+    Returns canonical WAV bytes.
+    """
+    import base64
+    import json
+    import urllib.error
+    import urllib.request
+
+    api_key = os.environ.get("GNANI_API_KEY", "").strip()
+    if not api_key:
+        raise RuntimeError("Missing required environment variable: GNANI_API_KEY")
+
+    m_name = (model_name or os.environ.get("GNANI_TTS_MODEL") or DEFAULT_GNANI_TTS_MODEL).strip()
+    v_name = (voice_name or os.environ.get("GNANI_TTS_VOICE") or DEFAULT_GNANI_VOICE).strip()
+    lang = (language or os.environ.get("GNANI_TTS_LANG") or DEFAULT_GNANI_LANG).strip()
+
+    payload_text = format_gnani_timbre_text(text, m_name)
+
+    body = {
+        "text": payload_text,
+        "voice": v_name,
+        "model": m_name,
+        "language": lang,
+        "speed": 1.0,
+        "audio_config": {
+            "sample_rate": SAMPLE_RATE,
+            "encoding": "linear_pcm",
+            "container": "wav",
+        },
+    }
+    encoded_body = json.dumps(body).encode("utf-8")
+
+    api_url = f"{GNANI_API_BASE_URL.rstrip('/')}/api/v1/tts/inference"
+    req = urllib.request.Request(
+        api_url,
+        data=encoded_body,
+        headers={
+            "X-API-Key-ID": api_key,
+            "Content-Type": "application/json",
+            "User-Agent": "InkMentor-Gnani-TTS/1.0",
+        },
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=timeout_sec) as resp:
+            content_type = resp.headers.get("Content-Type", "")
+            raw_bytes = resp.read()
+
+            # Direct audio response
+            if "audio" in content_type or raw_bytes.startswith(b"RIFF"):
+                return normalize_to_canonical_wav(raw_bytes)
+
+            # JSON response envelope
+            try:
+                data = json.loads(raw_bytes.decode("utf-8"))
+            except Exception:
+                return normalize_to_canonical_wav(raw_bytes)
+
+            audio_b64 = (
+                data.get("audio_content")
+                or data.get("audio")
+                or (data.get("data", {}).get("audio") if isinstance(data.get("data"), dict) else None)
+            )
+            if audio_b64:
+                return normalize_to_canonical_wav(base64.b64decode(audio_b64))
+
+            audio_url = data.get("audio_url") or (
+                data.get("data", {}).get("audio_url") if isinstance(data.get("data"), dict) else None
+            )
+            if audio_url:
+                with urllib.request.urlopen(audio_url, timeout=timeout_sec) as url_resp:
+                    return normalize_to_canonical_wav(url_resp.read())
+
+            raise RuntimeError(f"Gnani TTS returned unexpected response structure: {list(data.keys())}")
+
+    except urllib.error.HTTPError as he:
+        err_body = he.read().decode("utf-8", errors="ignore")
+        if api_key in err_body:
+            err_body = err_body.replace(api_key, "[REDACTED]")
+        raise RuntimeError(f"Gnani TTS HTTP {he.code}: {err_body}") from None
+    except Exception as exc:
+        err_str = str(exc)
+        if api_key in err_str:
+            err_str = err_str.replace(api_key, "[REDACTED]")
+        raise RuntimeError(f"Gnani TTS error: {err_str}") from None
+
+
+def transcribe_speech_gnani(
+    audio_bytes: bytes,
+    language_code: str = "indic-auto",
+    model_name: Optional[str] = None,
+    timeout_sec: float = 10.0,
+) -> str:
+    """Transcribes audio using Gnani.ai's Prisma STT API (The Great Indian AI Internship Challenge).
+    Base URL: https://api.vachana.ai/stt/v3
+    Supports indic-auto detection and code-mixed speech (e.g., Hinglish).
+    """
+    import json
+    import uuid
+    import urllib.error
+    import urllib.request
+
+    api_key = os.environ.get("GNANI_API_KEY", "").strip()
+    if not api_key:
+        raise RuntimeError("Missing required environment variable: GNANI_API_KEY")
+
+    m_name = (model_name or os.environ.get("GNANI_STT_MODEL") or DEFAULT_GNANI_STT_MODEL).strip()
+    boundary = f"----WebKitFormBoundary{uuid.uuid4().hex}"
+
+    # Build multipart/form-data payload
+    parts = []
+    # audio_file part
+    parts.append(f"--{boundary}\r\n".encode("utf-8"))
+    parts.append(b'Content-Disposition: form-data; name="audio_file"; filename="audio.wav"\r\n')
+    parts.append(b"Content-Type: audio/wav\r\n\r\n")
+    parts.append(audio_bytes)
+    parts.append(b"\r\n")
+
+    # model part
+    parts.append(f"--{boundary}\r\n".encode("utf-8"))
+    parts.append(b'Content-Disposition: form-data; name="model"\r\n\r\n')
+    parts.append(m_name.encode("utf-8"))
+    parts.append(b"\r\n")
+
+    # language_code part
+    parts.append(f"--{boundary}\r\n".encode("utf-8"))
+    parts.append(b'Content-Disposition: form-data; name="language_code"\r\n\r\n')
+    parts.append(language_code.encode("utf-8"))
+    parts.append(b"\r\n")
+
+    # close boundary
+    parts.append(f"--{boundary}--\r\n".encode("utf-8"))
+    body = b"".join(parts)
+
+    api_url = f"{GNANI_API_BASE_URL.rstrip('/')}/stt/v3"
+    req = urllib.request.Request(
+        api_url,
+        data=body,
+        headers={
+            "X-API-Key-ID": api_key,
+            "Content-Type": f"multipart/form-data; boundary={boundary}",
+            "User-Agent": "InkMentor-Gnani-STT/1.0",
+        },
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=timeout_sec) as resp:
+            raw_resp = resp.read()
+            data = json.loads(raw_resp.decode("utf-8"))
+
+            transcript = (
+                data.get("transcript")
+                or data.get("text")
+                or (data.get("data", {}).get("transcript") if isinstance(data.get("data"), dict) else None)
+                or ""
+            )
+            return str(transcript).strip()
+    except urllib.error.HTTPError as he:
+        err_body = he.read().decode("utf-8", errors="ignore")
+        if api_key in err_body:
+            err_body = err_body.replace(api_key, "[REDACTED]")
+        raise RuntimeError(f"Gnani STT HTTP {he.code}: {err_body}") from None
+    except Exception as exc:
+        err_str = str(exc)
+        if api_key in err_str:
+            err_str = err_str.replace(api_key, "[REDACTED]")
+        raise RuntimeError(f"Gnani STT error: {err_str}") from None
+
+
 def extract_retry_delay(exc: Exception) -> float:
     try:
         details = getattr(exc, "details", None)
@@ -609,23 +808,26 @@ def synthesize_speech_chain(
     timeout_sec: float,
     direction: str = "",
     position: str = "middle",
+    language: Optional[str] = None,
 ) -> AudioBytes:
-    """Executes strict TTS provider chain: Gemini -> Groq -> fallback to browser.
+    """Executes TTS provider chain: Gnani -> Gemini -> Groq -> fallback to browser.
     Enforces per-provider timeouts, total request budget, and circuit breaker."""
     order_env = os.environ.get("TTS_PROVIDER_ORDER", "").strip().lower()
     single_provider = os.environ.get("TTS_PROVIDER", "").strip().lower()
     if order_env:
         providers = [p.strip() for p in order_env.split(",") if p.strip()]
-    elif single_provider in ("groq", "gemini"):
-        other = "gemini" if single_provider == "groq" else "groq"
-        providers = [single_provider, other]
+    elif single_provider in ("gnani", "groq", "gemini"):
+        all_provs = ["gnani", "gemini", "groq"]
+        providers = [single_provider] + [p for p in all_provs if p != single_provider]
     else:
-        providers = ["gemini", "groq"]
+        providers = ["gnani", "gemini", "groq"]
 
+    timeout_gnani = float(os.environ.get("TTS_TIMEOUT_GNANI_MS", "5000")) / 1000.0
     timeout_gemini = float(os.environ.get("TTS_TIMEOUT_GEMINI_MS", "5000")) / 1000.0
     timeout_groq = float(os.environ.get("TTS_TIMEOUT_GROQ_MS", "4000")) / 1000.0
-    total_budget = float(os.environ.get("TTS_TOTAL_BUDGET_MS", "7000")) / 1000.0
+    total_budget = float(os.environ.get("TTS_TOTAL_BUDGET_MS", "9000")) / 1000.0
 
+    disable_gnani = os.environ.get("TTS_DISABLE_GNANI", "false").lower() in ("true", "1", "yes")
     disable_gemini = os.environ.get("TTS_DISABLE_GEMINI", "false").lower() in ("true", "1", "yes")
     disable_groq = os.environ.get("TTS_DISABLE_GROQ", "false").lower() in ("true", "1", "yes")
 
@@ -641,6 +843,16 @@ def synthesize_speech_chain(
             last_reason = "TOTAL_BUDGET_EXCEEDED"
             logger.warning(f"TTS chain total budget ({total_budget:.1f}s) exceeded before trying {prov}")
             break
+
+        if prov == "gnani":
+            if disable_gnani:
+                logger.info("Skipping gnani TTS (TTS_DISABLE_GNANI=true)")
+                last_reason = "DISABLED_GNANI"
+                continue
+            gnani_key = os.environ.get("GNANI_API_KEY", "").strip()
+            if not gnani_key:
+                last_reason = "NO_GNANI_API_KEY"
+                continue
 
         if prov == "gemini" and disable_gemini:
             logger.info("Skipping gemini TTS (TTS_DISABLE_GEMINI=true)")
@@ -659,7 +871,29 @@ def synthesize_speech_chain(
 
         attempts += 1
         t_call_start = time.time()
-        if prov == "gemini":
+
+        if prov == "gnani":
+            prov_timeout = min(timeout_gnani, remaining_budget)
+            try:
+                raw_wav = synthesize_speech_gnani(
+                    text,
+                    model_name=model_name,
+                    voice_name=voice_name,
+                    language=language,
+                    timeout_sec=prov_timeout,
+                )
+                canon_wav = normalize_to_canonical_wav(raw_wav)
+                circuit_breaker.record_success("gnani")
+                dur_ms = int((time.time() - t_call_start) * 1000)
+                return AudioBytes(canon_wav, provider="gnani", attempts=attempts, duration_ms=dur_ms)
+            except Exception as exc:
+                err_str = str(exc)
+                is_quota = "429" in err_str or "RATE_LIMITED" in err_str or "quota" in err_str.lower()
+                circuit_breaker.record_failure("gnani", err_str, is_quota=is_quota)
+                last_reason = "QUOTA_EXHAUSTED_GNANI" if is_quota else "ERROR_GNANI"
+                logger.warning(f"Gnani TTS failed ({last_reason}): {err_str}; proceeding to next provider")
+
+        elif prov == "gemini":
             prov_timeout = min(timeout_gemini, remaining_budget)
             try:
                 raw_wav = synthesize_speech_gemini(text, model_name, voice_name, prov_timeout)
@@ -674,6 +908,7 @@ def synthesize_speech_chain(
                 circuit_breaker.record_failure("gemini", err_str, is_quota=is_quota, retry_delay=retry_d)
                 last_reason = "QUOTA_EXHAUSTED_GEMINI" if is_quota else "ERROR_GEMINI"
                 logger.warning(f"Gemini TTS failed ({last_reason}): {err_str}; proceeding to next provider")
+
         elif prov == "groq":
             prov_timeout = min(timeout_groq, remaining_budget)
             try:
@@ -693,22 +928,30 @@ def synthesize_speech_chain(
     raise TTSAllProvidersFailed(reason=last_reason, attempts=attempts, duration_ms=total_dur_ms)
 
 
-def synthesize_speech_provider(text: str, model_name: str, voice_name: str, timeout_sec: float, direction: str = "") -> bytes:
+def synthesize_speech_provider(
+    text: str,
+    model_name: str,
+    voice_name: str,
+    timeout_sec: float,
+    direction: str = "",
+    language: Optional[str] = None,
+) -> bytes:
     """Direct provider call to TTS chain. Returns standard playable WAV bytes."""
-    return synthesize_speech_chain(text, model_name, voice_name, timeout_sec, direction=direction)
+    return synthesize_speech_chain(text, model_name, voice_name, timeout_sec, direction=direction, language=language)
 
 
 def generate_tts_wav(
     text: str,
     client_ip: str = "127.0.0.1",
     voice_override: Optional[str] = None,
-    position: Optional[str] = "middle"
+    position: Optional[str] = "middle",
+    lang_override: Optional[str] = None,
 ) -> bytes:
     """Full TTS pipeline:
     1. Validation
     2. Rate limiting check
     3. Position-based vocal direction resolution
-    4. Cache lookup (keyed by model, voice, direction, text)
+    4. Cache lookup (keyed by model, voice, direction, text, lang)
     5. Provider chain synthesis
     6. Cache storage
     7. Logging length and duration only (never full text)
@@ -722,7 +965,7 @@ def generate_tts_wav(
     if not check_ip_rate_limit(client_ip, rate_limit):
         raise PermissionError(f"Rate limit exceeded ({rate_limit} requests/min). Please try again shortly.")
 
-    cache_key = get_cache_key(model, voice, valid_text, direction)
+    cache_key = get_cache_key(model, voice, valid_text, direction, lang=lang_override or "")
     cached_audio = cache_get(cache_key)
     if cached_audio:
         duration = get_wav_duration(cached_audio)
@@ -730,7 +973,9 @@ def generate_tts_wav(
         return AudioBytes(cached_audio, provider="cache", attempts=0, duration_ms=int(duration * 1000))
 
     # Call provider chain (or patched synthesize_speech_provider)
-    wav_bytes = synthesize_speech_provider(valid_text, model, voice, timeout_sec, direction=direction)
+    wav_bytes = synthesize_speech_provider(
+        valid_text, model, voice, timeout_sec, direction=direction, language=lang_override
+    )
     canon_bytes = normalize_to_canonical_wav(wav_bytes)
     cache_set(cache_key, canon_bytes)
 

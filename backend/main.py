@@ -37,12 +37,19 @@ from backend.schemas import (
     RetrieveResponse,
     SolveRequest,
     SolveResponse,
+    STTRequest,
+    STTResponse,
     TTSRequest,
     TTSStatusResponse,
     UserResponse,
 )
 from backend.solver import solve_problem
-from backend.tts import TTSAllProvidersFailed, generate_tts_wav, get_tts_config
+from backend.tts import (
+    TTSAllProvidersFailed,
+    generate_tts_wav,
+    get_tts_config,
+    transcribe_speech_gnani,
+)
 
 
 @asynccontextmanager
@@ -457,6 +464,7 @@ async def tts_endpoint(request: TTSRequest, req: Request):
             client_ip=client_ip,
             voice_override=request.voice,
             position=request.position,
+            lang_override=request.lang,
         )
         provider = getattr(wav_bytes, "provider", "gemini")
         attempts = getattr(wav_bytes, "attempts", 1)
@@ -501,7 +509,7 @@ async def tts_endpoint(request: TTSRequest, req: Request):
         )
     except RuntimeError as re:
         clean_msg = str(re)
-        for secret_name in ("LLM_API_KEY", "TTS_API_KEY", "GROQ_API_KEY"):
+        for secret_name in ("LLM_API_KEY", "TTS_API_KEY", "GROQ_API_KEY", "GNANI_API_KEY"):
             sec = (os.environ.get(secret_name) or "").strip()
             if sec and sec in clean_msg:
                 clean_msg = clean_msg.replace(sec, "[REDACTED]")
@@ -518,19 +526,108 @@ async def tts_endpoint(request: TTSRequest, req: Request):
         )
 
 
-
 @app.get("/api/tts/status", response_model=TTSStatusResponse)
 @app.get("/tts/status", response_model=TTSStatusResponse)
 async def tts_status_endpoint() -> TTSStatusResponse:
     model, voice, rate, _ = get_tts_config()
-    api_key = (os.environ.get("LLM_API_KEY") or os.environ.get("GEMINI_API_KEY") or "").strip()
-    configured = bool(api_key and model)
+    provider = (os.environ.get("TTS_PROVIDER") or "gnani").strip().lower()
+    gnani_key = os.environ.get("GNANI_API_KEY", "").strip()
+    llm_key = (os.environ.get("LLM_API_KEY") or os.environ.get("GEMINI_API_KEY") or "").strip()
+    groq_key = os.environ.get("GROQ_API_KEY", "").strip()
+
+    active_provider = provider
+    if provider == "gnani" and gnani_key:
+        configured = True
+    elif provider == "groq" and groq_key:
+        configured = True
+    elif provider == "gemini" and llm_key:
+        configured = True
+    else:
+        # Fallback to whichever provider key is present
+        configured = bool(gnani_key or llm_key or groq_key)
+        if gnani_key:
+            active_provider = "gnani"
+        elif llm_key:
+            active_provider = "gemini"
+        elif groq_key:
+            active_provider = "groq"
+
     return TTSStatusResponse(
         configured=configured,
+        provider=active_provider if configured else None,
         model=model if configured else None,
         voice=voice if configured else None,
+        language=os.environ.get("GNANI_TTS_LANG", "en-IN"),
         rate_per_min=rate,
     )
+
+
+@app.post("/api/stt", response_model=STTResponse)
+@app.post("/stt", response_model=STTResponse)
+async def stt_endpoint(request: Request) -> STTResponse:
+    """Transcribes user speech into math problem text using Gnani.ai Prisma STT.
+    Accepts JSON with audio_base64 or raw audio bytes in request body.
+    Supports indic-auto detection and code-mixed speech (e.g. Hinglish).
+    """
+    content_type = request.headers.get("content-type", "")
+    audio_bytes: bytes = b""
+    language = "indic-auto"
+
+    if "application/json" in content_type:
+        try:
+            body_json = await request.json()
+            req_obj = STTRequest(**body_json)
+            if req_obj.language:
+                language = req_obj.language
+            if req_obj.audio_base64:
+                import base64
+                b64_str = req_obj.audio_base64
+                if "," in b64_str:
+                    b64_str = b64_str.split(",", 1)[1]
+                audio_bytes = base64.b64decode(b64_str)
+        except Exception as exc:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=f"Invalid STT JSON payload: {exc}",
+            )
+    else:
+        # Direct raw audio bytes (e.g. audio/webm, audio/wav, application/octet-stream)
+        audio_bytes = await request.body()
+        if request.query_params.get("language"):
+            language = request.query_params.get("language", "indic-auto")
+
+    if not audio_bytes:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="No audio data provided in request",
+        )
+
+    try:
+        transcript = await asyncio.to_thread(
+            transcribe_speech_gnani,
+            audio_bytes,
+            language_code=language,
+        )
+        return STTResponse(
+            transcript=transcript,
+            language=language,
+            model=os.environ.get("GNANI_STT_MODEL", "prisma-v3.0"),
+            provider="gnani",
+        )
+    except RuntimeError as re:
+        clean_msg = str(re)
+        gnani_key = os.environ.get("GNANI_API_KEY", "").strip()
+        if gnani_key and gnani_key in clean_msg:
+            clean_msg = clean_msg.replace(gnani_key, "[REDACTED]")
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=clean_msg,
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"STT processing error: {type(exc).__name__}",
+        )
 
 
 @app.get("/{file_name:path}")
