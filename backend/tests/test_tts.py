@@ -35,7 +35,7 @@ def test_1_tts_status_endpoint():
     assert "model" in data
     assert "voice" in data
     assert "rate_per_min" in data
-    assert data["voice"] in ("Puck", "autumn")
+    assert data["voice"] in ("Puck", "autumn", "Shivani", "Nalini")
 
 
 def test_2_valid_text_returns_playable_wav_with_correct_header():
@@ -284,25 +284,27 @@ def test_16_tts_circuit_breaker_skips_failed_provider():
 def test_17_tts_provider_chain_falls_back_to_groq_when_gemini_fails():
     """When Gemini raises quota/error, chain falls back to Groq and sets response headers."""
     fake_wav = pcm_to_wav(make_dummy_pcm(0.4), sample_rate=24000)
-    with patch("backend.tts.synthesize_speech_gemini", side_effect=RuntimeError("RESOURCE_EXHAUSTED 429")):
-        with patch("backend.tts.synthesize_speech_groq", return_value=fake_wav) as mock_groq:
-            resp = client.post("/api/tts", json={"text": "Differentiate x squared."})
-            assert resp.status_code == 200
-            assert resp.headers["content-type"] == "audio/wav"
-            assert resp.headers["x-tts-provider"] == "groq"
-            assert resp.headers["x-tts-attempts"] == "2"
-            mock_groq.assert_called_once()
+    with patch.dict(os.environ, {"TTS_PROVIDER": "gemini"}):
+        with patch("backend.tts.synthesize_speech_gemini", side_effect=RuntimeError("RESOURCE_EXHAUSTED 429")):
+            with patch("backend.tts.synthesize_speech_groq", return_value=fake_wav) as mock_groq:
+                resp = client.post("/api/tts", json={"text": "Differentiate x squared."})
+                assert resp.status_code == 200
+                assert resp.headers["content-type"] == "audio/wav"
+                assert resp.headers["x-tts-provider"] == "groq"
+                assert resp.headers["x-tts-attempts"] == "2"
+                mock_groq.assert_called_once()
 
 
 def test_18_tts_all_providers_failed_returns_503_browser_fallback():
     """When all providers in chain fail, endpoint returns 503 with fallback=browser JSON."""
-    with patch("backend.tts.synthesize_speech_gemini", side_effect=RuntimeError("RESOURCE_EXHAUSTED 429")):
-        with patch("backend.tts.synthesize_speech_groq", side_effect=RuntimeError("Groq 429 quota")):
-            resp = client.post("/api/tts", json={"text": "Compute integral of cos(x)."})
-            assert resp.status_code == 503
-            assert resp.headers["content-type"] == "application/json"
-            assert resp.headers["x-tts-provider"] == "none"
-            data = resp.json()
+    with patch.dict(os.environ, {"TTS_PROVIDER": "gemini"}):
+        with patch("backend.tts.synthesize_speech_gemini", side_effect=RuntimeError("RESOURCE_EXHAUSTED 429")):
+            with patch("backend.tts.synthesize_speech_groq", side_effect=RuntimeError("Groq 429 quota")):
+                resp = client.post("/api/tts", json={"text": "Compute integral of cos(x)."})
+                assert resp.status_code == 503
+                assert resp.headers["content-type"] == "application/json"
+                assert resp.headers["x-tts-provider"] == "none"
+                data = resp.json()
             assert data["fallback"] == "browser"
             assert "reason" in data
 

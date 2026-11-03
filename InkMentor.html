@@ -6888,8 +6888,38 @@ if (micBtn) {
 }
 
 // --- Gnani Prisma Voice-to-Canvas STT (The Great Indian AI Internship Challenge) ---
-var voiceAskRecorder = null;
-var voiceAskChunks = [];
+function encodeWavPcm(samples, sampleRate) {
+  var buffer = new ArrayBuffer(44 + samples.length * 2);
+  var view = new DataView(buffer);
+  function writeString(v, off, str) {
+    for (var i = 0; i < str.length; i++) v.setUint8(off + i, str.charCodeAt(i));
+  }
+  writeString(view, 0, 'RIFF');
+  view.setUint32(4, 36 + samples.length * 2, true);
+  writeString(view, 8, 'WAVE');
+  writeString(view, 12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, 1, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * 2, true);
+  view.setUint16(32, 2, true);
+  view.setUint16(34, 16, true);
+  writeString(view, 36, 'data');
+  view.setUint32(40, samples.length * 2, true);
+  var offset = 44;
+  for (var i = 0; i < samples.length; i++, offset += 2) {
+    var s = Math.max(-1, Math.min(1, samples[i]));
+    view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+  }
+  return new Blob([view], { type: 'audio/wav' });
+}
+
+var voiceAskStream = null;
+var voiceAskAudioCtx = null;
+var voiceAskProcessor = null;
+var voiceAskSource = null;
+var voiceAskPcmChunks = [];
 var voiceAskActive = false;
 var voiceAskTimer = null;
 
@@ -6904,22 +6934,22 @@ async function toggleVoiceAsk() {
     return;
   }
   try {
-    var stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    voiceAskChunks = [];
-    voiceAskRecorder = new MediaRecorder(stream);
-    voiceAskRecorder.ondataavailable = function(e) {
-      if (e.data && e.data.size > 0) voiceAskChunks.push(e.data);
-    };
-    voiceAskRecorder.onstop = function() {
-      try {
-        stream.getTracks().forEach(function(t) { t.stop(); });
-      } catch (e) {}
-      if (voiceAskChunks.length === 0) return;
-      var audioBlob = new Blob(voiceAskChunks, { type: voiceAskRecorder.mimeType || 'audio/webm' });
-      processVoiceAskAudio(audioBlob);
+    voiceAskStream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, sampleRate: 16000 } });
+    var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    voiceAskAudioCtx = new AudioContextClass({ sampleRate: 16000 });
+    voiceAskSource = voiceAskAudioCtx.createMediaStreamSource(voiceAskStream);
+    voiceAskProcessor = voiceAskAudioCtx.createScriptProcessor(4096, 1, 1);
+    voiceAskPcmChunks = [];
+
+    voiceAskProcessor.onaudioprocess = function(e) {
+      if (!voiceAskActive) return;
+      var input = e.inputBuffer.getChannelData(0);
+      voiceAskPcmChunks.push(new Float32Array(input));
     };
 
-    voiceAskRecorder.start(250);
+    voiceAskSource.connect(voiceAskProcessor);
+    voiceAskProcessor.connect(voiceAskAudioCtx.destination);
+
     voiceAskActive = true;
     if (btn) btn.classList.add('recording');
     $('#chip').classList.add('on');
@@ -6940,12 +6970,30 @@ function stopVoiceAsk() {
   clearTimeout(voiceAskTimer);
   var btn = $('#tool-voice-ask');
   if (btn) btn.classList.remove('recording');
+  if (!voiceAskActive) return;
   voiceAskActive = false;
-  if (voiceAskRecorder && voiceAskRecorder.state !== 'inactive') {
-    try {
-      voiceAskRecorder.stop();
-    } catch (e) {}
+
+  try {
+    if (voiceAskProcessor) voiceAskProcessor.disconnect();
+    if (voiceAskSource) voiceAskSource.disconnect();
+    if (voiceAskAudioCtx && voiceAskAudioCtx.state !== 'closed') voiceAskAudioCtx.close();
+  } catch (e) {}
+
+  try {
+    if (voiceAskStream) voiceAskStream.getTracks().forEach(function(t) { t.stop(); });
+  } catch (e) {}
+
+  if (voiceAskPcmChunks.length === 0) return;
+
+  var totalSamples = voiceAskPcmChunks.reduce(function(acc, c) { return acc + c.length; }, 0);
+  var merged = new Float32Array(totalSamples);
+  var off = 0;
+  for (var i = 0; i < voiceAskPcmChunks.length; i++) {
+    merged.set(voiceAskPcmChunks[i], off);
+    off += voiceAskPcmChunks[i].length;
   }
+  var wavBlob = encodeWavPcm(merged, 16000);
+  processVoiceAskAudio(wavBlob);
 }
 
 async function processVoiceAskAudio(blob) {

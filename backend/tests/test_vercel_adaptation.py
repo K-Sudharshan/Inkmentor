@@ -27,6 +27,7 @@ def test_kill_switch_gemini_goes_straight_to_groq():
     """With TTS_DISABLE_GEMINI=true, TTS skips Gemini with 0 calls and goes straight to Groq."""
     fake_wav = pcm_to_wav(make_dummy_pcm(0.2), sample_rate=24000)
     env_vars = {
+        "TTS_PROVIDER": "gemini",
         "TTS_DISABLE_GEMINI": "true",
         "GROQ_API_KEY": "gsk_test_mock_key",
     }
@@ -45,6 +46,7 @@ def test_kill_switch_gemini_goes_straight_to_groq():
 def test_kill_switch_both_disabled_falls_back_to_browser():
     """With both Gemini and Groq disabled, returns 503 fallback to browser."""
     env_vars = {
+        "TTS_DISABLE_GNANI": "true",
         "TTS_DISABLE_GEMINI": "true",
         "TTS_DISABLE_GROQ": "true",
     }

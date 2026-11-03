@@ -31,7 +31,7 @@ _invalid_directions_warned: Set[str] = set()
 
 # Gnani Timbre & Prisma Constants (The Great Indian AI Internship Challenge)
 DEFAULT_GNANI_TTS_MODEL = "timbre-v3.0"
-DEFAULT_GNANI_VOICE = "Nalini"
+DEFAULT_GNANI_VOICE = "Shivani"
 DEFAULT_GNANI_LANG = "en-IN"
 DEFAULT_GNANI_STT_MODEL = "prisma-v3.0"
 GNANI_API_BASE_URL = os.environ.get("GNANI_BASE_URL", "https://api.vachana.ai").strip()
@@ -558,8 +558,16 @@ def synthesize_speech_gnani(
     if not api_key:
         raise RuntimeError("Missing required environment variable: GNANI_API_KEY")
 
-    m_name = (model_name or os.environ.get("GNANI_TTS_MODEL") or DEFAULT_GNANI_TTS_MODEL).strip()
-    v_name = (voice_name or os.environ.get("GNANI_TTS_VOICE") or DEFAULT_GNANI_VOICE).strip()
+    if not model_name or not str(model_name).lower().startswith("timbre"):
+        m_name = (os.environ.get("GNANI_TTS_MODEL") or DEFAULT_GNANI_TTS_MODEL).strip()
+    else:
+        m_name = str(model_name).strip()
+
+    gnani_voices = ("avinash", "shivani", "lakshmi", "kalpana", "shubham", "prakash", "devansh", "yashraj", "chetana", "vasudha", "harshad", "riyaa", "tarika", "nalini")
+    if voice_name and str(voice_name).lower() in gnani_voices:
+        v_name = str(voice_name).strip()
+    else:
+        v_name = (os.environ.get("GNANI_TTS_VOICE") or DEFAULT_GNANI_VOICE).strip()
     lang = (language or os.environ.get("GNANI_TTS_LANG") or DEFAULT_GNANI_LANG).strip()
 
     payload_text = format_gnani_timbre_text(text, m_name)
@@ -633,6 +641,21 @@ def synthesize_speech_gnani(
         raise RuntimeError(f"Gnani TTS error: {err_str}") from None
 
 
+def detect_audio_format(audio_bytes: bytes) -> Tuple[str, str]:
+    """Detects filename extension and mime-type from magic bytes to prevent ffmpeg decoder mismatches."""
+    if audio_bytes.startswith(b"\x1a\x45\xdf\xa3"):
+        return "audio.webm", "audio/webm"
+    if audio_bytes.startswith(b"RIFF") and len(audio_bytes) >= 12 and audio_bytes[8:12] == b"WAVE":
+        return "audio.wav", "audio/wav"
+    if audio_bytes.startswith(b"OggS"):
+        return "audio.ogg", "audio/ogg"
+    if audio_bytes.startswith(b"ID3") or audio_bytes.startswith(b"\xff\xfb") or audio_bytes.startswith(b"\xff\xf3"):
+        return "audio.mp3", "audio/mpeg"
+    if len(audio_bytes) >= 8 and audio_bytes[4:8] == b"ftyp":
+        return "audio.m4a", "audio/mp4"
+    return "audio.wav", "audio/wav"
+
+
 def transcribe_speech_gnani(
     audio_bytes: bytes,
     language_code: str = "indic-auto",
@@ -654,13 +677,14 @@ def transcribe_speech_gnani(
 
     m_name = (model_name or os.environ.get("GNANI_STT_MODEL") or DEFAULT_GNANI_STT_MODEL).strip()
     boundary = f"----WebKitFormBoundary{uuid.uuid4().hex}"
+    fname, ctype = detect_audio_format(audio_bytes)
 
     # Build multipart/form-data payload
     parts = []
     # audio_file part
     parts.append(f"--{boundary}\r\n".encode("utf-8"))
-    parts.append(b'Content-Disposition: form-data; name="audio_file"; filename="audio.wav"\r\n')
-    parts.append(b"Content-Type: audio/wav\r\n\r\n")
+    parts.append(f'Content-Disposition: form-data; name="audio_file"; filename="{fname}"\r\n'.encode("utf-8"))
+    parts.append(f"Content-Type: {ctype}\r\n\r\n".encode("utf-8"))
     parts.append(audio_bytes)
     parts.append(b"\r\n")
 
@@ -816,9 +840,12 @@ def synthesize_speech_chain(
     single_provider = os.environ.get("TTS_PROVIDER", "").strip().lower()
     if order_env:
         providers = [p.strip() for p in order_env.split(",") if p.strip()]
-    elif single_provider in ("gnani", "groq", "gemini"):
-        all_provs = ["gnani", "gemini", "groq"]
-        providers = [single_provider] + [p for p in all_provs if p != single_provider]
+    elif single_provider == "gnani":
+        providers = ["gnani", "gemini", "groq"]
+    elif single_provider == "groq":
+        providers = ["groq", "gemini"]
+    elif single_provider == "gemini":
+        providers = ["gemini", "groq"]
     else:
         providers = ["gnani", "gemini", "groq"]
 
